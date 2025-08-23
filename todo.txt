@@ -1,0 +1,3 @@
+hacer con funciones el delete-products.js para usarlas en inventario.js
+hacer el ver todos las categorías y marcas 
+
