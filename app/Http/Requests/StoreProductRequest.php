@@ -26,7 +26,8 @@ class StoreProductRequest extends FormRequest
         return [
             'nombre' => 'required',
             'tipo' => 'required',
-            'codigo' => 'required|unique:productos,codigo',
+            'codigo_auto' => 'nullable',
+            'codigo' => 'nullable|required_if:codigo_auto,false|unique:productos,codigo',
             'marca_id' => 'nullable|required_if:tipo,producto|exists:marcas,id',
             'categoria_id' => 'required|exists:categorias,id',
             'descripcion' => 'nullable',
@@ -38,13 +39,13 @@ class StoreProductRequest extends FormRequest
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ];
     }
-
     public function messages(): array
     {
         return [
             'nombre.required' => 'El campo nombre es obligatorio.',
             'tipo.required' => 'El campo tipo es obligatorio.',
             'codigo.required' => 'El campo código es obligatorio.',
+            'codigo.required_if' => 'El campo código es obligatorio.',
             'codigo.unique' => 'Este código ya está registrado en otro producto.',
             'marca_id.required_if' => 'El campo marca es obligatorio cuando el tipo es producto.',
             'marca_id.exists' => 'La marca seleccionada no existe.',

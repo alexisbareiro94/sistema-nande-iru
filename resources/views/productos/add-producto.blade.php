@@ -33,15 +33,13 @@
                         <input type="text" name="codigo" id="codigo" value="{{ old('codigo') }}"
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo"
                             placeholder="Ej: cub-1956515-ll">
-                        <label for="codigo-auto" class="flex items-center cursor-pointer mx-2">
                             <!-- Toggle -->
+                        <label for="codigo-auto" class="flex items-center cursor-pointer mx-2">
                             <div class="relative">
-                                <input type="checkbox" id="codigo-auto" name="codigo-auto" class="sr-only">
-                                <div class="block bg-gray-300 w-14 h-8 rounded-full"></div>
-                                <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
-                            </div>                           
+                                <input type="checkbox" id="codigo-auto" name="codigo_auto" value="false">
+                            </div>
                             <span id="switch" class="ml-3 text-gray-700 text-xs font-medium">código automático</span>
-                        </label>                                              
+                        </label>
                     </div>
                 </div>
 
@@ -285,5 +283,5 @@
     </div>
     @include('productos.includes.add-distribuidor')
     @include('productos.includes.add-categoria')
-    @include('productos.includes.add-marca')    
+    @include('productos.includes.add-marca')
 @endsection

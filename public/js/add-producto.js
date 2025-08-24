@@ -11,16 +11,23 @@ const imagen = document.getElementById("imagen");
 const boton = document.getElementById("boton");
 const distribuidor_id = document.getElementById("distribuidor_id");
 const tipoProductoRadios = document.getElementsByName("tipo-producto");
+let codigoAuto = false;
+document.getElementById('codigo-auto').addEventListener('click', function(){
+    if (this.value === 'false'){
+        codigoAuto = true;
+        this.value = true;
+    }else{
+        codigoAuto = false;
+        this.value = false;
+    }
+});
 
 const labelServicio = document.getElementById("l-servicio");
 const labelProducto = document.getElementById("l-producto");
-const radioServicio = document.getElementById("radio-servicio");
-const radioProducto = document.getElementById("radio-producto");
 let tipoSeleccionado = "producto";
 tipoProductoRadios.forEach(radio => {
     radio.addEventListener('change', (e) => {
-        console.log(e.target.value)
-        if (e.target.value == 'servicio') {
+        if (e.target.value === 'servicio') {
             labelServicio.classList.add('bg-amarillo');
             labelProducto.classList.remove('bg-amarillo');
             tipoSeleccionado = "servicio";
@@ -32,12 +39,14 @@ tipoProductoRadios.forEach(radio => {
     });
 });
 
+
+
 boton.addEventListener("click", (e) => {
-    console.log(tipoSeleccionado);
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const formData = new FormData();
     formData.append('nombre', nombre.value);
     formData.append('codigo', codigo.value);
+    formData.append('codigo_auto', codigoAuto);
     formData.append('categoria_id', categoria_id.value ?? "");
     formData.append('marca_id', marca_id.value ?? "");
     formData.append('descripcion', descripcion.value ?? "");
@@ -48,11 +57,10 @@ boton.addEventListener("click", (e) => {
     formData.append('distribuidor_id', distribuidor_id.value ?? "");
     formData.append('tipo', tipoSeleccionado ?? "");
     formData.append('imagen', imagen.files[0] ?? "");
-
+    console.log(formData.get('codigo_auto'));
     fetch('http://localhost:8080/agregar-producto', {
         method: 'POST',
         headers: {
-            //'Content-Type': 'application/json',
             'X-CSRF-TOKEN': csrfToken
         },
         body: formData
@@ -64,6 +72,7 @@ boton.addEventListener("click", (e) => {
             return res.json();
         })
         .then(data => {
+            console.log(data);
             document.getElementById('form-add-producto').reset();
             document.getElementById('imagen-preview').src = "";
             document.getElementById("preview-cont").classList.add('hidden');
@@ -72,7 +81,6 @@ boton.addEventListener("click", (e) => {
             console.log("Producto agregado:", data);
         })
         .catch(err => {
-            //console.log(err.errors['nombre'])
             console.log(err)
             const errores = ['nombre', 'codigo', 'tipo', 'descripcion', 'precio_compra', 'precio_venta', 'stock', 'stock_minimo',
                 'categoria_id', 'marca_id', 'distribuidor_id', 'ventas', 'imagen',]
@@ -84,21 +92,21 @@ boton.addEventListener("click", (e) => {
         });
 });
 
-document.getElementById('codigo-auto').addEventListener('change', (e) => {
-    console.log('toggle')
-    const toggle = e.target;
-    if (toggle.checked) {
-        toggle.parentNode.querySelector('.block').classList.remove('bg-gray-300');
-        toggle.parentNode.querySelector('.block').classList.add('bg-amarillo');
-        toggle.parentNode.querySelector('.dot').classList.remove('left-1');
-        toggle.parentNode.querySelector('.dot').classList.add('left-7');
-    } else {
-        toggle.parentNode.querySelector('.block').classList.add('bg-gray-300');
-        toggle.parentNode.querySelector('.block').classList.remove('bg-amarillo');
-        toggle.parentNode.querySelector('.dot').classList.add('left-1');
-        toggle.parentNode.querySelector('.dot').classList.remove('left-7');
-    }
-});
+// document.getElementById('codigo-auto').addEventListener('change', (e) => {
+//     console.log('toggle')
+//     const toggle = e.target;
+//     if (toggle.checked) {
+//         toggle.parentNode.querySelector('.block').classList.remove('bg-gray-300');
+//         toggle.parentNode.querySelector('.block').classList.add('bg-amarillo');
+//         toggle.parentNode.querySelector('.dot').classList.remove('left-1');
+//         toggle.parentNode.querySelector('.dot').classList.add('left-7');
+//     } else {
+//         toggle.parentNode.querySelector('.block').classList.add('bg-gray-300');
+//         toggle.parentNode.querySelector('.block').classList.remove('bg-amarillo');
+//         toggle.parentNode.querySelector('.dot').classList.add('left-1');
+//         toggle.parentNode.querySelector('.dot').classList.remove('left-7');
+//     }
+// });
 
 
 //mostar preview de la imagen

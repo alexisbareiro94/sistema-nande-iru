@@ -9,11 +9,11 @@ use App\Models\Categoria;
 use App\Models\Distribuidor;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\StoreProductRequest;
+use App\Services\ProductService;
 
 class ProductoController extends Controller
 {
-    //public function __construct() {}
-
+    public function __construct(protected ProductService $productService) {}
     public function index()
     {
         return view('productos.index', [
@@ -23,7 +23,6 @@ class ProductoController extends Controller
             'distribuidores' => Distribuidor::all(),
         ]);
     }
-
     //function para hacer un buscador dinámico con js
     public function search(Request $request)
     {
@@ -72,7 +71,7 @@ class ProductoController extends Controller
         ]);
     }
 
-    public function allProducts(){{ 
+    public function allProducts(){{
         return response()->json([
             'success' => true,
             'productos' => Producto::with(['marca', 'distribuidor', 'categoria'])->get(),
@@ -89,9 +88,8 @@ class ProductoController extends Controller
     }
 
     public function store(StoreProductRequest $request)
-    {     
+    {
         $data = $request->validated();
-
         if ($request->hasFile('imagen')) {
             $fileName = time() . '.' . $request->file('imagen')->getClientOriginalExtension();
             $request->file('imagen')->move(public_path('images'), $fileName);
@@ -102,6 +100,9 @@ class ProductoController extends Controller
         $request->categoria_id ?? $data['categoria_id'] = 1;
         $request->distribuidor_id ?? $data['distribuidor_id'] = 1;
 
+        if ($request->codigo_auto){
+            $data['codigo'] = $this->productService->create_code($data['categoria_id'], $data['nombre'], $data['marca_id']);
+        }
         try {
             $producto = Producto::create($data);
 
@@ -117,7 +118,19 @@ class ProductoController extends Controller
             ], 400);
         }
     }
-
+    public function show(string $id){
+        try{
+            return response()->json([
+                'success' => true,
+                'producto' => Producto::select('nombre')->where('id', $id)->first(),
+            ]);
+        }catch (\Exception $e){
+            return response()->json([
+                'success' => false,
+                'errors' => $e->getMessage(),
+            ]);
+        }
+    }
     public function update_view(string $id)
     {
         return view('productos.edit', [
@@ -129,25 +142,24 @@ class ProductoController extends Controller
     }
 
     public function update(UpdateProductRequest $request, string $id)
-    {                            
-        $data = $request->validated();        
-       
+    {
+        $data = $request->validated();
         try {
-            $producto = Producto::find($id);            
+            $producto = Producto::find($id);
             if ($request->hasFile('imagen')) {
-                if (file_exists(public_path("images/$producto->imagen")) && $producto->imagen) {                    
+                if (file_exists(public_path("images/$producto->imagen")) && $producto->imagen) {
                     unlink(public_path("images/$producto->imagen"));
                 }
                 $fileName = time() . '.' . $request->file('imagen')->getClientOriginalExtension();
                 $request->file('imagen')->move(public_path('images'), $fileName);
                 $data['imagen'] = $fileName;
             }
-            if ($request->eliminar_imagen == "true" && $producto->imagen) {                
+            if ($request->eliminar_imagen == "true" && $producto->imagen) {
                   if (file_exists(public_path("images/$producto->imagen"))) {
                     unlink(public_path("images/$producto->imagen"));
                 }
                 $data['imagen'] = null;
-            }                        
+            }
             $producto->update($data);
 
             return response()->json([
@@ -156,13 +168,13 @@ class ProductoController extends Controller
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'success' => false,                
+                'success' => false,
                 'errors' => $e->getMessage(),
             ], 400);
         }
     }
 
-    public function delete(string $id){        
+    public function delete(string $id){
         try{
             $producto = Producto::find($id);
             $producto->delete();
