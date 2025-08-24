@@ -34,10 +34,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/agregar-distribuidor', [DistribuidorController::class, 'store'])->name('distribuidor.store');
         Route::get('/api/distribuidores', [DistribuidorController::class, 'index'])->name('distribuidor.index');
 
-        Route::post('/agregar-marca', [MarcaController::class, 'store'])->name('marca.store');        
+        Route::post('/agregar-marca', [MarcaController::class, 'store'])->name('marca.store');
+        Route::get('/api/marcas', [MarcaController::class, 'index'])->name('marca.all');
     });
 
-    Route::get('/prueba', function(){
-        dd(Producto::tipos());
-    });
+
 });

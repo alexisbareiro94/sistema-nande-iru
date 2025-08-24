@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Validator;
 class MarcaController extends Controller
 {
     public function store(Request $request){
-        // return response()->json([
-        //     'nombre' => $request->nombre,
-        // ]);
         $validate = Validator::make($request->all(), [
             'nombre' => 'required|string|max:255|unique:marcas,nombre'
         ]);
@@ -34,6 +31,26 @@ class MarcaController extends Controller
                 'success' => false,
                 'message' => $e->getMessage(),
             ], 500);
+        }
+    }
+
+    public function index(Request $request){
+        try{
+            $query = Marca::query();
+            $search = $request->get('q');
+            $marcas = $query->whereLike('nombre', "%$search%")
+                            ->whereNot('id', 1)
+                            ->get();
+
+            return response()->json([
+                'success' => true,
+                'marcas' => $marcas,
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 }
