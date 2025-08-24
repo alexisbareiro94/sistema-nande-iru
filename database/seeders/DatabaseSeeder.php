@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
       UserSeeder::class,
     ]);
 
-    DB::table('marcas')->insert([
+    DB::table('marcas')->insert([      
       'nombre' => 'sin marca'
     ]);
 

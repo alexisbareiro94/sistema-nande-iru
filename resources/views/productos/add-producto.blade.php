@@ -285,5 +285,5 @@
     </div>
     @include('productos.includes.add-distribuidor')
     @include('productos.includes.add-categoria')
-    @include('productos.includes.add-marca')
+    @include('productos.includes.add-marca')    
 @endsection

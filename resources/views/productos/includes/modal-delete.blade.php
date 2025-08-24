@@ -1,8 +1,8 @@
 <div id="delete-container"
     class="hidden fixed inset-0 bg-black/50 z-50 top-0 flex justify-center items-center overflow-y-auto overflow-x-hidden">
-    <div class="relative p-4 w-full max-w-md max-h-full">
+    <div  class="relative p-4 w-full max-w-md max-h-full">
         <div class="relative bg-white rounded-lg shadow-sm">
-            <div class="p-4 md:p-5 text-center">
+            <div id="sec-delete-container" class="p-4 md:p-5 text-center">
                 <svg class="mx-auto mb-4 text-gray-400 w-12 h-12" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 20 20">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

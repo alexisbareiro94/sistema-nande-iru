@@ -89,8 +89,7 @@ class ProductoController extends Controller
     }
 
     public function store(StoreProductRequest $request)
-    {
-     //   return response()->json($request);
+    {     
         $data = $request->validated();
 
         if ($request->hasFile('imagen')) {
