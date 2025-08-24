@@ -17,7 +17,10 @@ class CategoriaController extends Controller
         ]);
 
         if($validate->fails()){
-            return response()->json($validate->errors(), 400);
+            return response()->json([
+                'success' => false,
+                'errors' => $validate->messages(),
+            ], 400);
         }
 
         try{
@@ -33,9 +36,29 @@ class CategoriaController extends Controller
         }catch(\Exception $e){
             return response()->json([
                 'success' => false,
-                'error' => 'ta mal',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
 
+    public function index(Request $request){
+        try{
+            $query = Categoria::query();
+            $q = $request->query('q');
+
+            $categorias = $query->whereLike('nombre', "%$q%")
+                                ->whereNot('id', 1)
+                                ->get();
+
+            return response()->json([
+                'success' => true,
+                'categorias' => $categorias,
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
 }

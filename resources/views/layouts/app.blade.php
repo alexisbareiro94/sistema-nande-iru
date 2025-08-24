@@ -30,9 +30,9 @@
         </div>
     </header>
     <main class="flex-grow ">
-        @yield('contenido')                
+        @yield('contenido')
         @include('includes.cerrar-sesion')
-    </main>    
+    </main>
     <footer class="bg-[#000000] text-white py-4">
         <div class="max-w-7xl mx-auto px-4 text-center text-sm">
             &copy; {{ date('Y') }} MiApp. Todos los derechos reservados.
@@ -42,7 +42,8 @@
     <script src="{{ asset('js/inventario.js') }}"></script>
     <script src="{{ asset('js/edit-producto.js') }}"></script>
     <script src="{{ asset('js/marca.js') }}"></script>
-    @if (request()->routeIs('producto.update.view') || request()->routeIs('producto.update'))                
+    <script src="{{ asset('js/categoria.js')  }}"></script>
+    @if (request()->routeIs('producto.update.view') || request()->routeIs('producto.update'))
         <script src="{{ asset('js/edit-productorep.js') }}"></script>
     @endif
 </body>

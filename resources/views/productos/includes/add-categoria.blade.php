@@ -23,11 +23,17 @@
                         <input type="text" name="categoria_nombre" id="categoria_nombre" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"  required />
                     </div>
 
-                    <button id="btn-add-categoria" type="button" class="w-full text-black bg-amarillo hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    <button id="btn-add-categoria" type="button"
+                            class="mb-2 w-full cursor-pointer text-black bg-amarillo hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                         Agregar
+                    </button>
+
+                    <button id="all-categorias" type="button" class="w-full cursor-pointer text-black bg-white border border-white hover:border-amarillo focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                        Todas las Categorias
                     </button>
                 </form>
             </div>
         </div>
     </div>
+    @include('productos.includes.modal-all-categorias')
 </div>

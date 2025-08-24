@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/api/delete/{id}/producto', [ProductoController::class, 'delete'])->name('producto.delete');
 
         Route::post('/agregar-categoria', [CategoriaController::class, 'store'])->name('categoria.store');
+        Route::get('/api/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
 
         Route::post('/agregar-distribuidor', [DistribuidorController::class, 'store'])->name('distribuidor.store');
         Route::get('/api/distribuidores', [DistribuidorController::class, 'index'])->name('distribuidor.index');
