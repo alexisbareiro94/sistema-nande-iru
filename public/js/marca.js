@@ -9,8 +9,6 @@ document.getElementById('cerrar-ver-marca').addEventListener('click', () => {
     contVerMarcas.classList.add('hidden')
 })
 
-
-
 let timerd;
 document.getElementById('query-m').addEventListener('input',  function (){
     clearTimeout(timerd);
@@ -21,16 +19,14 @@ document.getElementById('query-m').addEventListener('input',  function (){
             document.getElementById('cerrar-q-m').addEventListener('click', () => {
                 document.getElementById('query-m').value = '';
                 document.getElementById('cerrar-q-m').classList.toggle('hidden');
-               processQuery();
+               processQueryMarca();
             });
         }
-        processQuery(query);
+        processQueryMarca(query);
     }, 300);
 })
 
-
-
-async function processQuery(query = '') {
+async function processQueryMarca(query = '') {
     try{
         const res = await fetch(`http://localhost:8080/api/marcas?q=${encodeURIComponent(query)}`, {
             method: 'GET',

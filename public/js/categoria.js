@@ -19,14 +19,14 @@ document.getElementById('query-c').addEventListener('input',  function (){
             document.getElementById('cerrar-q-c').addEventListener('click', () => {
                 document.getElementById('query-c').value = '';
                 document.getElementById('cerrar-q-c').classList.toggle('hidden');
-                processQuery();
+                processQueryCat();
             });
         }
-        processQuery(query);
+        processQueryCat(query);
     }, 300);
 })
 
-async function processQuery(query = '') {
+async function processQueryCat(query = '') {
     try{
         const res = await fetch(`http://localhost:8080/api/categorias?q=${encodeURIComponent(query)}`, {
             method: 'GET',
