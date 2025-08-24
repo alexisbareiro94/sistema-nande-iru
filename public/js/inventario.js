@@ -15,8 +15,8 @@ document.getElementById("i-s-inventario").addEventListener('input', (e) => {
                 btnCerrarInv.classList.add('hidden');
                 searchInventario(query = "", filtro ="");
             });
-        }        
-        searchInventario(query, filtro);        
+        }
+        searchInventario(query, filtro);
     }, 300);
 });
 
@@ -27,9 +27,9 @@ function searchInventario(query, filtro) {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': csrfToken,
         },
-    })    
+    })
         .then(res => res.json())
-        .then(data => {            
+        .then(data => {
             const bodytableInv = document.getElementById('body-table-inv');
             bodytableInv.innerHTML = '';
 
@@ -73,10 +73,10 @@ function searchInventario(query, filtro) {
                                     </svg>
                             </button>
                         </td>
-                    `;                
+                    `;
                 bodytableInv.appendChild(row);
                 deleteP();
-            });            
+            });
         })
         .catch(err => console.error('error al cargar los datos', err));
 }
@@ -89,9 +89,13 @@ function deleteP(){
     const btnDeleteProducts = document.querySelectorAll(".delete-producto");
 
     btnDeleteProducts.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
             const productoId = btn.dataset.producto;
-            console.log("Producto a eliminar:", productoId);
+            const product = await getProduct(productoId);
+
+            document.getElementById('product-h3').innerHTML = `
+                ¿Estás seguro de eliminar, <strong>${product.producto.nombre}</strong>?
+            `;
 
             document.getElementById("confirmar-d").addEventListener('click', async () => {
                 try {
@@ -186,4 +190,23 @@ function deleteP(){
 
 deleteP();
 
+async function getProduct(productoId) {
+    try{
+        const res = await fetch(`http://localhost:8080/api/producto/${productoId}`, {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            }
+        });
 
+        const data = await res.json();
+        if(!res.ok){
+            throw data;
+        }
+
+        return data;
+    }catch(err){
+       // console.log('error en getProduct');
+        showToast(`${err.message || 'Error al obtener productos'}`, 'error');
+    }
+}
