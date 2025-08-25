@@ -37,8 +37,7 @@ function searchInventario(query, filtro) {
                 const row = document.createElement('tr');
 
                 const tipoStockClass = producto.tipo === 'servicio'
-                    ? "text-gray-300 font-semibold"
-                    : (producto.stock > 50 ? "text-green-500" : "");
+                    ? "text-gray-300 font-semibold" : "text-gray-500";
 
                 row.innerHTML = `
                         <td class="pl-6 py-4 text-sm">
@@ -83,13 +82,23 @@ function searchInventario(query, filtro) {
 
 
 //borrar producto
-function deleteP(){
+function deleteP() {
     const deleteCont = document.getElementById("delete-container");
     const cancelarModal = document.getElementById("cancelar-d");
-    const btnDeleteProducts = document.querySelectorAll(".delete-producto");
+    const bodyTableInv = document.getElementById("body-table-inv");
 
-    btnDeleteProducts.forEach(btn => {
-        btn.addEventListener('click', async () => {
+    // Solo agrega el listener una vez
+    if (!cancelarModal.dataset.listener) {
+        cancelarModal.addEventListener('click', () => {
+            deleteCont.classList.add("hidden");
+        });
+        cancelarModal.dataset.listener = "true";
+    }
+
+    // Delegación de eventos para los botones de borrar
+    bodyTableInv.addEventListener('click', async function (e) {
+        if (e.target.closest('.delete-producto')) {
+            const btn = e.target.closest('.delete-producto');
             const productoId = btn.dataset.producto;
             const product = await getProduct(productoId);
 
@@ -97,7 +106,12 @@ function deleteP(){
                 ¿Estás seguro de eliminar, <strong>${product.producto.nombre}</strong>?
             `;
 
-            document.getElementById("confirmar-d").addEventListener('click', async () => {
+            // Remueve listeners previos antes de agregar uno nuevo
+            const confirmarBtn = document.getElementById("confirmar-d");
+            confirmarBtn.replaceWith(confirmarBtn.cloneNode(true));
+            const newConfirmarBtn = document.getElementById("confirmar-d");
+
+            newConfirmarBtn.addEventListener('click', async () => {
                 try {
                     const res = await fetch(`http://localhost:8080/api/delete/${productoId}/producto`, {
                         method: 'DELETE',
@@ -111,42 +125,39 @@ function deleteP(){
                         throw errData;
                     }
                     await recargarTablaInv();
-                    deleteCont.classList.add('hidden')
+                    deleteCont.classList.add('hidden');
                     showToast('Producto Eliminado', 'success');
                 } catch (err) {
-                    showToast(`${err.errors}`, "error")
+                    showToast(`${err.errors}`, "error");
                 }
             });
+
             deleteCont.classList.remove("hidden");
-        });
+        }
     });
+}
+deleteP();
 
-    cancelarModal.addEventListener('click', () => {
-        deleteCont.classList.add("hidden");
-    });
+async function recargarTablaInv() {
+    const bodyTableInv = document.getElementById("body-table-inv");
 
+    try {
+        const res = await fetch(`http://localhost:8080/api/all-products`);
+        const data = await res.json();
 
-    async function recargarTablaInv() {
-        const bodyTableInv = document.getElementById("body-table-inv");
+        if (!res.ok) {
+            throw data;
+        }
 
-        try {
-            const res = await fetch(`http://localhost:8080/api/all-products`);
-            const data = await res.json();
+        bodyTableInv.innerHTML = "";
 
-            if (!res.ok) {
-                throw data;
-            }
+        data.productos.forEach(producto => {
+            const row = document.createElement('tr');
 
-            bodyTableInv.innerHTML = "";
+            const tipoStockClass = producto.tipo === 'servicio'
+                ? "text-gray-300 font-semibold" : "text-gray-500";
 
-            data.productos.forEach(producto => {
-                const row = document.createElement('tr');
-
-                const tipoStockClass = producto.tipo === 'servicio'
-                    ? "text-gray-300 font-semibold"
-                    : (producto.stock > 50 ? "text-green-500" : "");
-
-                row.innerHTML = `
+            row.innerHTML = `
                         <td class="pl-6 py-4 text-sm">
                             <p class="font-semibold">${producto.nombre}</p>
                             <p class="text-gray-500">${producto.marca?.nombre ?? ''}</p>
@@ -178,18 +189,15 @@ function deleteP(){
                             </button>
                         </td>
                     `;
-                bodyTableInv.appendChild(row);
-            });
+            bodyTableInv.appendChild(row);
+            deleteP();
+        });
 
-        } catch (err) {
-            console.error(err);
-            showToast(`${err.message || 'Error al obtener productos'}`, 'error');
-        }
+    } catch (err) {
+        console.error(err);
+        showToast(`${err.message || 'Error al obtener productos'}`, 'error');
     }
 }
-
-deleteP();
-
 async function getProduct(productoId) {
     try{
         const res = await fetch(`http://localhost:8080/api/producto/${productoId}`, {

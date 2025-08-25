@@ -2,22 +2,18 @@ const producto_id = document.getElementById('producto_id').value;
 
 document.getElementById('boton-u').addEventListener('click', (e) => {
     e.preventDefault();
-    console.log('dad')
     updateProduct(flag = false);
 });
-
 
 document.addEventListener('DOMContentLoaded', ()=>{
     const message = localStorage.getItem('toastMessage');
     const type = localStorage.getItem('toastType');
-    
+
     if(message != null){
         showToast(message, type);
     }
-    localStorage.clear();    
+    localStorage.clear();
 });
-
-
 
 let eliminarImagen = false;
 const btnCerrarPreviewUp = document.getElementById('cerrar-preview-u');
@@ -42,6 +38,8 @@ document.getElementById('confirmar-borrado').addEventListener('click', async (e)
 });
 
 async function updateProduct(flag = false) {
+    const tipoE = document.getElementById('tipo-e').value;
+
     const formDataEdit = new FormData();
     nombre.value ? formDataEdit.append('nombre', nombre.value) : '';
     codigo.value ? formDataEdit.append('codigo', codigo.value) : '';
@@ -53,11 +51,11 @@ async function updateProduct(flag = false) {
     stock.value ? formDataEdit.append('stock', stock.value) : '';
     stock_minimo.value ? formDataEdit.append('stock_minimo', stock_minimo.value) : '';
     distribuidor_id.value ? formDataEdit.append('distribuidor_id', distribuidor_id.value) : '';
-    tipoSeleccionado ? formDataEdit.append('tipo', tipoSeleccionado) : '';
+    tipoE ? formDataEdit.append('tipo', tipoE) : '';
     imagen.files[0] ? formDataEdit.append('imagen', imagen.files[0]) : '';
     eliminarImagen ? formDataEdit.append('eliminar_imagen', eliminarImagen) : '';
     producto_id ? formDataEdit.append('producto_id', producto_id) : '';
-    //console.log(imagen.files[0])
+    //console.log(tipoSeleccionadoE)
     try {
         const res = await fetch(`http://localhost:8080/edit/${encodeURIComponent(producto_id)}/producto`, {
             method: 'POST',
@@ -75,7 +73,6 @@ async function updateProduct(flag = false) {
 
         const data = await res.json();
         document.getElementById('form-add-producto-u').reset();
-        console.log(data);
         // guardo el mensaje en localStorage
         if (flag == true) {
             localStorage.setItem("toastMessage", "Producto Actualizado Correctamente");

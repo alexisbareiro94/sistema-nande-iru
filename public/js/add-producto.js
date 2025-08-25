@@ -39,8 +39,6 @@ tipoProductoRadios.forEach(radio => {
     });
 });
 
-
-
 boton.addEventListener("click", (e) => {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const formData = new FormData();

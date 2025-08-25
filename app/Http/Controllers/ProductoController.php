@@ -100,10 +100,10 @@ class ProductoController extends Controller
         $request->categoria_id ?? $data['categoria_id'] = 1;
         $request->distribuidor_id ?? $data['distribuidor_id'] = 1;
 
-        if ($request->codigo_auto){
-            $data['codigo'] = $this->productService->create_code($data['categoria_id'], $data['nombre'], $data['marca_id']);
-        }
         try {
+            if ($request->codigo_auto){
+                $data['codigo'] = $this->productService->create_code($data['categoria_id'], $data['nombre'], $data['marca_id']);
+            }
             $producto = Producto::create($data);
 
             return response()->json([
@@ -122,7 +122,7 @@ class ProductoController extends Controller
         try{
             return response()->json([
                 'success' => true,
-                'producto' => Producto::select('nombre')->where('id', $id)->first(),
+                'producto' => Producto::select('id','nombre')->where('id', $id)->first(),
             ]);
         }catch (\Exception $e){
             return response()->json([

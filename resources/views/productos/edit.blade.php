@@ -122,34 +122,21 @@
 
                 {{-- tipo de producto --}}
                 <div class="justify-center gap-2 my-2">
-                    <label for="distribuidor_id" class="block text-sm font-semibold text-gray-700 mb-1">
-                        Tipo de Producto
+                    <label for="tipo-e" class="block text-sm font-semibold text-gray-700 mb-1">
+                        Tipo de Producto:
                     </label>
                     <div class="flex gap-0.5 text-center">
-                        <label id="l-producto" @class([
-                            'flex-1 max-w-xs p-1 border-2 border-gris rounded-lg cursor-pointer transition flex flex-col',
-                            'bg-amarillo' => $producto->tipo == 'producto',
-                            '' => $producto->tipo == 'servicio',
-                        ])>
-                            <div class="flex items-center mb-2">
-                                <input {{ $producto->tipo == 'producto' ? 'checked' : '' }} id="radio-producto"
-                                    type="radio" name="tipo-producto" value="producto" class="sr-only" />
-                                <span class="text-negro font-black">Producto</span>
-                            </div>
-                        </label>
-
-                        <label id="l-servicio" @class([
-                            'flex-1 max-w-xs p-1 border-2 border-gris rounded-lg cursor-pointer transition flex flex-col',
-                            'bg-amarillo' => $producto->tipo == 'servicio',
-                            '' => $producto->tipo == 'producto',
-                        ])>
-                            <div class="flex items-center mb-2">
-                                <input {{ $producto->tipo == 'servicio' ? 'checked' : '' }} id="radio-servicio"
-                                    type="radio" name="tipo-producto" value="servicio" class="sr-only" />
-                                <span class="font-semibold text-negro">Servicio</span>
-                            </div>
-                        </label>
+                        <select name="tipo-e" id="tipo-e"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo appearance-none bg-white">
+                            <option value="">Seleccionar nuevo Tipo de producto</option>
+                            <option value="servicio">Servicio</option>
+                            <option value="producto">Producto</option>
+                        </select>
                     </div>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Distribuidor Actual: <span
+                            class="font-semibold underline">{{ $producto->tipo }}</span>
+                    </p>
                 </div>
             </div>
             <!-- Descripción -->

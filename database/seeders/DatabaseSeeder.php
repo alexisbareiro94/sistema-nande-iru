@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
       UserSeeder::class,
     ]);
 
-    DB::table('marcas')->insert([      
+    DB::table('marcas')->insert([
       'nombre' => 'sin marca'
     ]);
 
@@ -33,5 +33,8 @@ class DatabaseSeeder extends Seeder
     DB::table('distribuidores')->insert([
       'nombre' => 'sin distribuidor'
     ]);
+
+      \App\Models\Producto::factory(50)->create();
+
   }
 }

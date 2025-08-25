@@ -1,3 +1,4 @@
-hacer el ver todos las categorías y marcas 
 crear la funcion de codigo automatico
+crear funcionalidad para eliminar categorias, marcas y distribuidores
 
+q

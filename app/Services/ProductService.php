@@ -4,12 +4,14 @@ namespace App\Services;
 
 use App\Models\Categoria;
 use App\Models\Marca;
+use App\Models\Producto;
 
 class ProductService
 {
     public function create_code($categoriaId, $nombre, $marcaId) {
         $categoria = Categoria::select('nombre')->where('id', $categoriaId)->first();
         $marca = Marca::select('nombre')->where('id', $marcaId)->first();
+        //$nombre = 'cubierta 175/70R14';
 
         $splitMarca = collect(str_split($marca->nombre));
 
@@ -25,13 +27,22 @@ class ProductService
         } else {
             $resultado = preg_replace('/[^a-zA-ZáéíóúÁÉÍÓÚñÑ]/u', '', $nombre);
         }
-        $exists = Categoria::where('nombre', $resultado)->get();
-        if($exists){
-            $numero = $exists->count() + 1;
-            $resultado = $resultado.(string)$numero;
+        $realCode = $cat.$resultado.$code;
+        $exists = Producto::where('tipo', 'servicio')->get();
+        $codePrueba = (string)strtolower($realCode);
+        $proExists = Producto::where('codigo', $codePrueba)->first();
+        if($exists && $proExists && $proExists->tipo == 'servicio'){
+            $nro = count($exists);
+            $nro += 1;
+            $resultadodos = $resultado.$nro;
+            $realCode = $cat.$resultadodos.$code;
         }
 
-        $realCode = $cat.$resultado.$code;
+        if($proExists && $proExists->tipo == 'producto'){
+            $chars = range(0, 100);
+            $add =  collect($chars)->random(2)->implode('');
+            $realCode = $cat.$resultado.$add.$code;
+        }
         return strtolower($realCode);
     }
 }
