@@ -32,6 +32,7 @@
     <main class="flex-grow ">
         @yield('contenido')
         @include('includes.cerrar-sesion')
+        @include('alertas.alerts')
     </main>
     <footer class="bg-[#000000] text-white py-4">
         <div class="max-w-7xl mx-auto px-4 text-center text-sm">

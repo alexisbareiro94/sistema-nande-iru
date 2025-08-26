@@ -8,6 +8,7 @@
     <title>@yield('titulo')</title>
 </head>
 <body>
-    @yield('contenido')    
+    @yield('contenido')
+    @include('alertas.alerts')
 </body>
 </html>

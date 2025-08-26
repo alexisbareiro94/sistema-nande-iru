@@ -42,7 +42,7 @@
                         class="w-full mb-5 bg-[#000000] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#333] transition-colors">
                         Iniciar Sesión
                     </button>
-                    <a
+                    <a href="{{ route('register.view') }}"
                         class="cursor-pointer w-full mt-6 bg-white text-black font-semibold py-2 px-4 rounded-md hover:underline transition-colors">
                         Registro
                     </a>
