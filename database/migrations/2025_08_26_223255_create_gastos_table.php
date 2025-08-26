@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('descuentos', function (Blueprint $table) {
+        Schema::create('gastos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('venta_id')->constrained('ventas');
-            $table->foreignId('producto_id')->nullable()->constrained('productos');
-            $table->enum('tipo', ['porcentaje', 'monto_fijo']);
-            $table->integer('valor');
+            $table->foreignId('user_id')->constrained('users');
+            $table->string('motivo')->nullable();
+            $table->integer('cantidad');
+            $table->date('fecha');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('descuentos');
+        Schema::dropIfExists('gastos');
     }
 };

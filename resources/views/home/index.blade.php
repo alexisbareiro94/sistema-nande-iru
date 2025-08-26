@@ -3,16 +3,16 @@
 @section('titulo', 'home')
 
 @section('contenido')
-    <div class="max-w-7xl mx-auto p-6 pt-8">    
+    <div class="max-w-7xl mx-auto p-6 pt-8">
         <div class="mb-10">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">Panel de Control</h1>            
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Panel de Control</h1>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Clientes y Distribuidores -->
             <a href="#"
                 class="group bg-gradient-to-b from-white to-gray-50 border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:shadow-blue-100/50 min-h-[180px] flex flex-col items-center p-6">
-                <div class="bg-blue-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">                    
+                <div class="bg-blue-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="h-8 w-8 text-blue-600">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -25,11 +25,10 @@
                     de Clientes y Distribuidores</span>
             </a>
 
-            
             <!-- Caja -->
-            <a href="#"
+            <a href="{{ route('caja.index') }}"
                 class="group bg-gradient-to-b from-white to-gray-50 border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:shadow-green-100/50 min-h-[180px] flex flex-col items-center p-6">
-                <div class="bg-green-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">                
+                <div class="bg-green-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="h-8 w-8 text-green-600">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -44,7 +43,7 @@
             <!-- Inventario -->
             <a href="{{ route('producto.index') }}"
                 class="group bg-gradient-to-b from-white to-gray-50 border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:shadow-yellow-100/50 min-h-[180px] flex flex-col items-center p-6">
-                <div class="bg-yellow-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">                
+                <div class="bg-yellow-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="h-8 w-8 text-yellow-600">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -59,7 +58,7 @@
             <!-- Gestión de Usuarios -->
             <a href="#"
                 class="group bg-gradient-to-b from-white to-gray-50 border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:shadow-purple-100/50 min-h-[180px] flex flex-col items-center p-6">
-                <div class="bg-purple-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">                    
+                <div class="bg-purple-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="h-8 w-8 text-purple-600">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -75,7 +74,7 @@
             <!-- Reportes -->
             <a href="#"
                 class="group bg-gradient-to-b from-white to-gray-50 border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:shadow-red-100/50 min-h-[180px] flex flex-col items-center p-6">
-                <div class="bg-red-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">                    
+                <div class="bg-red-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="h-8 w-8 text-red-600">
                         <path stroke-linecap="round" stroke-linejoin="round"

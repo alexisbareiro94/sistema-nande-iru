@@ -13,11 +13,18 @@ return new class extends Migration
     {
         Schema::create('ventas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->date('fecha');
+            $table->foreignId('caja_id')->constrained('users');
+            $table->foreignId('cliente_id')->constrained('users');
+            $table->boolean('venta_con_descuento')->default(false);
+            $table->integer('monto_descuento')->nullable();
+            $table->integer('subtotal');
             $table->integer('total');
-            $table->enum('estado', ['pendiente', 'completado', 'cancelado'])->default('pendiente');
+            $table->enum('estado', ['pendiente', 'completado', 'cancelado'])->default('pendiente')->index();
             $table->timestamps();
+            $table->foreignId('created_by')->nullable()->constrained('users');
+            $table->foreignId('updated_by')->nullable()->constrained('users');
+            $table->foreignId('deleted_by')->nullable()->constrained('users');
+            $table->softDeletes();
         });
     }
 
