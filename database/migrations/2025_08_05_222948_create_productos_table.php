@@ -29,10 +29,10 @@ return new class extends Migration
             $table->string('codigo')->nullable()->unique();
             $table->enum('tipo', ['servicio', 'producto'])->default('producto');
             $table->string('descripcion')->nullable();
-            $table->string('precio_compra')->nullable();
-            $table->string('precio_venta')->nullable();
-            $table->string('stock')->nullable();
-            $table->string('stock_minimo')->nullable();
+            $table->integer('precio_compra')->nullable();
+            $table->integer('precio_venta')->nullable();
+            $table->integer('stock')->nullable();
+            $table->integer('stock_minimo')->nullable();
             $table->foreignId('categoria_id')->nullable()->constrained('categorias');
             $table->foreignId('marca_id')->nullable()->constrained('marcas');
             $table->foreignId('distribuidor_id')->nullable()->constrained('distribuidores');

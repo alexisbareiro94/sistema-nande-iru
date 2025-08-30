@@ -19,7 +19,7 @@
         <form id="form-add-producto-u" action="" method="POST" enctype="multipart/form-data" class="p-6 space-y-8">
             <!-- Sección de Información Básica -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input type="hidden" id="producto_id" name="producto_id" value="{{ $producto->id }}">
+                <input type="hidden" id="producto_id" name="producto_id" value="{{ $producto->id ?? ''}}">
                 <!-- Nombre -->
                 <div class="md:col-span-2">
                     <label for="nombre" class="block text-sm font-semibold text-gray-700 mb-1.5">
@@ -28,7 +28,7 @@
                     <input type="text" name="nombre" id="nombre" placeholder="Escribe el nuevo nombre"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo transition-all duration-200">
                     <p class="text-xs text-gray-500 mt-1">
-                        Nombre Actual: <span class="font-semibold underline">{{ $producto->nombre }}</span>
+                        Nombre Actual: <span class="font-semibold underline">{{ $producto->nombre ?? ''}}</span>
                     </p>
                 </div>
 
@@ -39,7 +39,7 @@
                     <input type="text" name="codigo" id="codigo" value="" placeholder="Escribe el nuevo codigo"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo">
                     <p class="text-xs text-gray-500 mt-1">
-                        Código Actual: <span class="font-semibold underline">{{ $producto->codigo }}</span>
+                        Código Actual: <span class="font-semibold underline">{{ $producto->codigo ?? '' }}</span>
                     </p>
                 </div>
 
@@ -64,7 +64,7 @@
                         </span>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">
-                        Categoría Actual: <span class="font-semibold underline">{{ $producto->categoria->nombre }}</span>
+                        Categoría Actual: <span class="font-semibold underline">{{ $producto->categoria->nombre ?? ''}}</span>
                     </p>
                 </div>
                 <!-- marcas -->
@@ -88,7 +88,7 @@
                         </span>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">
-                        Marca Actual: <span class="font-semibold underline">{{ $producto->marca->nombre }}</span>
+                        Marca Actual: <span class="font-semibold underline">{{ $producto->marca->nombre ?? '' }}</span>
                     </p>
                 </div>
             </div>
@@ -116,7 +116,7 @@
                     </div>
                     <p class="text-xs text-gray-500 mt-1">
                         Distribuidor Actual: <span
-                            class="font-semibold underline">{{ $producto->distribuidor->nombre }}</span>
+                            class="font-semibold underline">{{ $producto->distribuidor->nombre ?? ''}}</span>
                     </p>
                 </div>
 
@@ -135,7 +135,7 @@
                     </div>
                     <p class="text-xs text-gray-500 mt-1">
                         Distribuidor Actual: <span
-                            class="font-semibold underline">{{ $producto->tipo }}</span>
+                            class="font-semibold underline">{{ $producto->tipo ?? ''}}</span>
                     </p>
                 </div>
             </div>

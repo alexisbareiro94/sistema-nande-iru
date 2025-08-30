@@ -90,23 +90,6 @@ boton.addEventListener("click", (e) => {
         });
 });
 
-// document.getElementById('codigo-auto').addEventListener('change', (e) => {
-//     console.log('toggle')
-//     const toggle = e.target;
-//     if (toggle.checked) {
-//         toggle.parentNode.querySelector('.block').classList.remove('bg-gray-300');
-//         toggle.parentNode.querySelector('.block').classList.add('bg-amarillo');
-//         toggle.parentNode.querySelector('.dot').classList.remove('left-1');
-//         toggle.parentNode.querySelector('.dot').classList.add('left-7');
-//     } else {
-//         toggle.parentNode.querySelector('.block').classList.add('bg-gray-300');
-//         toggle.parentNode.querySelector('.block').classList.remove('bg-amarillo');
-//         toggle.parentNode.querySelector('.dot').classList.add('left-1');
-//         toggle.parentNode.querySelector('.dot').classList.remove('left-7');
-//     }
-// });
-
-
 //mostar preview de la imagen
 imagen.addEventListener('change', (e) => { //evento del input de la imagen
     const file = e.target.files[0];

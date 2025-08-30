@@ -24,8 +24,8 @@ class ProductoFactory extends Factory
             'descripcion' => $this->faker->sentence(),
             'stock' => $tipo === 'producto' ? $this->faker->numberBetween(0, 100) : null,
             'stock_minimo' => $tipo === 'producto' ? $this->faker->numberBetween(0, 10) : null,
-            'precio_venta' => $this->faker->randomFloat(2, 1, 500),
-            'precio_compra' => $tipo === 'producto' ? $this->faker->randomFloat(2, 1, 400) : null,
+            'precio_venta' => $this->faker->numberBetween(25, 425),
+            'precio_compra' => $tipo === 'producto' ? $this->faker->numberBetween(5, 200) : null,
             'distribuidor_id' => $tipo === 'producto' ? Distribuidor::inRandomOrder()->value('id') : null,
             'imagen' => null,
         ];
