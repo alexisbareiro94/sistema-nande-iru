@@ -44,6 +44,7 @@
     <script src="{{ asset('js/edit-producto.js') }}"></script>
     <script src="{{ asset('js/marca.js') }}"></script>
     <script src="{{ asset('js/categoria.js')  }}"></script>
+    <script src="{{ asset('js/filtros.js') }}"></script>
     @if (request()->routeIs('producto.update.view') || request()->routeIs('producto.update'))
         <script src="{{ asset('js/edit-productorep.js') }}"></script>
     @endif

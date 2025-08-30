@@ -62,10 +62,21 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-amarillo">
                     <tr>
-                        <th class="pl-6 py-3 text-left text-sm font-semibold text-negro uppercase">Nombre</th>
+                        <th class="pl-6 py-3 text-left text-sm font-semibold text-negro uppercase flex gap-1">
+                            Nombre
+                            @include('productos.icons.nombres')
+                        </th>
                         <th class="px-2 py-3 text-left text-sm font-semibold text-negro uppercase">Código</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-negro uppercase">Precio</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-negro uppercase">Stock</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-negro uppercase flex gap-1">
+                            Precio
+                            @include('productos.icons.precio')
+                        </th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-negro uppercase">
+                            <div class="flex">
+                                Stock
+                                @include('productos.icons.stock')
+                            </div>
+                        </th>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-negro uppercase">Distribuidor</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold text-negro uppercase">Acciones</th>
                     </tr>
@@ -74,19 +85,17 @@
                     @foreach ($productos as $producto)
                         <tr>
                             <td class="pl-6 py-4 text-sm">
-                                <p class="font-semibold">{{ $producto->nombre }}</p>
+                                <p class="font-semibold">{{ $producto->nombre ?? '' }}</p>
                                 <p class="text-gray-500">{{ $producto->marca->nombre ?? '' }}</p>
                             </td>
-                            <td class="px-2 py-4 text-sm">{{ $producto->codigo }}</td>
+                            <td class="px-2 py-4 text-sm">{{ $producto->codigo ?? '' }}</td>
                             <td class="px-6 py-4 text-sm">
                                 GS. {{ number_format($producto->precio_venta, -2, ',', '.') }}
                             </td>
                             <td @class([
                                 'px-6 py-4 text-sm',
                                 'text-gray-300 font-semibold' => $producto->tipo == 'servicio',
-                                'text-red-500 font-bold' =>
-                                    $producto->stock_minimo >= $producto->stock &&
-                                    $producto->tipo == 'producto',
+                                'text-red-500 font-bold' => $producto->stock_minimo >= $producto->stock && $producto->tipo == 'producto',
                             ])>
                                 {{ $producto->tipo == 'servicio' ? 'Servicio' : $producto->stock }}
                                 @if ($producto->stock_minimo >= $producto->stock && $producto->tipo == 'producto')
@@ -96,10 +105,9 @@
                             <td @class([
                                 'px-6 py-4 text-sm',
                                 'text-gray-300 font-semibold' => $producto->tipo == 'servicio',
-                                //'text-green-500' => $producto->stock_minimo >= $producto->stock,
                             ])>
 
-                                {{ $producto->tipo == 'servicio' ? 'Servicio' : $producto->distribuidor->nombre }}</td>
+                                {{ $producto->tipo == 'servicio' ? 'Servicio' : $producto->distribuidor->nombre ?? '' }}</td>
                             <td class="px-6 py-4 text-sm flex">
                                 <a href="{{ route('producto.update.view', ['id' => $producto->id]) }}"
                                     class="edit-product text-blue-600 hover:underline text-sm cursor-pointer transition-all duration-150 hover:bg-blue-100 px-1 py-1 rounded-md"
@@ -123,6 +131,10 @@
                     @endforeach
                 </tbody>
             </table>
+            <div id="links"
+                class="max-w-xl items-center mx-auto">
+                {{ $productos->links() }}
+            </div>
         </div>
     </div>
     @include('productos.includes.modal-delete')

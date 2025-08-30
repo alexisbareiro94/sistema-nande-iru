@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Marca;
@@ -17,7 +18,7 @@ class ProductoController extends Controller
     public function index()
     {
         return view('productos.index', [
-            'productos' => Producto::all(),
+            'productos' => Producto::orderBy('id','desc')->paginate(15),
             'categorias' => Categoria::all(),
             'marcas' => Marca::all(),
             'distribuidores' => Distribuidor::all(),
@@ -28,6 +29,8 @@ class ProductoController extends Controller
     {
         $search = $request->query('q');
         $filtro = $request->query('filtro');
+        $orderBy = $request->query('orderBy');
+        $direction = $request->query('dir');
 
         $query = Producto::query();
         if ($filtro == "nombre") {
@@ -50,14 +53,21 @@ class ProductoController extends Controller
             });
         }
 
+        if(filled($orderBy) && filled($direction)) {        
+            $query->orderBy($orderBy, $direction);
+        }
+
         if (empty($filtro)) {
             $query->whereLike("nombre", "%$search%")
                 ->orWhereLike("codigo", "%$search%");
         }
 
+        $productos = $query->with(['marca', 'distribuidor'])
+                            ->get();
+
         return response()->json([
             'success' => true,
-            'productos' => $query->with(['marca', 'distribuidor'])->get(),
+            'productos' => $productos,
         ]);
     }
 
@@ -99,6 +109,8 @@ class ProductoController extends Controller
         $request->marca_id ?? $data['marca_id'] = 1;
         $request->categoria_id ?? $data['categoria_id'] = 1;
         $request->distribuidor_id ?? $data['distribuidor_id'] = 1;
+
+        //$data['precio_venta'] = (int)$data['precio_venta'];
 
         try {
             if ($request->codigo_auto){
