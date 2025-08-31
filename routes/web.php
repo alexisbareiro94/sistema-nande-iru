@@ -8,7 +8,6 @@ use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
-use App\Models\Producto;
 
 Route::get('/login', [AuthController::class, 'login_view'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
@@ -21,6 +20,7 @@ Route::middleware('auth')->group(function () {
     })->name('home');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/caja', [CajaController::class, 'index_view'])->name('caja.index');
+    Route::post('/abrir-caja', [CajaController::class, 'abrir'])->name('caja.abrir');
     Route::middleware(AdminMiddleware::class)->group(function () {
         Route::get('/inventario', [ProductoController::class, 'index'])->name('producto.index');
         Route::get('/agregar-producto', [ProductoController::class, 'add_producto_view'])->name('producto.add');
@@ -40,6 +40,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/distribuidores', [DistribuidorController::class, 'index'])->name('distribuidor.index');
 
         Route::post('/agregar-marca', [MarcaController::class, 'store'])->name('marca.store');
-        Route::get('/api/marcas', [MarcaController::class, 'index'])->name('marca.all');
+        Route::get('/api/marcas', [MarcaController::class, 'index'])->name('marca.all');        
     });
+});
+
+Route::get('/session', function(){
+    dd(session('caja'), gettype(session('caja')));
+});
+
+Route::get('/borrar-session', function(){
+    session()->forget('caja');
+});
+
+Route::get('ver', function(){
+    dd(now()); // usa timezone del config
+
 });

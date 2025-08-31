@@ -21,7 +21,7 @@ return new class extends Migration
             $table->enum('estado', ['pagado', 'pendiente', 'vencido'])->default('pendiente');
             $table->dateTime('fecha_pago')->nullable();
             $table->timestamps();
-        });;
+        });
     }
 
     /**

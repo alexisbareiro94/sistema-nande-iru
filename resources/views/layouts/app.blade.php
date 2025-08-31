@@ -39,6 +39,8 @@
             &copy; {{ date('Y') }} MiApp. Todos los derechos reservados.
         </div>
     </footer>
+
+    @yield('js')
     <script src="{{ asset('js/add-producto.js') }}"></script>
     <script src="{{ asset('js/inventario.js') }}"></script>
     <script src="{{ asset('js/edit-producto.js') }}"></script>

@@ -13,10 +13,6 @@
                 class="cursor-pointer bg-amarillo text-negro px-6 py-2 font-semibold rounded-lg shadow hover:opacity-90 transition">
                 Agregar Producto
             </a>
-            <a
-                class="cursor-pointer bg-rojo text-white px-6 py-2 font-semibold rounded-lg shadow hover:opacity-90 transition">
-                Agregar Distribuidor
-            </a>
         </div>
 
         <!-- Barra de búsqueda -->

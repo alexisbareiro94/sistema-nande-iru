@@ -33,9 +33,9 @@ class ProductoController extends Controller
         $direction = $request->query('dir');
 
         $query = Producto::query();
-        if ($filtro == "nombre") {
-            $query->whereLike("nombre", "%$search%");
-        }
+        // if ($filtro == "nombre") {
+        //     $query->whereLike("nombre", "%$search%");
+        // }
 
         if ($filtro == "tipo") {
             $query->whereLike("tipo", "%$search%");

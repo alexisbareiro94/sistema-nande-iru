@@ -49,4 +49,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function cajas(){
+        return $this->hasMany(Caja::class);
+    }
 }
