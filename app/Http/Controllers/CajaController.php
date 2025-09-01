@@ -11,11 +11,10 @@ class CajaController extends Controller
 {
     public function __construct(protected CajaService $cajaService){
         if( Caja::where('estado', 'abierto')->exists() && empty(session('caja'))){
-            $caja = Caja::where('estado', 'abierto')->first();
-            session(['caja' => $caja]);
-            $ses = session('caja')->toArray();
-            $ses['saldo'] = (int)session('caja')->monto_inicial;
-            session(['caja' => $ses]);            
+            session('caja', []);
+            $item = Caja::where('estado', 'abierto')->first()->toArray();
+            $item['saldo'] = $item['monto_inicial'];
+            session()->put(['caja' => $item]);            
         }
         
     }
@@ -34,8 +33,7 @@ class CajaController extends Controller
         $data = $this->cajaService->set_data($res);
                 
         try{            
-            $caja = Caja::create($data);
-            session(['caja' => $caja]);
+            $caja = Caja::create($data);            
             $ses = session('caja')->toArray();
             $ses['saldo'] = (int)session('caja')->monto_inicial;
             session(['caja' => $ses]);            
