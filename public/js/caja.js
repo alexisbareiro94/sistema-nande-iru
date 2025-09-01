@@ -47,10 +47,22 @@ document.getElementById('input-b-producto-ventas').addEventListener('input', fun
                 const data = await res.json();
                 if (!res.ok) {
                     throw data;
-                }                
-                await recargarTablaVentas(data);
+                }
+                if (data.productos && Object.keys(data.productos).length > 0) {
+                    await recargarTablaVentas(data);
+                } else {
+                    const tablaVentaProductos = document.getElementById('tabla-venta-productos');
+                    tablaVentaProductos.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-gray-500">
+                                No hay resultados
+                            </td>
+                        </tr>
+                    `;
+                }
+
             } catch (err) {
-                showToast('error', `${err.messages}`);                
+                showToast('error', `${err.messages}`);
             }
         }
     }, 300);
@@ -95,7 +107,7 @@ async function recargarTablaVentas(data) {
                                     </button>
                                 </td>
                     `
-        tablaVentaProductos.appendChild(row);        
+        tablaVentaProductos.appendChild(row);
     });
 }
 
@@ -106,8 +118,74 @@ function addToCart() {
         const btn = e.target.closest('.productos');
         if (btn) {
             console.log(btn.dataset.producto);
-            
+
         }
     });
 }
 addToCart();
+
+const form = document.getElementById('form-cliente-venta');
+const modalUsuarios = document.getElementById('modalUsuarios');
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const inputRucCi = document.getElementById('i-ruc-ci').value;
+    const inputNombreRazon = document.getElementById('i-nombre-razon').value;
+    const listaUsers = document.getElementById('listaUsuarios');
+    listaUsers.innerHTML = '';
+    const q = inputRucCi ?? inputNombreRazon;
+    try{
+        const res = await fetch(`http://localhost:8080/api/users?q=${encodeURIComponent(q)}`,{
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+            }            
+        });
+
+        const data = await res.json();
+        if(!res.ok){
+            throw data;
+        }
+        
+        if(data.users && Object.keys(data.users).length > 0){
+            console.log(data)
+        }else{
+            listaUsers.innerHTML = `
+            <div class="items-center justify-center text-center">
+                <p class="text-center text-gray-400">No hay registro</p>
+                <br>
+                <button id="registrar-cliente" class="border border-yellow-200 bg-amarillo px-4 py-2 rounded-md font-semibold">
+                    Registrar Cliente
+                </button>
+            </div>
+            `;
+            document.getElementById('registrar-cliente').addEventListener('click', ()=>{
+                document.getElementById('modal-add-cliente').classList.remove('hidden')      
+            })
+        }   
+
+    }catch(err){
+        console.log(err)
+        showToast('error', `${err.error}`)
+    }
+    modalUsuarios.classList.remove('hidden')
+});
+
+const formAddCliente = document.getElementById('form-add-cliente');
+
+formAddCliente.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const addCliente = new FormData();
+    addCliente.append('name', document.getElementById('name').value.trim());
+    addCliente.append('surname',document.getElementById('surname').value.trim());
+    addCliente.append('razon_social', document.getElementById('razon_social').value.trim());
+    addCliente.append('ruc_ci', document.getElementById('ruc_ci').value.trim())
+
+    try{
+
+    }catch(err){
+        showToast('error', `${err.error}`);
+    }
+})
+//form-add-cliente
+//modal-add-cliente

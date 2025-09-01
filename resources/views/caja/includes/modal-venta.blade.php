@@ -1,6 +1,5 @@
-<!-- Modal de Venta Mejorado -->
 <div id="modal-ventas"
-    class=" fixed inset-0 bg-black/60 flex items-center justify-center z-50 transition-opacity duration-300">
+    class=" fixed inset-0 bg-black/60 flex items-center justify-center z-40 transition-opacity duration-300">
     <div class="bg-white rounded-2xl w-full max-w-7xl shadow-2xl overflow-hidden flex flex-col h-[90vh]">
         <!-- Header con título y botón de cierre -->
         <div class="bg-gradient-to-r from-yellow-500 to-amarillo p-4 flex justify-between items-center">
@@ -35,8 +34,9 @@
                         </svg>
                     </div>
                     <form id="form-b-productos-ventas" action="">
-                        <input id="input-b-producto-ventas" type="text" placeholder="Buscar producto por nombre, código o categoría..."
-                        class="w-full pl-12 pr-4 py-3 border border-gray-300  rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all">
+                        <input id="input-b-producto-ventas" type="text"
+                            placeholder="Buscar producto por nombre, código o categoría..."
+                            class="w-full pl-12 pr-4 py-3 border border-gray-300  rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all">
                     </form>
                 </div>
 
@@ -89,7 +89,8 @@
             </div>
 
             <!-- Derecha: Carrito de venta -->
-            <div class="w-1/3 p-2 flex flex-col gap-1 bg-gray-50 ">
+            <div class="w-1/3 p-2 flex flex-col gap-1 bg-gray-50 relative">
+                @include('caja.includes.modal-usuarios')
                 <!-- Información del cliente -->
                 <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
                     <h3 class="font-bold text-lg text-yellow-700 mb-3 flex items-center gap-2">
@@ -102,35 +103,41 @@
                     </h3>
 
                     <div class="space-y-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">RUC o CI</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H5a2 2 0 00-2 2v11a2 2 0 00.293 1.207l5.414 5.414A1 1 0 009.414 21z" />
-                                    </svg>
+                        <form id="form-cliente-venta" action="">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">RUC o CI</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H5a2 2 0 00-2 2v11a2 2 0 00.293 1.207l5.414 5.414A1 1 0 009.414 21z" />
+                                        </svg>
+                                    </div>
+                                    <input id="i-ruc-ci" type="number" placeholder="Ingrese RUC o CI"
+                                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400">
                                 </div>
-                                <input type="text" placeholder="Ingrese RUC o CI"
-                                    class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400">                                    
                             </div>
-                        </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre o Razón Social</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre o Razón
+                                    Social</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                    </div>
+                                    <input id="i-nombre-razon" type="text"
+                                        placeholder="Ingrese nombre o razón social"
+                                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400">
                                 </div>
-                                <input type="text" placeholder="Ingrese nombre o razón social"
-                                    class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400">
                             </div>
-                        </div>
+
+                            <button class="sr-only" type="submit">b</button>
+                        </form>
                     </div>
                 </div>
 
@@ -138,8 +145,8 @@
                 <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 flex-1 flex flex-col">
                     <div class="flex justify-between items-center mb-3">
                         <h4 class="font-bold text-yellow-700 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>

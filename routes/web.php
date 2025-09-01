@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DistribuidorController;
 use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/caja', [CajaController::class, 'index_view'])->name('caja.index');
     Route::post('/abrir-caja', [CajaController::class, 'abrir'])->name('caja.abrir');
+
+    Route::get('/api/users', [UserController::class, 'index'])->name('user.index');
+
     Route::middleware(AdminMiddleware::class)->group(function () {
         Route::get('/inventario', [ProductoController::class, 'index'])->name('producto.index');
         Route::get('/agregar-producto', [ProductoController::class, 'add_producto_view'])->name('producto.add');
