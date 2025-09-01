@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/abrir-caja', [CajaController::class, 'abrir'])->name('caja.abrir');
 
     Route::get('/api/users', [UserController::class, 'index'])->name('user.index');
+    Route::post('/api/users', [UserController::class, 'store'])->name('user.store');
 
     Route::middleware(AdminMiddleware::class)->group(function () {
         Route::get('/inventario', [ProductoController::class, 'index'])->name('producto.index');
@@ -57,6 +58,6 @@ Route::get('/borrar-session', function(){
 });
 
 Route::get('ver', function(){
-    dd(now()); // usa timezone del config
+    dd(now());
 
 });

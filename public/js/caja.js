@@ -97,7 +97,7 @@ async function recargarTablaVentas(data) {
                                 <td class="px-5 py-3 font-medium">Gs. ${producto.precio_venta}</td>                                
                                 <td class="px-5 py-3 ${stockClass}">${producto.tipo == 'servicio' ? 'servicio' : producto.stock}</td>
                                 <td class="px-5 py-3 text-center">
-                                    <button data-producto="${producto.id}"
+                                    <button data-producto='${JSON.stringify(producto)}'
                                         class="productos cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
@@ -111,18 +111,105 @@ async function recargarTablaVentas(data) {
     });
 }
 
-
 function addToCart() {
     const tablaVentaProductos = document.getElementById('tabla-venta-productos');
     tablaVentaProductos.addEventListener('click', function (e) {
         const btn = e.target.closest('.productos');
         if (btn) {
-            console.log(btn.dataset.producto);
-
+            const producto = JSON.parse(btn.dataset.producto);
+            let carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
+            console.log(carrito)
+            if (carrito[producto.id]) {
+                carrito[producto.id].cantidad += 1;
+            
+            } else {
+                carrito[producto.id] = {
+                    nombre: producto.nombre,
+                    codigo: producto.codigo,
+                    precio: producto.precio_venta,
+                    stock: producto.stock,
+                    imagen: producto.imagen,
+                    cantidad: 1
+                };
+            }
+            sessionStorage.setItem('carrito', JSON.stringify(carrito));            
+            renderCarrito();            
         }
     });
 }
 addToCart();
+renderCarrito();
+
+function renderCarrito() {
+    const carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
+    const carritoForm = document.getElementById('carrito-form');
+    carritoForm.innerHTML = '';
+
+      Object.entries(carrito).forEach(([id, producto]) => {
+        const div = document.createElement('div');
+        div.classList.add('flex-1')        
+        div.innerHTML = `
+            <div id="carrito-container" class="bg-gray-50 p-2 flex justify-between items-start border-b border-gray-300">                                
+                <div class="flex-1">
+                    <p class="text-xs font-semibold">${producto.nombre}</p>
+                    <p class="text-xs text-gray-500">Código: ${producto.codigo}</p>
+                </div>
+                <div id="btn-cont" class="flex items-center gap-0 ml-1">
+                    <button data-action="dec" data-id="${id}" class="decaum w-5 h-5 rounded-md bg-yellow-100 text-yellow-700 flex items-center justify-center hover:bg-yellow-200 transition-colors">
+                        <span>-</span>
+                    </button>
+                    <span class="w-5 text-center font-medium">${producto.cantidad}</span>
+                    <button data-action="aum" data-id="${id}" class="decaum w-5 h-5 rounded-md bg-yellow-500 text-white flex items-center justify-center hover:bg-yellow-600 transition-colors">
+                        <span>+</span>
+                    </button>
+                </div>  
+                <div class="ml-3 font-medium flex gap-1">
+                    Gs.<input class="max-w-24 border border-gray-200 px-2" type="number"
+                        value="${(producto.precio * producto.cantidad).toLocaleString('es-PY')}">                                    
+                </div>
+            </div>
+        `;
+
+        carritoForm.appendChild(div);    
+        totalCarrito();               
+    });
+}
+
+
+document.getElementById('carrito-form').addEventListener('click', (e) => {
+    e.preventDefault();
+    if (e.target.closest('.decaum')) {
+        const carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
+        const btn = e.target.closest('.decaum');
+        const action = btn.dataset.action;
+        const id = btn.dataset.id;
+        if(action == 'aum'){            
+            carrito[id].cantidad++;            
+        }else{            
+            carrito[id].cantidad--;
+            if(carrito[id].cantidad <= 0){
+                delete carrito[id];  
+                let totalVenta = document.getElementById('totalCarrito');                          
+                totalVenta.innerHTML = '';
+            }
+        }        
+
+        sessionStorage.setItem('carrito', JSON.stringify(carrito))
+        renderCarrito();
+    }
+});
+
+function totalCarrito(){    
+    let totalP = 0;
+    let totalVenta = document.getElementById('totalCarrito');
+    const carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
+        
+    Object.entries(carrito).forEach(([id, producto]) => {
+        totalP += carrito[id].cantidad * carrito[id].precio;                
+    })    
+    
+    totalVenta.innerHTML = `Gs. ${totalP.toLocaleString('es-PY')}`;
+}
 
 const form = document.getElementById('form-cliente-venta');
 const modalUsuarios = document.getElementById('modalUsuarios');
@@ -134,56 +221,111 @@ form.addEventListener('submit', async (e) => {
     const listaUsers = document.getElementById('listaUsuarios');
     listaUsers.innerHTML = '';
     const q = inputRucCi ?? inputNombreRazon;
-    try{
-        const res = await fetch(`http://localhost:8080/api/users?q=${encodeURIComponent(q)}`,{
+    if(q.length <= 0){
+        return;
+    }
+    try {
+        const res = await fetch(`http://localhost:8080/api/users?q=${encodeURIComponent(q)}`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
-            }            
+            }
         });
 
         const data = await res.json();
-        if(!res.ok){
+        if (!res.ok) {
             throw data;
         }
-        
-        if(data.users && Object.keys(data.users).length > 0){
-            console.log(data)
-        }else{
+
+        if (data.users && Object.keys(data.users).length > 0) {
+            data.users.forEach(async user => {
+                const li = document.createElement('li');
+                li.classList.add('clientes', 'hover:bg-amarillo/20', 'px-2', 'py-2', 'cursor-pointer');
+                li.dataset.razon = user.razon_social;
+                li.dataset.ruc = user.ruc_ci;
+                li.innerHTML = `                    
+                        <p> <strong> Nombre:</strong> ${user.razon_social}</p>                
+                        <p> <strong> RUC/CI:</strong> ${user.ruc_ci}</p>                    
+                `;
+                listaUsers.appendChild(li);
+                await selectUser();
+            });
+        } else {
             listaUsers.innerHTML = `
             <div class="items-center justify-center text-center">
                 <p class="text-center text-gray-400">No hay registro</p>
-                <br>
-                <button id="registrar-cliente" class="border border-yellow-200 bg-amarillo px-4 py-2 rounded-md font-semibold">
-                    Registrar Cliente
-                </button>
+                <br>                
             </div>
             `;
-            document.getElementById('registrar-cliente').addEventListener('click', ()=>{
-                document.getElementById('modal-add-cliente').classList.remove('hidden')      
-            })
-        }   
+        }
 
-    }catch(err){
-        console.log(err)
+    } catch (err) {
         showToast('error', `${err.error}`)
     }
     modalUsuarios.classList.remove('hidden')
 });
 
+async function selectUser() {
+    const listaUsers = document.getElementById('listaUsuarios');
+
+    const inputRazonSocial = document.getElementById('i-nombre-razon');
+    const inputRucCi = document.getElementById('i-ruc-ci');
+
+    listaUsers.addEventListener('click', async (e) => {
+        const btn = e.target.closest('.clientes');
+        if (btn) {
+            const razon = btn.dataset.razon;
+            const ruc = btn.dataset.ruc;
+
+            inputRazonSocial.value = razon;
+            inputRucCi.value = ruc;
+
+            document.getElementById('modalUsuarios').classList.add('hidden');
+        }
+    });
+}
+
 const formAddCliente = document.getElementById('form-add-cliente');
 
 formAddCliente.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const listaUsers = document.getElementById('listaUsuarios');
+    //document.getElementById('modalUsuarios').classList.add('hidden');
     const addCliente = new FormData();
     addCliente.append('name', document.getElementById('name').value.trim());
-    addCliente.append('surname',document.getElementById('surname').value.trim());
+    addCliente.append('surname', document.getElementById('surname').value.trim());
     addCliente.append('razon_social', document.getElementById('razon_social').value.trim());
     addCliente.append('ruc_ci', document.getElementById('ruc_ci').value.trim())
 
-    try{
+    try {
+        const res = await fetch(`http://localhost:8080/api/users`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: addCliente,
+        });
 
-    }catch(err){
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw data;
+        }
+
+        const inputRazonSocial = document.getElementById('i-nombre-razon');
+        const inputRucCi = document.getElementById('i-ruc-ci');
+        const razon = data.cliente.razon_social;
+        const ruc = data.cliente.ruc_ci;
+
+        inputRazonSocial.value = razon;
+        inputRucCi.value = ruc;
+
+        document.getElementById('modalUsuarios').classList.add('hidden');
+        listaUsers.classList.add('hidden');
+
+        showToast('success', 'Cliente Agregado con éxito');
+    } catch (err) {
+        //console.log(err)
         showToast('error', `${err.error}`);
     }
 })
