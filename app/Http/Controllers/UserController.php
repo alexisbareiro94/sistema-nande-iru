@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Http\Requests\StoreUserRequest;
 
 class UserController extends Controller
 {
@@ -30,7 +31,21 @@ class UserController extends Controller
         }
     }
 
-    public function store(Request $request) {
-        
+    public function store(StoreUserRequest $request) {
+        $data = $request->validated();                
+        try{
+            $cliente = User::create($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cliente Agregado con éxito',
+                'cliente' => $cliente, 
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

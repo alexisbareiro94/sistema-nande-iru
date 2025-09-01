@@ -1,5 +1,5 @@
 <div id="modal-add-cliente"
-    class="fixed inset-0 bg-black/20 flex items-center justify-center z-40 transition-opacity duration-300 ">
+    class="hidden fixed inset-0 bg-black/20 flex items-center justify-center z-40 transition-opacity duration-300 ">
     <div class="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col ">
 
         <!-- Header -->
