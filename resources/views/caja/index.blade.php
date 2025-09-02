@@ -45,6 +45,9 @@
                                     @endif
                                 @endif
                             </span>
+                            <span class="text-gray-400 text-sm -ml-2">
+                                | {{ session('caja')['user']['name'] }}
+                            </span>
 
                         </div>
 
@@ -178,5 +181,6 @@
 
 @section('js')
     <script src="{{ asset('js/caja.js') }}"></script>
+    <script src="{{ asset('js/procesar-caja.js') }}"></script>
 @endsection
 @endsection
