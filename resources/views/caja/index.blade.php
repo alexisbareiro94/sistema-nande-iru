@@ -46,7 +46,7 @@
                                 @endif
                             </span>
                             <span class="text-gray-400 text-sm -ml-2">
-                                | {{ session('caja')['user']['name'] }}
+                                | {{ session('caja')['user']['name'] ?? ''}}
                             </span>
 
                         </div>
@@ -95,7 +95,7 @@
 
                     @if (!session('caja'))
                         <div
-                            class=" cursor-not-allowed absolute inset-0 z-50 bg-gray-500/80 rounded-xl flex flex-col items-center justify-center gap-2 text-white">
+                            class=" cursor-not-allowed absolute inset-0 z-50 backdrop-blur-xs bg-gray-500/80 rounded-xl flex flex-col items-center justify-center gap-2 text-white">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="size-8">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -123,7 +123,7 @@
 
                     @if (!session('caja'))
                         <div
-                            class="cursor-not-allowed absolute inset-0 z-50 bg-gray-500/80 rounded-xl flex flex-col items-center justify-center gap-2 text-white">
+                            class="cursor-not-allowed absolute inset-0 z-50 backdrop-blur-xs bg-gray-500/80 rounded-xl flex flex-col items-center justify-center gap-2 text-white">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="size-8">
                                 <path stroke-linecap="round" stroke-linejoin="round"
