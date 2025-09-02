@@ -88,7 +88,9 @@
                     <div class="space-y-3">
                         <form id="form-cliente-venta" action="">
                             <div class="mb-1">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">RUC o CI</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    RUC o CI <span id="ob" class="text-red-500 text-lg">*</span>
+                                </label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400"
@@ -103,8 +105,9 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre o Razón
-                                    Social</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Nombre o Razón Social <span class="text-red-500 text-lg">*</span> 
+                                </label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400"
