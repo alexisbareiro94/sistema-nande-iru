@@ -61,7 +61,7 @@ document.getElementById('input-b-producto-ventas').addEventListener('input', fun
                 }
 
             } catch (err) {
-                showToast('error', `${err.messages}`);
+                showToast(`${err.messages}`,'error');
             }
         }
     }, 300);
@@ -131,8 +131,9 @@ function addToCart() {
                     descuento: false,
                     precio_descuento: 0,                    
                     cantidad: 1
-                };
+                };                
             }
+            
             sessionStorage.setItem('carrito', JSON.stringify(carrito));            
             renderCarrito();            
         }
@@ -206,7 +207,6 @@ function descuento(){
     })
 }
 
-
 document.getElementById('carrito-form').addEventListener('click', (e) => {
     e.preventDefault();
     if (e.target.closest('.decaum')) {
@@ -214,6 +214,7 @@ document.getElementById('carrito-form').addEventListener('click', (e) => {
         const btn = e.target.closest('.decaum');
         const action = btn.dataset.action;
         const id = btn.dataset.id;
+        
         if(action == 'aum'){            
             carrito[id].cantidad++;            
         }else{            
@@ -306,7 +307,7 @@ form.addEventListener('submit', async (e) => {
         }
 
     } catch (err) {
-        showToast('error', `${err.error}`)
+        showToast(`${err.error}`, 'error');
     }
     modalUsuarios.classList.remove('hidden')
 });
@@ -366,13 +367,14 @@ formAddCliente.addEventListener('submit', async (e) => {
         inputRazonSocial.value = razon;
         inputRucCi.value = ruc;
 
-        document.getElementById('modalUsuarios').classList.add('hidden');
+        document.getElementById('modalUsuarios').classList.add('hidden');        
         listaUsers.classList.add('hidden');
+        document.getElementById('modal-add-cliente').classList.add('hidden');
 
-        showToast('success', 'Cliente Agregado con éxito');
+        showToast('Cliente Agregado con éxito', 'success');
     } catch (err) {
-        //console.log(err)
-        showToast('error', `${err.error}`);
+        console.log(err)
+        showToast(`${err.error}`, 'error');
     }
 })
 //form-add-cliente
