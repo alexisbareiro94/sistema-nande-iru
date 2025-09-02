@@ -3,14 +3,28 @@
     <div class="bg-white rounded-2xl w-full max-w-[80%] shadow-2xl overflow-hidden flex flex-col h-[90vh]">
         <!-- Header con título y botón de cierre -->
         <div class="bg-gradient-to-r from-yellow-500 to-amarillo p-4 flex justify-between items-center">
-            <h2 class="text-white text-2xl font-bold flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                Nueva Venta
-            </h2>
+            <div class="flex space-x-20 items-center text-center object-center">
+                <h2 class="text-white text-2xl font-bold flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Nueva Venta
+                </h2>
+
+                <span class="flex gap-2 font-semibold text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                    </svg>
+                    {{ auth()->user()->name }}
+                </span>
+
+            </div>
+
+
             <!-- cerrar modal x -->
             <button id="cerrar-modal-ventas"
                 class="text-white cursor-pointer hover:bg-yellow-700 rounded-full p-2 transition-colors">
@@ -51,7 +65,7 @@
                                 <th class="px-5 py-3 font-semibold text-center">Acción</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-venta-productos" class="divide-y divide-gray-100">                           
+                        <tbody id="tabla-venta-productos" class="divide-y divide-gray-100">
                         </tbody>
                     </table>
                 </div>
@@ -110,7 +124,8 @@
                 </div>
 
                 <!-- Carrito de compras -->
-                <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 flex-1 flex flex-col overflow-y-auto">
+                <div
+                    class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 flex-1 flex flex-col overflow-y-auto">
                     <div class="flex justify-between items-center mb-3">
                         <h4 class="font-bold text-yellow-700 flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
@@ -132,25 +147,26 @@
                     </div>
 
 
-                    <div id="carrito" class="flex-1 overflow-y-auto  space-y-1 ">                    
+                    <div id="carrito" class="flex-1 overflow-y-auto  space-y-1 ">
                         <form action="" id="carrito-form">
-                            <!-- aca se muestran los productos seleccionados -->                            
-                        </form>                        
+                            <!-- aca se muestran los productos seleccionados -->
+                        </form>
                     </div>
 
                     <div class="border-t pt-4 mt-2">
-                        <div class="flex justify-between items-center text-lg font-bold">                            
+                        <div class="flex justify-between items-center text-lg font-bold">
                             <span class="text-gray-600">SUBTOTAL:</span>
-                            <span id="subTotalCarrito" class="text-gray-700 text-xl"><!-- subtotal del carrito --></span>
+                            <span id="subTotalCarrito"
+                                class="text-gray-700 text-xl"><!-- subtotal del carrito --></span>
                         </div>
-                        <div class="flex justify-between items-center text-lg font-bold">                            
+                        <div class="flex justify-between items-center text-lg font-bold">
                             <span class="text-gray-600">TOTAL:</span>
                             <span id="totalCarrito" class="text-yellow-600 text-2xl"><!-- total del carrito --></span>
                         </div>
                     </div>
 
                 </div>
-                
+
                 <div class="flex gap-3 pt-2">
                     <button id="cancelar-venta"
                         class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
@@ -179,16 +195,16 @@
         document.getElementById('cancelar-venta').addEventListener('click', () => {
             document.getElementById('modal-ventas').classList.add('hidden');
             const carrito = sessionStorage.getItem('carrito');
-            delete carrito;             
+            delete carrito;
             document.getElementById('form-cliente-venta').reset();
         })
 
 
-        document.getElementById('limpiar-carrito').addEventListener('click', ()=>{
-            sessionStorage.clear(); 
-            document.getElementById('totalCarrito').innerHTML = '' 
-            document.getElementById('subTotalCarrito').innerHTML = ''         
-            renderCarrito();            
+        document.getElementById('limpiar-carrito').addEventListener('click', () => {
+            sessionStorage.clear();
+            document.getElementById('totalCarrito').innerHTML = ''
+            document.getElementById('subTotalCarrito').innerHTML = ''
+            renderCarrito();
         });
     </script>
 </div>
