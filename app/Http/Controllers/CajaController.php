@@ -33,10 +33,11 @@ class CajaController extends Controller
         $data = $this->cajaService->set_data($res);
                 
         try{            
-            $caja = Caja::create($data);            
-            $ses = session('caja')->toArray();
-            $ses['saldo'] = (int)session('caja')->monto_inicial;
-            session(['caja' => $ses]);            
+            Caja::create($data);            
+            session('caja', []);
+            $item = Caja::where('estado', 'abierto')->with('user:id,name,role')->first()->toArray();
+            $item['saldo'] = $item['monto_inicial'];
+            session()->put(['caja' => $item]);            
             return back()->with('success', 'Caja Abierta Correctamente');        
         }catch(\Exception $e){
             return back()->with('error', $e->getMessage());
