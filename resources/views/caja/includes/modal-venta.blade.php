@@ -139,7 +139,11 @@
                     </div>
 
                     <div class="border-t pt-4 mt-2">
-                        <div class="flex justify-between items-center text-lg font-bold">
+                        <div class="flex justify-between items-center text-lg font-bold">                            
+                            <span class="text-gray-600">SUBTOTAL:</span>
+                            <span id="subTotalCarrito" class="text-gray-700 text-xl"><!-- subtotal del carrito --></span>
+                        </div>
+                        <div class="flex justify-between items-center text-lg font-bold">                            
                             <span class="text-gray-600">TOTAL:</span>
                             <span id="totalCarrito" class="text-yellow-600 text-2xl"><!-- total del carrito --></span>
                         </div>
@@ -157,7 +161,7 @@
                         </svg>
                         Cancelar
                     </button>
-                    <button
+                    <button id="procesar-venta"
                         class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-xl transition-colors shadow-md hover:shadow-lg flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -182,7 +186,8 @@
 
         document.getElementById('limpiar-carrito').addEventListener('click', ()=>{
             sessionStorage.clear(); 
-            document.getElementById('totalCarrito').innerHTML = ''          
+            document.getElementById('totalCarrito').innerHTML = '' 
+            document.getElementById('subTotalCarrito').innerHTML = ''         
             renderCarrito();            
         });
     </script>
