@@ -10,17 +10,11 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('tipos_cuota', function (Blueprint $table) {
-            $table->id();
-            $table->enum('tipo', ['mensual', 'semanal', 'quincenal', 'personalizado']);
-            $table->timestamps();
-        });
-
+    {        
         Schema::create('planes_cuotas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('venta_id')->constrained('ventas');
-            $table->foreignId('tipo_cuota_id')->constrained('tipos_cuota');
+            $table->enum('tipo', ['mensual', 'semanal', 'quincenal', 'personalizado']);
             $table->integer('cantidad_cuotas');
             $table->integer('monto_total');
             $table->integer('saldo');

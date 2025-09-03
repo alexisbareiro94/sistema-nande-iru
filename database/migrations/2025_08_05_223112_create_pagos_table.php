@@ -11,19 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('metodos_pagos', function (Blueprint $table) {
-            $table->id();
-            $table->string('tipo');
-            $table->string('descripcion')->nullable();
-            $table->timestamps();
-        });
-
         Schema::create('pagos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('venta_id')->constrained('ventas');
-            $table->foreignId('metodo_id')->constrained('metodos_pagos');
+            $table->enum('metodo', ['efectivo', 'transferencia', 'tc', 'td']);
             $table->date('fecha');
-            $table->integer('total');
+            $table->integer('monto');
             $table->enum('estado', ['pendiente', 'completado', 'cancelado'])->default('pendiente');
             $table->timestamps();
         });

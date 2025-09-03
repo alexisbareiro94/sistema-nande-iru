@@ -16,11 +16,11 @@ return new class extends Migration
             $table->foreignId('venta_id')->constrained('ventas');
             $table->foreignId('producto_id')->constrained('productos');
             $table->integer('cantidad');
-            $table->integer('precio_unitario');
+            $table->integer('precio_unitario'); //precio real
             $table->boolean('producto_con_descuento')->default(false);
-            $table->integer('monto_descuento')->nullable();
-            $table->integer('subtotal'); // cantidad * precio_unitario
-            $table->integer('precio_venta'); //subtotal - descuento
+            $table->integer('precio_descuento')->nullable();
+            $table->integer('subtotal'); // cantidad * precio_unitario o precio_descuento
+            $table->integer('total'); //subtotal - descuento
             $table->timestamps();
             $table->unique(['venta_id', 'producto_id']);
             $table->foreignId('created_by')->nullable()->constrained('users');
