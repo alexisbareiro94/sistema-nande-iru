@@ -234,6 +234,7 @@ document.getElementById('carrito-form').addEventListener('click', (e) => {
 function totalCarrito(){    
     let totalP = 0;
     let subTotal = 0;
+    let cantidadTotal = 0;
     let totalVenta = document.getElementById('totalCarrito');
     const subtotalVenta = document.getElementById('subTotalCarrito');
     const carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
@@ -244,6 +245,7 @@ function totalCarrito(){
         }else{
             totalP += producto.cantidad * producto.precio;                
         }
+        cantidadTotal += producto.cantidad;
         subTotal += producto.cantidad * producto.precio;        
     })
 
@@ -251,6 +253,7 @@ function totalCarrito(){
     totalCarritoSession = {
         total: totalP,
         subtotal: subTotal,
+        cantidadTotal: cantidadTotal,
     };    
     sessionStorage.setItem('totalCarrito', JSON.stringify(totalCarritoSession));        
 
