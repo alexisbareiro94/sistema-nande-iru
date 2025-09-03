@@ -7,7 +7,9 @@ use App\Http\Controllers\DistribuidorController;
 use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VentaController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\CajaMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'login_view'])->name('login');
@@ -20,11 +22,21 @@ Route::middleware('auth')->group(function () {
         return view('home.index');
     })->name('home');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::get('/caja', [CajaController::class, 'index_view'])->name('caja.index');
-    Route::post('/abrir-caja', [CajaController::class, 'abrir'])->name('caja.abrir');
 
-    Route::get('/api/users', [UserController::class, 'index'])->name('user.index');
-    Route::post('/api/users', [UserController::class, 'store'])->name('user.store');
+    Route::middleware(CajaMiddleware::class)->group(function(){
+        //caja
+        Route::get('/caja', [CajaController::class, 'index_view'])->name('caja.index');
+        Route::post('/abrir-caja', [CajaController::class, 'abrir'])->name('caja.abrir');
+        
+        //users
+        Route::get('/api/users', [UserController::class, 'index'])->name('user.index');
+        Route::post('/api/users', [UserController::class, 'store'])->name('user.store');
+
+        //venta
+        Route::post('/api/venta', [VentaController::class, 'store'])->name('venta.store');
+    });
+
+
 
     Route::middleware(AdminMiddleware::class)->group(function () {
         Route::get('/inventario', [ProductoController::class, 'index'])->name('producto.index');

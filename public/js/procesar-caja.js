@@ -1,17 +1,119 @@
 const procesarVenta = document.getElementById('procesar-venta');
 
 procesarVenta.addEventListener('click', () => {
-    const ruc = document.getElementById('i-ruc-ci');    
+    const ruc = document.getElementById('i-ruc-ci');
     const razon = document.getElementById('i-nombre-razon');
-    if(ruc.value.trim() == ''){
+    if (ruc.value.trim() == '') {
         ruc.classList.remove('border-gray-300', 'focus:ring-yellow-400', 'focus:border-yellow-400')
-        ruc.classList.add('border-red-500', 'ring-2','ring-red-500', 'focus:border-red-500', 'bg-red-100');
+        ruc.classList.add('border-red-500', 'ring-2', 'ring-red-500', 'focus:border-red-500', 'bg-red-100');
         ruc.placeholder = 'Campo Obligatorio';
     }
-    if(razon.value.trim() == ''){
+    if (razon.value.trim() == '') {
         razon.classList.remove('border-gray-300', 'focus:ring-yellow-400', 'focus:border-yellow-400')
-        razon.classList.add('border-red-500', 'ring-2','ring-red-500', 'focus:border-red-500', 'bg-red-100');
+        razon.classList.add('border-red-500', 'ring-2', 'ring-red-500', 'focus:border-red-500', 'bg-red-100');
         razon.placeholder = 'Campo Obligatorio';
     }
-    //w-full pl-10 pr-4 py-2.5 rounded-lg focus:ring-2 
+
+    carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
+    total = JSON.parse(sessionStorage.getItem('totalCarrito')) || {};
+    console.log(carrito, total);
+
+    if (razon.value.trim() != '' && ruc.value.trim() != '') {
+        ventaData = new FormData();
+        ventaData.append('carrito', JSON.stringify(carrito));
+        ventaData.append('total', JSON.stringify(total));
+            
+        document.getElementById('modal-confirmar-venta').classList.remove('hidden')         
+        document.getElementById('razon-venta').innerHTML = razon.value.trim();
+        document.getElementById('ruc-venta').innerHTML = ruc.value.trim();
+        resumenCarrito();
+        
+    }
 });
+
+
+function resumenCarrito(){
+    const carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
+    const totalResumen = JSON.parse(sessionStorage.getItem('totalCarrito')) || {};
+    const bodyTableVenta = document.getElementById('body-tabla-venta');
+    const footerTableVenta = document.getElementById('footer-tabla-venta');
+
+    bodyTableVenta.innerHTML = '';
+    footerTableVenta.innerHTML = '';
+    Object.entries(carrito).forEach(([id, producto]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
+                                    ${producto.nombre}
+                                </th>
+                                <td class="px-6 py-4">
+                                    ${producto.cantidad}
+                                </td>
+                                <td class="px-6 py-4">
+                                    ${producto.descuento ? producto.precio_descuento : producto.precio}
+                                </td>
+        `;
+        bodyTableVenta.appendChild(tr)
+    });
+
+    const trF = document.createElement('tr');
+    trF.classList.add('font-semibold', 'text-gray-900', 'bg-gray-200');
+    trF.innerHTML = `
+                                <th scope="row" class="px-6 py-3 text-base">Total</th>
+                                <td class="px-6 py-3">${totalResumen.cantidadTotal}</td>
+                                <td class="px-6 py-3">Gs. ${totalResumen.total}</td>
+    `;
+    footerTableVenta.appendChild(trF);    
+}
+
+const mixto = document.getElementById('mixto');
+const efectivoTransf = document.querySelectorAll('#efectivo, #transf');
+const contMontoRecibido = document.getElementById('monto-recibido');
+ 
+mixto.addEventListener('change', () => {
+    contMontoRecibido.innerHTML = `
+                <div class="flex">
+                    <label for="mixto-efectivo" class="text-gray-800 font-semibold mt-1 pr-14">Efectivo Recibido:</label>
+                    <input class="border border-gray-300 px-3 py-1 rounded-md" type="number" name="mixto-efectivo" id="mixto-efectivo">
+                </div>
+                <div class="flex ">
+                    <label for="mixto-transf" class="text-gray-800 font-semibold mt-1 pr-2">Monto en Transferencia:</label>
+                    <input class="border border-gray-300 px-3 py-1 rounded-md" type="number" name="mixto-transf" id="mixto-transf">
+                </div>
+    `
+});
+
+efectivoTransf.forEach(btn => {
+    btn.addEventListener('change', ()=>{
+    contMontoRecibido.innerHTML = `
+                <div class="flex">
+                    <label for="monto-recibido" class="text-gray-800 font-semibold mt-1 pr-12">Monto Recibido:</label>
+                    <input class="border border-gray-300 px-3 py-1 rounded-md" type="number" name="monto-recibido" id="monto-recibido">
+                </div>                
+    `;
+    })
+})
+    
+
+
+function confirmarVenta() {
+
+}
+// try{
+//     const res = await fetch(`http://localhost:8080/api/venta`, {
+//         method: 'POST',
+//         headers: {
+//             'X-CSRF-TOKEN': csrfToken,
+//         },
+//         body: ventaData,
+//     });
+
+//     const data = await res.json();
+//     if(!res.ok){
+//         throw data;
+//     }
+
+
+// }catch(err){
+//     showToast('error', `${err.error}`);
+// }

@@ -15,8 +15,7 @@ class CajaController extends Controller
             $item = Caja::where('estado', 'abierto')->with('user:id,name,role')->first()->toArray();
             $item['saldo'] = $item['monto_inicial'];
             session()->put(['caja' => $item]);            
-        }
-        
+        }        
     }
 
     public function index_view(){
@@ -42,5 +41,5 @@ class CajaController extends Controller
         }catch(\Exception $e){
             return back()->with('error', $e->getMessage());
         }
-    }
+    }    
 }

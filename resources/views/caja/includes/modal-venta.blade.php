@@ -192,6 +192,7 @@
                 </div>
             </div>
         </div>
+        @include('caja.includes.modal-confirmar-venta')
     </div>
 
     <script>
