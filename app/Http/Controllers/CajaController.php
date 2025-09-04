@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\AbrirCajaRequest;
-use App\Models\Caja;
+use App\Models\{Caja, MovimientoCaja};
 use App\Services\CajaService;
 
 class CajaController extends Controller
@@ -31,12 +30,20 @@ class CajaController extends Controller
         $res = $request->validated();
         $data = $this->cajaService->set_data($res);
                 
-        try{            
-            Caja::create($data);            
+        try{                        
             session('caja', []);
-            $item = Caja::where('estado', 'abierto')->with('user:id,name,role')->first()->toArray();
-            $item['saldo'] = $item['monto_inicial'];
-            session()->put(['caja' => $item]);            
+            $caja = Caja::create($data);            
+
+            MovimientoCaja::create([
+                'caja_id' => $caja->id,
+                'tipo' => 'ingreso',
+                'concepto' => 'Apertura de caja',
+                'monto' => $caja['monto_inicial']
+            ]);
+
+            $arrayCaja = $caja->toArray();
+            $arrayCaja['saldo'] = $arrayCaja['monto_inicial'];
+            session()->put(['caja' => $arrayCaja]);            
             return back()->with('success', 'Caja Abierta Correctamente');        
         }catch(\Exception $e){
             return back()->with('error', $e->getMessage());
