@@ -10,11 +10,12 @@ const btnCerrarModalVentas = document.getElementById('cerrar-modal-ventas');
 if (btnAbrirCaja) {
     btnAbrirCaja.addEventListener('click', () => {
         modalAbrirCaja.classList.remove('hidden')
+        document.getElementById('monto_inicial').focus();
     });
 }
 cerrarModalCaja.forEach(btn => {
     btn.addEventListener('click', () => {
-        modalAbrirCaja.classList.add('hidden');
+        modalAbrirCaja.classList.add('hidden');        
     })
 });
 
@@ -290,7 +291,7 @@ form.addEventListener('submit', async (e) => {
         if (!res.ok) {
             throw data;
         }
-
+        console.log(data)
         if (data.users && Object.keys(data.users).length > 0) {
             data.users.forEach(async user => {
                 const li = document.createElement('li');
