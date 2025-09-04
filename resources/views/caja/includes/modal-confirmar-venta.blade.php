@@ -133,15 +133,17 @@
                 </ul>
 
                 <!-- monto recibido -->
-                <div id="monto-recibido" class="flex flex-col object-center text-center gap-2 px-10 py-4 ">
-                    <div class="flex">
-                        <label for="monto-recibido" class="text-gray-800 font-semibold mt-1 pr-12">Monto
-                            Recibido:
-                        </label>
-                        <input class="border border-gray-300 px-3 py-1 rounded-md" type="number"
-                            name="monto-recibido" id="i-monto-recibido">
+                <form id="form-monto-recibido" action="">
+                    <div id="monto-recibido" class="flex flex-col object-center text-center gap-2 px-10 py-4 ">
+                        <div class="flex">
+                            <label for="monto-recibido" class="text-gray-800 font-semibold mt-1 pr-12">Monto
+                                Recibido:
+                            </label>
+                            <input class="border border-gray-300 px-3 py-1 rounded-md" type="number"
+                                name="monto-recibido" id="i-monto-recibido">
+                        </div>
                     </div>
-                </div>
+                </form>                
                 <!-- /monto recibido -->
             </div>
             <!-- /metodo de pago -->

@@ -11,7 +11,6 @@
 </head>
 
 <body class="bg-[#A4B6B3] min-h-screen flex flex-col">
-<div id="toast-container" class="fixed top-4 right-4 space-y-2 z-[9999]"></div>
     <header class="bg-[#FFC60A] text-black shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <a href="{{ url('/') }}" class="text-xl font-bold">MiApp</a>
@@ -29,6 +28,9 @@
             </nav>
         </div>
     </header>
+    <!-- toast alert -->
+    <div id="toast-container" class="fixed top-4 right-4 space-y-2 z-[9999]"></div>
+    <!-- /toast alert -->    
     <main class="flex-grow ">
         @yield('contenido')
         @include('includes.cerrar-sesion')

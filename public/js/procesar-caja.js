@@ -1,8 +1,12 @@
-const procesarVenta = document.getElementById('procesar-venta');
-
-procesarVenta.addEventListener('click', () => {
+document.getElementById('procesar-venta').addEventListener('click', () => {
+    const carrito = JSON.parse(sessionStorage.getItem('carrito')) ?? {};
     const ruc = document.getElementById('i-ruc-ci');
     const razon = document.getElementById('i-nombre-razon');
+
+    if (Object.entries(carrito).length === 0) {
+        showToast('No hay productos en el carrito', 'error');
+        return;
+    }
     if (ruc.value.trim() == '') {
         ruc.classList.remove('border-gray-300', 'focus:ring-yellow-400', 'focus:border-yellow-400')
         ruc.classList.add('border-red-500', 'ring-2', 'ring-red-500', 'focus:border-red-500', 'bg-red-100');
@@ -13,74 +17,73 @@ procesarVenta.addEventListener('click', () => {
         razon.classList.add('border-red-500', 'ring-2', 'ring-red-500', 'focus:border-red-500', 'bg-red-100');
         razon.placeholder = 'Campo Obligatorio';
     }
-
     if (razon.value.trim() != '' && ruc.value.trim() != '') {
         document.getElementById('modal-confirmar-venta').classList.remove('hidden')
         document.getElementById('razon-venta').innerHTML = razon.value.trim();
         document.getElementById('ruc-venta').innerHTML = ruc.value.trim();
         resumenCarrito();
+    }
+});
 
-        document.getElementById('confirmar-venta').addEventListener('click', async () => {
-            const mixtoEfectivo = document.getElementById('mixto-efectivo') ?? '';
-            const mixtoTransf = document.getElementById('mixto-transf') ?? '';
-            const montoRecibido = document.getElementById('i-monto-recibido') ?? '';
-            let formaPago = {};
+document.getElementById('confirmar-venta').addEventListener('click', async () => {    
+    const mixtoEfectivo = document.getElementById('mixto-efectivo') ?? '';
+    const mixtoTransf = document.getElementById('mixto-transf') ?? '';
+    const montoRecibido = document.getElementById('i-monto-recibido') ?? '';    
+    let formaPago = {};
 
-            if (efectivo.checked == false && transf.checked == false && mixto.checked == false) {
-                document.getElementById('no-radio').classList.remove('hidden');
+    if (efectivo.checked == false && transf.checked == false && mixto.checked == false) {
+        document.getElementById('no-radio').classList.remove('hidden');
+        return;
+    }
+
+    if (montoRecibido != '' && mixtoEfectivo == '' && mixtoTransf == '') {
+        if (montoRecibido.value == '') {
+            montoRecibido.classList.remove('border-gray-300')
+            montoRecibido.classList.add('border-red-500', 'bg-red-100', 'ring-2', 'ring-red-500')
+            montoRecibido.placeholder = 'Ingresa el monto recibido';
+            return;
+        }
+    }
+    if (montoRecibido == '' && mixtoTransf != '' && mixtoEfectivo != '') {
+        if (mixtoEfectivo.value == '') {
+            mixtoEfectivo.classList.remove('border-gray-300')
+            mixtoEfectivo.classList.add('border-red-500', 'bg-red-100', 'ring-2', 'ring-red-500')
+            mixtoEfectivo.placeholder = 'Ingresa el monto recibido';
+
+            if (mixtoTransf.value == '') {
+                mixtoTransf.classList.remove('border-gray-300')
+                mixtoTransf.classList.add('border-red-500', 'bg-red-100', 'ring-2', 'ring-red-500')
+                mixtoTransf.placeholder = 'Ingresa el monto recibido';
+                return;
+            } else {
                 return;
             }
-
-            if (montoRecibido != '' && mixtoEfectivo == '' && mixtoTransf == '') {
-                if (montoRecibido.value == '') {
-                    montoRecibido.classList.remove('border-gray-300')
-                    montoRecibido.classList.add('border-red-500', 'bg-red-100', 'ring-2', 'ring-red-500')
-                    montoRecibido.placeholder = 'Ingresa el monto recibido';
-                    return;
-                }
-            }
-            if (montoRecibido == '' && mixtoTransf != '' && mixtoEfectivo != '') {
-                if (mixtoEfectivo.value == '') {
-                    mixtoEfectivo.classList.remove('border-gray-300')
-                    mixtoEfectivo.classList.add('border-red-500', 'bg-red-100', 'ring-2', 'ring-red-500')
-                    mixtoEfectivo.placeholder = 'Ingresa el monto recibido';
-
-                    if (mixtoTransf.value == '') {
-                        mixtoTransf.classList.remove('border-gray-300')
-                        mixtoTransf.classList.add('border-red-500', 'bg-red-100', 'ring-2', 'ring-red-500')
-                        mixtoTransf.placeholder = 'Ingresa el monto recibido';
-                        return;
-                    } else {
-                        return;
-                    }
-                }
-                if (mixtoTransf.value == '') {
-                    mixtoTransf.classList.remove('border-gray-300')
-                    mixtoTransf.classList.add('border-red-500', 'bg-red-100', 'ring-2', 'ring-red-500')
-                    mixtoTransf.placeholder = 'Ingresa el monto recibido';
-                    return;
-                }
-            }
-            if (efectivo.checked) {
-                formaPago = {
-                    'efectivo': montoRecibido.value.trim(),
-                }
-            } else if (transf.checked) {
-                formaPago = {
-                    'transferencia': montoRecibido.value.trim(),
-                }
-            } else {
-                formaPago = {
-                    'mixto': {
-                        'efectivo': mixtoEfectivo.value.trim(),
-                        'transferencia': mixtoTransf.value.trim(),
-                    }
-                }
-            }
-            //console.log(formaPago)           
-            await confirmarVenta(formaPago);
-        });
+        }
+        if (mixtoTransf.value == '') {
+            mixtoTransf.classList.remove('border-gray-300')
+            mixtoTransf.classList.add('border-red-500', 'bg-red-100', 'ring-2', 'ring-red-500')
+            mixtoTransf.placeholder = 'Ingresa el monto recibido';
+            return;
+        }
     }
+    if (efectivo.checked) {
+        formaPago = {
+            'efectivo': montoRecibido.value.trim(),
+        }
+    } else if (transf.checked) {
+        formaPago = {
+            'transferencia': montoRecibido.value.trim(),
+        }
+    } else {
+        formaPago = {
+            'mixto': {
+                'efectivo': mixtoEfectivo.value.trim(),
+                'transferencia': mixtoTransf.value.trim(),
+            }
+        }
+    }
+    await confirmarVenta(formaPago);
+    limpiarUI();    
 });
 
 
@@ -165,18 +168,33 @@ async function confirmarVenta(formaPago) {
             },
             body: ventaData,
         });
-
         const data = await res.json();
         if (!res.ok) {
             throw data;
         }
-        
-        console.log(data)
         showToast('Venta realizado con éxito');
 
     } catch (err) {
-        console.log(err)
         showToast(`${err.error}`, 'error');
     }
 
+}
+
+function limpiarUI(){
+    const ruc = document.getElementById('i-ruc-ci');
+    const razon = document.getElementById('i-nombre-razon');
+    sessionStorage.clear();
+    renderCarrito();
+    document.getElementById('totalCarrito').innerHTML = ''
+    document.getElementById('subTotalCarrito').innerHTML = ''
+    document.getElementById('form-cliente-venta').reset();
+    document.getElementById('modal-ventas').classList.add('hidden');
+    document.getElementById('form-monto-recibido').reset();
+    ruc.classList.remove('border-red-500', 'ring-2', 'ring-red-500', 'focus:border-red-500', 'bg-red-100');
+    ruc.classList.add('border-gray-300', 'focus:ring-yellow-400', 'focus:border-yellow-400')
+    ruc.placeholder = 'Ingrese RUC O CI';
+    razon.classList.remove('border-red-500', 'ring-2', 'ring-red-500', 'focus:border-red-500', 'bg-red-100');
+    razon.classList.add('border-gray-300', 'focus:ring-yellow-400', 'focus:border-yellow-400')
+    razon.placeholder = 'Ingrese nombre o razon social';
+    document.getElementById('modal-confirmar-venta').classList.add('hidden')
 }

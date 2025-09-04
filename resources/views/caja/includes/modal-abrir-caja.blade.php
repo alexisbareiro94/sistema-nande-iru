@@ -18,7 +18,7 @@
             @csrf
             <div class="mb-4">
                 <label for="monto_inicial" class="block text-gray-400 text-sm mb-2">Monto Inicial</label>
-                <input type="number" id="monto_inicial" name="monto_inicial" step="0.01"
+                <input  type="number" id="monto_inicial" name="monto_inicial" step="0.01"
                 class="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-amarillo focus:ring focus:ring-amarillo/30 outline-none">
             </div>
             

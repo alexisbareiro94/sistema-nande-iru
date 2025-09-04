@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VentaController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'login_view'])->name('login');
@@ -61,15 +62,14 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::get('/session', function(){
-    dd(session('caja'), gettype(session('caja')));
+Route::get('/session/{nombre}', function($nombre){
+    dd(session("$nombre"), gettype(session("$nombre")));
 });
 
 Route::get('/borrar-session', function(){
-    session()->forget('caja');
+    session()->flush();
 });
 
-Route::get('ver', function(){
-    dd(now());
-
+Route::get('/debug', function(){
+    return view('welcome');
 });

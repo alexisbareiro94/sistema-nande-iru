@@ -198,8 +198,10 @@
     <script>
         document.getElementById('cancelar-venta').addEventListener('click', () => {
             document.getElementById('modal-ventas').classList.add('hidden');
-            const carrito = sessionStorage.getItem('carrito');
-            delete carrito;
+            sessionStorage.clear();
+            renderCarrito();    
+            document.getElementById('totalCarrito').innerHTML = ''
+            document.getElementById('subTotalCarrito').innerHTML = ''
             document.getElementById('form-cliente-venta').reset();
         })
 
@@ -208,7 +210,7 @@
             sessionStorage.clear();
             document.getElementById('totalCarrito').innerHTML = ''
             document.getElementById('subTotalCarrito').innerHTML = ''
-            renderCarrito();
+            renderCarrito();    
         });
     </script>
 </div>
