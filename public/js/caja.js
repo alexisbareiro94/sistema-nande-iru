@@ -27,11 +27,15 @@ btnCerrarModalVentas.addEventListener('click', () => {
     modalVentas.classList.add('hidden');
 });
 
+document.getElementById('form-b-productos-ventas').addEventListener('submit', (e)=>{
+    e.preventDefault();
+})
+
 let timerVentas;
-document.getElementById('input-b-producto-ventas').addEventListener('input', function () {
+document.getElementById('input-b-producto-ventas').addEventListener('input', (e) => {    
     clearTimeout(timerVentas);
     timerVentas = setTimeout(async () => {
-        let query = this.value.trim();
+        let query = e.target.value.trim();
         if (query.length == 0) {
             const tablaVentaProductos = document.getElementById('tabla-venta-productos');
             tablaVentaProductos.innerHTML = '';
