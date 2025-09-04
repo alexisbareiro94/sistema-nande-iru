@@ -3,13 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreVentaRequest;
-use App\Models\User;
-use App\Models\Venta;
-use App\Models\DetalleVenta;
-use App\Models\Caja;
-use App\Models\Pago;
 use App\Services\VentaService;
-use App\Models\Producto;
+use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto};
 use Illuminate\Support\Facades\DB;
 
 class VentaController extends Controller
@@ -53,6 +48,13 @@ class VentaController extends Controller
                 'estado' => 'completado',
             ]);
 
+            MovimientoCaja::create([
+                'caja_id' => $cajaId,
+                'tipo' => 'ingreso',
+                'concepto' => 'Venta de productos',
+                'monto' => $venta->total,
+            ]);
+
             foreach ($carrito as $id => $producto) {
                 DetalleVenta::create([
                     'venta_id' => $venta->id,
@@ -66,9 +68,9 @@ class VentaController extends Controller
                 ]);
 
                 $productdb = Producto::find($id);
-                if ($productdb->tipo === 'producto') {                    
+                if ($productdb->tipo === 'producto') {
                     if ($producto->cantidad < $productdb->stock) {
-                        $productdb->decrement('stock', $producto->cantidad); 
+                        $productdb->decrement('stock', $producto->cantidad);
                     } else {
                         DB::rollBack();
                         return response()->json([
@@ -77,7 +79,7 @@ class VentaController extends Controller
                             'stock' => $productdb->stock,
                             'carrito_cantidad' => $producto->cantidad,
                         ]);
-                    }                    
+                    }
                 }
             }
 
