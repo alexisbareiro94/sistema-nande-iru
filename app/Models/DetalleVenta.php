@@ -12,19 +12,18 @@ class DetalleVenta extends Model
     protected $table = 'detalle_ventas';
 
     protected $fillable = [
-    'venta_id',
-    'producto_id',
-    'cantidad',
-    'precio_unitario',
-    'producto_con_descuento',
-    'monto_descuento',
-    'subtotal',
-    'precio_venta',
-    'created_by',
-    'updated_by',
-    'deleted_by',
-];
-
+        'venta_id',
+        'producto_id',
+        'cantidad',
+        'precio_unitario',
+        'producto_con_descuento',
+        'precio_descuento',
+        'subtotal',
+        'total',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+    ];
 
     public function venta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

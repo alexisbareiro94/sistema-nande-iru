@@ -10,9 +10,8 @@ class Pago extends Model
 
     protected $fillable = [
         'venta_id',
-        'metodo_id',
-        'fecha',
-        'total',
+        'metodo',    
+        'monto',
         'estado',
     ];
 
