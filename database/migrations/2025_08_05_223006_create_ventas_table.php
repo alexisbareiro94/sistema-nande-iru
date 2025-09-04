@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('caja_id')->constrained('users');
             $table->foreignId('cliente_id')->constrained('users');
-            $table->boolean('venta_con_descuento')->default(false);
+            $table->integer('cantidad_productos');
+            $table->boolean('con_descuento')->default(false);
             $table->integer('monto_descuento')->nullable();
             $table->integer('subtotal');
             $table->integer('total');
-            $table->enum('estado', ['pendiente', 'completado', 'cancelado'])->default('pendiente')->index();
+            $table->enum('estado', ['pendiente', 'completado', 'cancelado'])->default('completado')->index();
             $table->timestamps();
             $table->foreignId('created_by')->nullable()->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');
