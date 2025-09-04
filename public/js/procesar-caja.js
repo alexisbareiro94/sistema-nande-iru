@@ -14,25 +14,77 @@ procesarVenta.addEventListener('click', () => {
         razon.placeholder = 'Campo Obligatorio';
     }
 
-    carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
-    total = JSON.parse(sessionStorage.getItem('totalCarrito')) || {};
-    console.log(carrito, total);
-
     if (razon.value.trim() != '' && ruc.value.trim() != '') {
-        ventaData = new FormData();
-        ventaData.append('carrito', JSON.stringify(carrito));
-        ventaData.append('total', JSON.stringify(total));
-            
-        document.getElementById('modal-confirmar-venta').classList.remove('hidden')         
+        document.getElementById('modal-confirmar-venta').classList.remove('hidden')
         document.getElementById('razon-venta').innerHTML = razon.value.trim();
         document.getElementById('ruc-venta').innerHTML = ruc.value.trim();
         resumenCarrito();
-        
+
+        document.getElementById('confirmar-venta').addEventListener('click', async () => {
+            const mixtoEfectivo = document.getElementById('mixto-efectivo') ?? '';
+            const mixtoTransf = document.getElementById('mixto-transf') ?? '';
+            const montoRecibido = document.getElementById('i-monto-recibido') ?? '';
+            let formaPago = {};
+
+            if (efectivo.checked == false && transf.checked == false && mixto.checked == false) {
+                document.getElementById('no-radio').classList.remove('hidden');
+                return;
+            }
+
+            if (montoRecibido != '' && mixtoEfectivo == '' && mixtoTransf == '') {
+                if (montoRecibido.value == '') {
+                    montoRecibido.classList.remove('border-gray-300')
+                    montoRecibido.classList.add('border-red-500', 'bg-red-100', 'ring-2', 'ring-red-500')
+                    montoRecibido.placeholder = 'Ingresa el monto recibido';
+                    return;
+                }
+            }
+            if (montoRecibido == '' && mixtoTransf != '' && mixtoEfectivo != '') {
+                if (mixtoEfectivo.value == '') {
+                    mixtoEfectivo.classList.remove('border-gray-300')
+                    mixtoEfectivo.classList.add('border-red-500', 'bg-red-100', 'ring-2', 'ring-red-500')
+                    mixtoEfectivo.placeholder = 'Ingresa el monto recibido';
+
+                    if (mixtoTransf.value == '') {
+                        mixtoTransf.classList.remove('border-gray-300')
+                        mixtoTransf.classList.add('border-red-500', 'bg-red-100', 'ring-2', 'ring-red-500')
+                        mixtoTransf.placeholder = 'Ingresa el monto recibido';
+                        return;
+                    } else {
+                        return;
+                    }
+                }
+                if (mixtoTransf.value == '') {
+                    mixtoTransf.classList.remove('border-gray-300')
+                    mixtoTransf.classList.add('border-red-500', 'bg-red-100', 'ring-2', 'ring-red-500')
+                    mixtoTransf.placeholder = 'Ingresa el monto recibido';
+                    return;
+                }
+            }
+            if (efectivo.checked) {
+                formaPago = {
+                    'efectivo': montoRecibido.value.trim(),
+                }
+            } else if (transf.checked) {
+                formaPago = {
+                    'transferencia': montoRecibido.value.trim(),
+                }
+            } else {
+                formaPago = {
+                    'mixto': {
+                        'efectivo': mixtoEfectivo.value.trim(),
+                        'transferencia': mixtoTransf.value.trim(),
+                    }
+                }
+            }
+            //console.log(formaPago)           
+            await confirmarVenta(formaPago);
+        });
     }
 });
 
 
-function resumenCarrito(){
+function resumenCarrito() {
     const carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
     const totalResumen = JSON.parse(sessionStorage.getItem('totalCarrito')) || {};
     const bodyTableVenta = document.getElementById('body-tabla-venta');
@@ -63,13 +115,13 @@ function resumenCarrito(){
                                 <td class="px-6 py-3">${totalResumen.cantidadTotal}</td>
                                 <td class="px-6 py-3">Gs. ${totalResumen.total}</td>
     `;
-    footerTableVenta.appendChild(trF);    
+    footerTableVenta.appendChild(trF);
 }
 
 const mixto = document.getElementById('mixto');
 const efectivoTransf = document.querySelectorAll('#efectivo, #transf');
 const contMontoRecibido = document.getElementById('monto-recibido');
- 
+
 mixto.addEventListener('change', () => {
     contMontoRecibido.innerHTML = `
                 <div class="flex">
@@ -84,36 +136,47 @@ mixto.addEventListener('change', () => {
 });
 
 efectivoTransf.forEach(btn => {
-    btn.addEventListener('change', ()=>{
-    contMontoRecibido.innerHTML = `
+    btn.addEventListener('change', () => {
+        contMontoRecibido.innerHTML = `
                 <div class="flex">
                     <label for="monto-recibido" class="text-gray-800 font-semibold mt-1 pr-12">Monto Recibido:</label>
-                    <input class="border border-gray-300 px-3 py-1 rounded-md" type="number" name="monto-recibido" id="monto-recibido">
+                    <input class="border border-gray-300 px-3 py-1 rounded-md" type="number" name="monto-recibido" id="i-monto-recibido">
                 </div>                
     `;
     })
 })
-    
 
+async function confirmarVenta(formaPago) {
+    try {
+        carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
+        total = JSON.parse(sessionStorage.getItem('totalCarrito')) || {};
 
-function confirmarVenta() {
+        ventaData = new FormData();
+        ventaData.append('carrito', JSON.stringify(carrito));
+        ventaData.append('total', JSON.stringify(total));
+        ventaData.append('forma_pago', JSON.stringify(formaPago));
+        ventaData.append('ruc', document.getElementById('i-ruc-ci').value.trim());
+        ventaData.append('razon', document.getElementById('i-nombre-razon').value.trim());
+
+        const res = await fetch(`http://localhost:8080/api/venta`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: ventaData,
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+            throw data;
+        }
+        
+        console.log(data)
+        showToast('Venta realizado con éxito');
+
+    } catch (err) {
+        console.log(err)
+        showToast(`${err.error}`, 'error');
+    }
 
 }
-// try{
-//     const res = await fetch(`http://localhost:8080/api/venta`, {
-//         method: 'POST',
-//         headers: {
-//             'X-CSRF-TOKEN': csrfToken,
-//         },
-//         body: ventaData,
-//     });
-
-//     const data = await res.json();
-//     if(!res.ok){
-//         throw data;
-//     }
-
-
-// }catch(err){
-//     showToast('error', `${err.error}`);
-// }
