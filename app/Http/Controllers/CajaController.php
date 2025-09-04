@@ -12,7 +12,7 @@ class CajaController extends Controller
     public function __construct(protected CajaService $cajaService){
         if( Caja::where('estado', 'abierto')->exists() && empty(session('caja'))){
             session('caja', []);
-            $item = Caja::where('estado', 'abierto')->with('user:id,name,role')->first()->toArray();
+            $item = Caja::where('estado', 'abierto')->with('user:id,name,role')->first()->toArray();            
             $item['saldo'] = $item['monto_inicial'];
             session()->put(['caja' => $item]);            
         }        

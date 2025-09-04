@@ -32,10 +32,7 @@ class ProductoController extends Controller
         $orderBy = $request->query('orderBy');
         $direction = $request->query('dir');
 
-        $query = Producto::query();
-        // if ($filtro == "nombre") {
-        //     $query->whereLike("nombre", "%$search%");
-        // }
+        $query = Producto::query();    
 
         if ($filtro == "tipo") {
             $query->whereLike("tipo", "%$search%");
