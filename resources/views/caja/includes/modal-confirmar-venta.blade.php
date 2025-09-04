@@ -70,8 +70,9 @@
             <!-- /datos del cliente -->
 
             <!-- metodo de pago -->
-            <div class="py-4 shadow-md rounded-md mt-4 bg-gray-100 border border-gray-200 ">
-                <h3 class="mb-4 font-semibold text-gray-900 text-lg text-center">Seleccionar metodo de pago</h3>
+            <div id="" class="py-4 shadow-md rounded-md mt-4 bg-gray-100 border border-gray-200 ">
+                <h3 class="mb-4 font-semibold text-gray-900 text-lg text-center">Seleccionar método de pago</h3>
+                <p id="no-radio" class="hidden text-center mb-4 text-red-500 font-semibold px-2 bg-red-100 mx-auto max-w-[300px] rounded-md">Debes seleccionar un método de pago</p>
                 <ul id="ul-pagos"
                     class="items-center w-full p-2 text-sm font-medium text-gray-900 bg-gray-100 border border-gray-200 sm:flex">
                     <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r">
@@ -138,7 +139,7 @@
                             Recibido:
                         </label>
                         <input class="border border-gray-300 px-3 py-1 rounded-md" type="number"
-                            name="monto-recibido" id="monto-recibido">
+                            name="monto-recibido" id="i-monto-recibido">
                     </div>
                 </div>
                 <!-- /monto recibido -->
@@ -164,12 +165,10 @@
                             </tr>
                         </thead>
                         <tbody id="body-tabla-venta">
-                            {{-- <tr class="bg-white ">
-                                
-                            </tr>                             --}}
+                            <!-- -->
                         </tbody>
                         <tfoot id="footer-tabla-venta">
-                            
+                            <!-- -->
                         </tfoot>
                     </table>
                 </div>
@@ -185,7 +184,7 @@
                 Cancelar
             </button>
             <button id="confirmar-venta"
-                class="px-4 py-2 bg-yellow-500 text-white font-semibold rounded-xl hover:bg-yellow-600 transition-colors">
+                class="cursor-pointer px-4 py-2 bg-yellow-500 text-white font-semibold rounded-xl hover:bg-yellow-600 transition-colors">
                 Confirmar
             </button>
         </div>
