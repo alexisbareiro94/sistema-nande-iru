@@ -14,8 +14,7 @@ async function getMovimientos() {
         const data = await res.json();
         if (!res.ok) {
             throw data;
-        }
-        console.log(data)
+        }        
         return data;
     } catch (err) {
         showToast(`${err.error}`);

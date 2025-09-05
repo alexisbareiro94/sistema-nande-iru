@@ -54,8 +54,7 @@ boton.addEventListener("click", (e) => {
     formData.append('stock_minimo', stock_minimo.value ?? "");
     formData.append('distribuidor_id', distribuidor_id.value ?? "");
     formData.append('tipo', tipoSeleccionado ?? "");
-    formData.append('imagen', imagen.files[0] ?? "");
-    console.log(formData.get('codigo_auto'));
+    formData.append('imagen', imagen.files[0] ?? "");    
     fetch('http://localhost:8080/agregar-producto', {
         method: 'POST',
         headers: {
@@ -69,17 +68,14 @@ boton.addEventListener("click", (e) => {
             }
             return res.json();
         })
-        .then(data => {
-            console.log(data);
+        .then(data => {            
             document.getElementById('form-add-producto').reset();
             document.getElementById('imagen-preview').src = "";
             document.getElementById("preview-cont").classList.add('hidden');
             document.getElementById("div-img-original").classList.remove('hidden');
-            showToast("Producto agregado con éxito", "success");
-            console.log("Producto agregado:", data);
+            showToast("Producto agregado con éxito", "success");            
         })
-        .catch(err => {
-            console.log(err)
+        .catch(err => {            
             const errores = ['nombre', 'codigo', 'tipo', 'descripcion', 'precio_compra', 'precio_venta', 'stock', 'stock_minimo',
                 'categoria_id', 'marca_id', 'distribuidor_id', 'ventas', 'imagen',]
             errores.forEach(errori => {
@@ -189,8 +185,7 @@ const contVerDistribuidores = document.getElementById("cont-ver-dists");
 verDistribuidores.addEventListener("click", (e) => {
     contVerDistribuidores.classList.remove('hidden');
     const q = document.getElementById('query');
-    const cerrarq = document.getElementById('cerrar-q');
-    console.log(q.length);
+    const cerrarq = document.getElementById('cerrar-q');    
 });
 cerrarVerDist = document.getElementById("cerrar-ver-dists");
 cerrarVerDist.addEventListener("click", (e) => {
@@ -326,18 +321,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return res.json();
             })
             .then(data => {
-                showToast("Marca agregada con éxito", "success");
-                console.log("Marca agregada:", data);
+                showToast("Marca agregada con éxito", "success");                
                 recargarTodo();
                 marcaNombre.value = '';
             })
             .catch(err => {
                 if (err.errors) {
-                    showToast("⚠ Error: " + Object.values(err.errors).join(', '), "error");
-                    console.log("Errores de validación:", err.errors);
+                    showToast("⚠ Error: " + Object.values(err.errors).join(', '), "error");                    
                 } else {
-                    showToast(`${err['nombre']}`, "error");
-                    console.error("Error:", err);
+                    showToast(`${err['nombre']}`, "error");                    
                 }
             });
     }
@@ -373,18 +365,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return res.json();
             })
             .then(data => {
-                showToast("Categoría agregada con éxito", "success");
-                console.log("Producto agregado:", data);
+                showToast("Categoría agregada con éxito", "success");                
                 recargarTodo(); // recargar los selects
                 categoriaNombre.value = ''; // limpiar input
             })
             .catch(err => {
                 if (err.errors) {
-                    showToast("⚠ Error: " + Object.values(err.errors).join(', '), "error");
-                    console.log("Errores de validación:", err.errors);
+                    showToast("⚠ Error: " + Object.values(err.errors).join(', '), "error");                    
                 } else {
-                    showToast(`${err['nombre']}`, "error");
-                    console.error("Error:", err);
+                    showToast(`${err['nombre']}`, "error");                    
                 }
             });
     }
@@ -398,8 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addDistribuidor();
     });
 
-    function addDistribuidor() {
-        console.log('add distr')
+    function addDistribuidor() {        
         const distNombre = document.getElementById('dist-nombre');
         const distRuc = document.getElementById('dist-ruc');
         const distCelular = document.getElementById('dist-celular');

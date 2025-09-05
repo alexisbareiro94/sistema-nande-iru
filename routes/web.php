@@ -26,11 +26,11 @@ Route::middleware('auth')->group(function () {
     })->name('home');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::middleware(CajaMiddleware::class)->group(function(){
+    Route::middleware(CajaMiddleware::class)->group(function () {
         //caja
         Route::get('/caja', [CajaController::class, 'index_view'])->name('caja.index');
         Route::post('/abrir-caja', [CajaController::class, 'abrir'])->name('caja.abrir');
-        
+
         //users
         Route::get('/api/users', [UserController::class, 'index'])->name('user.index');
         Route::post('/api/users', [UserController::class, 'store'])->name('user.store');
@@ -62,18 +62,30 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/distribuidores', [DistribuidorController::class, 'index'])->name('distribuidor.index');
 
         Route::post('/agregar-marca', [MarcaController::class, 'store'])->name('marca.store');
-        Route::get('/api/marcas', [MarcaController::class, 'index'])->name('marca.all');        
+        Route::get('/api/marcas', [MarcaController::class, 'index'])->name('marca.all');
     });
 });
 
-Route::get('/session/{nombre}', function($nombre){
+Route::get('/session/{nombre}', function ($nombre) {
     dd(session("$nombre"), gettype(session("$nombre")));
 });
 
-Route::get('/borrar-session', function(){
+Route::get('/borrar-session', function () {
     session()->flush();
 });
 
-Route::get('/debug', function(){
-    return view('welcome');
+Route::get('/debug', function () {
+     $carrito['465s7da'] = [
+        '2' => [          
+            'nombre' => 'tal cosa',
+            //demas datos
+        ],
+        '5' => [
+            'nombre' => 'otra cosa'
+            //demas datos
+        ]
+    ];
+
+
+    session(['prueba' => $carrito]);
 });

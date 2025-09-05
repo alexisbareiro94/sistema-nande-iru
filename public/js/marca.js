@@ -36,8 +36,7 @@ async function processQueryMarca(query = '') {
         });
         const data = await res.json();
 
-        if(!res.ok){
-            console.log(error)
+        if(!res.ok){            
             throw data;
         }
 

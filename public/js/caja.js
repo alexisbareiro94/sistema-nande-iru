@@ -290,8 +290,7 @@ form.addEventListener('submit', async (e) => {
         const data = await res.json();
         if (!res.ok) {
             throw data;
-        }
-        console.log(data)
+        }        
         if (data.users && Object.keys(data.users).length > 0) {
             data.users.forEach(async user => {
                 const li = document.createElement('li');
@@ -380,8 +379,7 @@ formAddCliente.addEventListener('submit', async (e) => {
         document.getElementById('modal-add-cliente').classList.add('hidden');
 
         showToast('Cliente Agregado con éxito', 'success');
-    } catch (err) {
-        console.log(err)
+    } catch (err) {        
         showToast(`${err.error}`, 'error');
     }
 })

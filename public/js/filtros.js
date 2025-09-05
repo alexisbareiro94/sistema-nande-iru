@@ -7,8 +7,7 @@ async function orderBy(column, direction) {
             },
         });
 
-        const data = await res.json();
-        //console.log(data);
+        const data = await res.json();        
         if (!res.ok) {
             throw data;
         }

@@ -12,11 +12,6 @@ btnCerrarCategoria.addEventListener("click", () => {
     contAddCategoria.classList.add('hidden');
 });
 
-//add distribuidores
-//const addDistribuidor = document.getElementById("add-distribuidor");
-//const contAddDistribuidor = document.getElementById("cont-add-dist");
-//const cerrarDist = document.getElementById("cerrar-dist");
-
 document.getElementById("add-distribuidor").addEventListener("click", (e) => {
     document.getElementById("cont-add-dist").classList.remove('hidden');
 });
@@ -26,17 +21,11 @@ document.getElementById("cerrar-dist").addEventListener("click", (e) => {
 });
 
 
-//ver tabla de  distribuidores
-//const verDistribuidores = document.getElementById("ver-dists");
-//const contVerDistribuidores = document.getElementById("cont-ver-dists");
-
 document.getElementById("ver-dists").addEventListener("click", (e) => {
     document.getElementById("cont-ver-dists").classList.remove('hidden');
     const q = document.getElementById('query');
-    //const cerrarq = document.getElementById('cerrar-q');
-    console.log(q.length);
 });
-//const cerrarVerDist = document.getElementById("cerrar-ver-dists");
+
 document.getElementById("cerrar-ver-dists").addEventListener("click", (e) => {
     document.getElementById("cont-ver-dists").classList.add('hidden');
 });
@@ -168,18 +157,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return res.json();
             })
             .then(data => {
-                showToastRep("Marca agregada con éxito", "success");
-                console.log("Marca agregada:", data);
+                showToastRep("Marca agregada con éxito", "success");                
                 recargarTodo();
                 marcaNombre.value = '';
             })
             .catch(err => {
                 if (err.errors) {
-                    showToastRep("⚠ Error: " + Object.values(err.errors).join(', '), "error");
-                    console.log("Errores de validación:", err.errors);
+                    showToastRep("⚠ Error: " + Object.values(err.errors).join(', '), "error");                    
                 } else {
-                    showToastRep(`${err['nombre']}`, "error");
-                    console.error("Error:", err);
+                    showToastRep(`${err['nombre']}`, "error");                    
                 }
             });
     }
@@ -215,18 +201,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return res.json();
             })
             .then(data => {
-                showToastRep("Categoría agregada con éxito", "success");
-                console.log("Producto agregado:", data);
+                showToastRep("Categoría agregada con éxito", "success");                
                 recargarTodo(); // recargar los selects
                 categoriaNombre.value = ''; // limpiar input
             })
             .catch(err => {
                 if (err.errors) {
-                    showToastRep("⚠ Error: " + Object.values(err.errors).join(', '), "error");
-                    console.log("Errores de validación:", err.errors);
+                    showToastRep("⚠ Error: " + Object.values(err.errors).join(', '), "error");                    
                 } else {
-                    showToastRep(`${err['nombre']}`, "error");
-                    console.error("Error:", err);
+                    showToastRep(`${err['nombre']}`, "error");                    
                 }
             });
     }
@@ -240,8 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addDistribuidor();
     });
 
-    function addDistribuidor() {
-        console.log('add distr')
+    function addDistribuidor() {        
         const distNombre = document.getElementById('dist-nombre');
         const distRuc = document.getElementById('dist-ruc');
         const distCelular = document.getElementById('dist-celular');

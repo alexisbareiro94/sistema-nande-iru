@@ -54,8 +54,7 @@ async function updateProduct(flag = false) {
     tipoE ? formDataEdit.append('tipo', tipoE) : '';
     imagen.files[0] ? formDataEdit.append('imagen', imagen.files[0]) : '';
     eliminarImagen ? formDataEdit.append('eliminar_imagen', eliminarImagen) : '';
-    producto_id ? formDataEdit.append('producto_id', producto_id) : '';
-    //console.log(tipoSeleccionadoE)
+    producto_id ? formDataEdit.append('producto_id', producto_id) : '';    
     try {
         const res = await fetch(`http://localhost:8080/edit/${encodeURIComponent(producto_id)}/producto`, {
             method: 'POST',
@@ -66,8 +65,7 @@ async function updateProduct(flag = false) {
         });
 
         if (!res.ok) {
-            const errData = await res.json();
-            console.log(errData)
+            const errData = await res.json();            
             throw errData;
         }
 
@@ -85,8 +83,7 @@ async function updateProduct(flag = false) {
             window.location.href = `/edit/${producto_id}/producto`;
         }
 
-    } catch (err) {
-        console.log(err)
+    } catch (err) {        
         const errores = [
             'nombre', 'codigo', 'tipo', 'descripcion', 'precio_compra', 'precio_venta',
             'stock', 'stock_minimo', 'categoria_id', 'marca_id', 'distribuidor_id',
@@ -99,8 +96,7 @@ async function updateProduct(flag = false) {
             }
         });
 
-        if (err.message) {
-            console.log(err)
+        if (err.message) {            
             showToast(err.message, "error");
         }
     }

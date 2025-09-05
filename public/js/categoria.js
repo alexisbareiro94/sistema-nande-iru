@@ -36,8 +36,7 @@ async function processQueryCat(query = '') {
         });
         const data = await res.json();
 
-        if(!res.ok){
-            console.log(error)
+        if(!res.ok){            
             throw data;
         }
 
@@ -62,8 +61,7 @@ async function processQueryCat(query = '') {
                     `;
             bodyTablaMarcas.appendChild(row);
         });
-    }catch(err){
-        console.log(err);
+    }catch(err){        
         showToast(err.message, 'error')
     }
 }

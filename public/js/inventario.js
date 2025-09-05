@@ -214,8 +214,7 @@ async function getProduct(productoId) {
         }
 
         return data;
-    }catch(err){
-       // console.log('error en getProduct');
+    }catch(err){       
         showToast(`${err.message || 'Error al obtener productos'}`, 'error');
     }
 }
