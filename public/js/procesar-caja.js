@@ -25,10 +25,10 @@ document.getElementById('procesar-venta').addEventListener('click', () => {
     }
 });
 
-document.getElementById('confirmar-venta').addEventListener('click', async () => {    
+document.getElementById('confirmar-venta').addEventListener('click', async () => {
     const mixtoEfectivo = document.getElementById('mixto-efectivo') ?? '';
     const mixtoTransf = document.getElementById('mixto-transf') ?? '';
-    const montoRecibido = document.getElementById('i-monto-recibido') ?? '';    
+    const montoRecibido = document.getElementById('i-monto-recibido') ?? '';
     let formaPago = {};
 
     if (efectivo.checked == false && transf.checked == false && mixto.checked == false) {
@@ -82,10 +82,49 @@ document.getElementById('confirmar-venta').addEventListener('click', async () =>
             }
         }
     }
-    await confirmarVenta(formaPago);
-    limpiarUI();    
+    const data = await confirmarVenta(formaPago);
+    resumenVenta(data);
+    limpiarUI();
 });
 
+
+function resumenVenta(data) {
+    const modalVentaCompletada = document.getElementById('modal-venta-completada');
+    const resumenVenta = document.getElementById('resumen-venta');
+    modalVentaCompletada.classList.remove('hidden');
+    console.log(data.venta);
+    resumenVenta.innerHTML = '';
+    const ul = document.createElement('ul');
+    ul.classList.add('space-y-1');
+    ul.innerHTML = `
+                <li><strong>Código de Venta:</strong>${data.venta.codigo}</li>
+                <li>
+                    <strong>Cliente:</strong>
+                    <ul class="ml-4 list-disc list-inside">
+                        <li>Razón social: ${data.venta.cliente.razon_social}</li>
+                        <li>RUC o CI: ${data.venta.cliente.ruc_ci}</li>
+                    </ul>
+                </li>
+                <strong>Productos:</strong>
+                <li id="li-productos">
+                    
+                </li>
+                <li class="mt-4"><strong>Subtotal:</strong> ${data.venta.subtotal.toLocaleString('es-PY')} Gs</li>
+                <li class="font-bold text-gray-900"><strong>Total:</strong> ${data.venta.total.toLocaleString('es-PY')} Gs</li>
+    `;
+    resumenVenta.append(ul);
+    const li = document.getElementById('li-productos');
+    li.innerHTML = '';
+    const ulP = document.createElement('ul');
+    ulP.classList.add('ml-4', 'list-disc', 'list-inside')
+    data.productos.forEach(producto => {
+        ulP.innerHTML = `
+                    <li>${producto.nombre}</li>                
+        `;
+        li.appendChild(ulP);
+    });
+
+}
 
 function resumenCarrito() {
     const carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
@@ -173,14 +212,14 @@ async function confirmarVenta(formaPago) {
             throw data;
         }
         showToast('Venta realizado con éxito');
-
+        return data;
     } catch (err) {
         showToast(`${err.error}`, 'error');
     }
 
 }
 
-async function limpiarUI(){
+async function limpiarUI() {
     const ruc = document.getElementById('i-ruc-ci');
     const razon = document.getElementById('i-nombre-razon');
     sessionStorage.clear();

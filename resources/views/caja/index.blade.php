@@ -142,6 +142,7 @@
     @include('caja.includes.modal-venta')
     @include('caja.includes.modal-abrir-caja')
     @include('caja.includes.modal-add-clientes')    
+    @include('caja.venta-completada')
 
 @section('js')
     <script src="{{ asset('js/caja.js') }}"></script>
