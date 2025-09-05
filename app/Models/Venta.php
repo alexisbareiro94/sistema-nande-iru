@@ -12,14 +12,20 @@ class Venta extends Model
     protected $table = 'ventas';
 
     protected $fillable = [
+        'codigo',        
         'caja_id',
         'cliente_id',
+        'nro_ticket',
+        'nro_factura',
         'cantidad_productos',
         'con_descuento',
         'monto_descuento',
         'subtotal',
         'total',
         'estado',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     public function cajero()
@@ -30,5 +36,9 @@ class Venta extends Model
     public function cliente()
     {
         return $this->belongsTo(User::class, 'cliente_id');
+    }
+
+    public function detalleVentas(){
+        return $this->hasMany(DetalleVenta::class, 'venta_id');
     }
 }

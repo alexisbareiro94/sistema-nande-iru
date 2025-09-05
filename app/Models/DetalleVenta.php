@@ -27,7 +27,7 @@ class DetalleVenta extends Model
 
     public function venta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Venta::class);
+        return $this->belongsTo(Venta::class, 'venta_id');
     }
 
     public function producto(): \Illuminate\Database\Eloquent\Relations\BelongsTo
