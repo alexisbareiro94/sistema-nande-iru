@@ -39,6 +39,7 @@ class VentaController extends Controller
         try {
             $venta = Venta::create([
                 'caja_id' => $cajaId,
+                'codigo' => generate_code(),
                 'cliente_id' => $userId,
                 'cantidad_productos' => $totalCarrito['cantidadTotal'],
                 'con_descuento' => $tieneDescuento,

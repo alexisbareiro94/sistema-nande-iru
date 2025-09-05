@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('ventas', function (Blueprint $table) {
             $table->id();
+            $table->string('codigo')->unique();
             $table->foreignId('caja_id')->constrained('users');
             $table->foreignId('cliente_id')->constrained('users');
+            $table->string('nro_ticket')->nullable()->unique();
+            $table->string('nro_factura')->nullable()->unique();
             $table->integer('cantidad_productos');
             $table->boolean('con_descuento')->default(false);
             $table->integer('monto_descuento')->nullable();
