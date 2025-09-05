@@ -180,7 +180,7 @@ async function confirmarVenta(formaPago) {
 
 }
 
-function limpiarUI(){
+async function limpiarUI(){
     const ruc = document.getElementById('i-ruc-ci');
     const razon = document.getElementById('i-nombre-razon');
     sessionStorage.clear();
@@ -197,4 +197,5 @@ function limpiarUI(){
     razon.classList.add('border-gray-300', 'focus:ring-yellow-400', 'focus:border-yellow-400')
     razon.placeholder = 'Ingrese nombre o razon social';
     document.getElementById('modal-confirmar-venta').classList.add('hidden')
+    await recargarMovimientos();
 }

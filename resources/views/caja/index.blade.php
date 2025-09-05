@@ -136,43 +136,7 @@
             </div>
 
             <!-- Historial de movimientos (opcional) -->
-            <div class="card rounded-xl p-5">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-amarillo">Últimos movimientos</h2>
-                    <button class="text-gris hover:text-amarillo transition-colors">
-                        Ver todo el historial →
-                    </button>
-                </div>
-
-                <div class="space-y-3 max-h-60 overflow-y-auto pr-2">
-                    <!-- Movimiento 1 -->
-                    <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                        <div>
-                            <p class="font-medium text-white">Venta de productos</p>
-                            <p class="text-gray-400 text-sm">10:45 AM - 15/05/2024</p>
-                        </div>
-                        <span class="text-green-400 font-bold">+ $150.00</span>
-                    </div>
-
-                    <!-- Movimiento 2 -->
-                    <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                        <div>
-                            <p class="font-medium text-white">Pago de proveedor</p>
-                            <p class="text-gray-400 text-sm">09:30 AM - 15/05/2024</p>
-                        </div>
-                        <span class="text-red-400 font-bold">- $85.50</span>
-                    </div>
-
-                    <!-- Movimiento 3 -->
-                    <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                        <div>
-                            <p class="font-medium text-white">Apertura inicial</p>
-                            <p class="text-gray-400 text-sm">08:00 AM - 15/05/2024</p>
-                        </div>
-                        <span class="text-green-400 font-bold">+ $2,586.00</span>
-                    </div>
-                </div>
-            </div>
+            @include('caja.includes.movimientos')            
         </div>
     </div>
     @include('caja.includes.modal-venta')
@@ -182,5 +146,6 @@
 @section('js')
     <script src="{{ asset('js/caja.js') }}"></script>
     <script src="{{ asset('js/procesar-caja.js') }}"></script>
+    <script src="{{ asset('js/movimiento.js') }}"></script>
 @endsection
 @endsection

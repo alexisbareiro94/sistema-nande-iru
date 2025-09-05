@@ -5,11 +5,13 @@ use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DistribuidorController;
 use App\Http\Controllers\MarcaController;
+use App\Http\Controllers\MovimientoCajaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VentaController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
+use App\Models\MovimientoCaja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -35,8 +37,10 @@ Route::middleware('auth')->group(function () {
 
         //venta
         Route::post('/api/venta', [VentaController::class, 'store'])->name('venta.store');
-    });
 
+        //movimiento
+        Route::get('/api/movimiento', [MovimientoCajaController::class, 'index'])->name('movimiento.index');
+    });
 
 
     Route::middleware(AdminMiddleware::class)->group(function () {
