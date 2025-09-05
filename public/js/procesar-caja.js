@@ -91,8 +91,7 @@ document.getElementById('confirmar-venta').addEventListener('click', async () =>
 function resumenVenta(data) {
     const modalVentaCompletada = document.getElementById('modal-venta-completada');
     const resumenVenta = document.getElementById('resumen-venta');
-    modalVentaCompletada.classList.remove('hidden');
-    console.log(data.venta);
+    modalVentaCompletada.classList.remove('hidden'); 
     resumenVenta.innerHTML = '';
     const ul = document.createElement('ul');
     ul.classList.add('space-y-1');
@@ -113,11 +112,14 @@ function resumenVenta(data) {
                 <li class="font-bold text-gray-900"><strong>Total:</strong> ${data.venta.total.toLocaleString('es-PY')} Gs</li>
     `;
     resumenVenta.append(ul);
+
     const li = document.getElementById('li-productos');
     li.innerHTML = '';
-    const ulP = document.createElement('ul');
-    ulP.classList.add('ml-4', 'list-disc', 'list-inside')
+   
     data.productos.forEach(producto => {
+        const ulP = document.createElement('ul');
+        ulP.classList.add('ml-4', 'list-disc', 'list-inside')
+        console.log(producto);
         ulP.innerHTML = `
                     <li>${producto.nombre}</li>                
         `;

@@ -56,6 +56,7 @@ class VentaController extends Controller
                 'monto' => $venta->total,
             ]);
             
+            $productos = [];
             foreach ($carrito as $id => $producto) {
                 DetalleVenta::create([
                     'venta_id' => $venta->id,
@@ -66,8 +67,8 @@ class VentaController extends Controller
                     'precio_descuento' => $producto->precio_descuento,
                     'subtotal' => $producto->cantidad * $producto->precio,
                     'total' => $producto->descuento === true ? $producto->cantidad * $producto->precio_descuento : $producto->cantidad * $producto->precio,
-                ]);
-                $productos = [];
+                ]);         
+                       
                 $productdb = Producto::find($id);
                 $productos[] = $productdb;
                 if ($productdb->tipo === 'producto') {
