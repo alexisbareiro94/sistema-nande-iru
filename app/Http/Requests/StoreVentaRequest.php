@@ -47,6 +47,6 @@ class StoreVentaRequest extends FormRequest
         return response()->json([
             'success' => false,
             'error' => $validator->errors()->first(),
-        ], 500);
+        ]);
     }
 }

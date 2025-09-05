@@ -21,7 +21,7 @@ class VentaController extends Controller
                 'success' => false,
                 'errores' => $errores->first(),
                 'es en el service'
-            ]);
+            ], 400);
         }
 
         $carrito = collect(json_decode($data['carrito']));
@@ -55,7 +55,7 @@ class VentaController extends Controller
                 'concepto' => 'Venta de productos',
                 'monto' => $venta->total,
             ]);
-
+            
             foreach ($carrito as $id => $producto) {
                 DetalleVenta::create([
                     'venta_id' => $venta->id,
@@ -67,8 +67,9 @@ class VentaController extends Controller
                     'subtotal' => $producto->cantidad * $producto->precio,
                     'total' => $producto->descuento === true ? $producto->cantidad * $producto->precio_descuento : $producto->cantidad * $producto->precio,
                 ]);
-
+                $productos = [];
                 $productdb = Producto::find($id);
+                $productos[] = $productdb;
                 if ($productdb->tipo === 'producto') {
                     if ($producto->cantidad < $productdb->stock) {
                         $productdb->decrement('stock', $producto->cantidad);
@@ -79,7 +80,7 @@ class VentaController extends Controller
                             'error' => 'No hay stock suficiente: ' . $producto->nombre,
                             'stock' => $productdb->stock,
                             'carrito_cantidad' => $producto->cantidad,
-                        ]);
+                        ], 400);
                     }
                 }
             }
@@ -106,14 +107,16 @@ class VentaController extends Controller
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => 'Venta realizada con exito'
+                'message' => 'Venta realizada con exito',
+                'venta' => $venta->load('cliente:id,razon_social,ruc_ci'),
+                'productos' => $productos,
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
-            ]);
+            ], 400);
         }
     }
 }
