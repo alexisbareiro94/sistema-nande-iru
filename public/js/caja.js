@@ -383,5 +383,28 @@ formAddCliente.addEventListener('submit', async (e) => {
         showToast(`${err.error}`, 'error');
     }
 })
-//form-add-cliente
-//modal-add-cliente
+
+window.addEventListener('DOMContentLoaded', async ()=>{
+    await recargarSaldo();
+});
+
+async function recargarSaldo(){
+    const saldo = document.getElementById('saldo-caja');
+    saldo.innerText = '';
+    try {
+        const res = await fetch(`http://localhost:8080/api/movimiento/total`, {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+            },
+        });
+        const data = await res.json();
+        if(!res.ok){
+            throw data;
+        }
+        saldo.innerHTML = `${data.total.toLocaleString('es-PY')} GS.`
+        
+    } catch (err) {
+        showToast(`${err.error}`, 'error')
+    }
+}

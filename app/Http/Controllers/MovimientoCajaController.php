@@ -12,4 +12,20 @@ class MovimientoCajaController extends Controller
             'movimientos' => MovimientoCaja::orderBy('id', 'desc')->limit(3)->get(),
         ]);
     }    
+
+    public function total(){
+        try{
+            $total = MovimientoCaja::selectRaw('SUM(monto) as total')->pluck('total');
+            
+            return response()->json([
+                'success' => true,
+                'total' => $total,
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
 }

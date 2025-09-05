@@ -83,8 +83,8 @@ document.getElementById('confirmar-venta').addEventListener('click', async () =>
         }
     }
     const data = await confirmarVenta(formaPago);
-    resumenVenta(data);
-    limpiarUI();
+    resumenVenta(data);    
+    limpiarUI();    
 });
 
 
@@ -237,4 +237,5 @@ async function limpiarUI() {
     razon.placeholder = 'Ingrese nombre o razon social';
     document.getElementById('modal-confirmar-venta').classList.add('hidden')
     await recargarMovimientos();
+    await recargarSaldo();
 }

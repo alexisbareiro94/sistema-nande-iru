@@ -54,7 +54,7 @@
                         <!-- Saldo actual -->
                         <div class="bg-gray-800 rounded-xl p-5 border border-gray-700">
                             <p class="text-gray-400 text-sm mb-1">Saldo actual</p>
-                            <p class="text-4xl font-bold text-amarillo">
+                            <p id="saldo-caja" class="text-4xl font-bold text-amarillo">
                                 Gs. {{ session('caja') ? number_format(session('caja')['saldo'], 0, ',', '.') : 0 }}
                             </p>
                         </div>

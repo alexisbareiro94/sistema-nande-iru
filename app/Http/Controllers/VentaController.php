@@ -104,6 +104,10 @@ class VentaController extends Controller
                     ]);
                 }
             }
+
+            $caja = session('caja');
+            $caja['saldo'] += $venta->total;
+            session()->put(['caja' => $caja]);
             DB::commit();
             return response()->json([
                 'success' => true,
