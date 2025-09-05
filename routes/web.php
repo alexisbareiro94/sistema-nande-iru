@@ -40,6 +40,8 @@ Route::middleware('auth')->group(function () {
 
         //movimiento
         Route::get('/api/movimiento', [MovimientoCajaController::class, 'index'])->name('movimiento.index');
+        Route::get('/api/movimiento/total', [MovimientoCajaController::class, 'total'])->name('movimiento.total');
+        
     });
 
 
@@ -74,18 +76,4 @@ Route::get('/borrar-session', function () {
     session()->flush();
 });
 
-Route::get('/debug', function () {
-     $carrito['465s7da'] = [
-        '2' => [          
-            'nombre' => 'tal cosa',
-            //demas datos
-        ],
-        '5' => [
-            'nombre' => 'otra cosa'
-            //demas datos
-        ]
-    ];
-
-
-    session(['prueba' => $carrito]);
-});
+Route::get('/debug', [CajaController::class, 'index']);
