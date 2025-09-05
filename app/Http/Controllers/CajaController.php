@@ -41,7 +41,7 @@ class CajaController extends Controller
                 'monto' => $caja['monto_inicial']
             ]);
 
-            $arrayCaja = $caja->toArray();
+            $arrayCaja = $caja->load('user:id,name')->toArray();            
             $arrayCaja['saldo'] = $arrayCaja['monto_inicial'];
             session()->put(['caja' => $arrayCaja]);            
             return back()->with('success', 'Caja Abierta Correctamente');        
