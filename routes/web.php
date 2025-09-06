@@ -9,10 +9,10 @@ use App\Http\Controllers\MovimientoCajaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VentaController;
+
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
-use App\Models\MovimientoCaja;
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'login_view'])->name('login');
@@ -41,9 +41,9 @@ Route::middleware('auth')->group(function () {
         //movimiento
         Route::get('/api/movimiento', [MovimientoCajaController::class, 'index'])->name('movimiento.index');
         Route::get('/api/movimiento/total', [MovimientoCajaController::class, 'total'])->name('movimiento.total');
+        Route::post('/api/movimiento', [MovimientoCajaController::class, 'store'])->name('movimiento.store');
         
     });
-
 
     Route::middleware(AdminMiddleware::class)->group(function () {
         Route::get('/inventario', [ProductoController::class, 'index'])->name('producto.index');

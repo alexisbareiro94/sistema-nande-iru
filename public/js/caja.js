@@ -401,10 +401,65 @@ async function recargarSaldo(){
         const data = await res.json();
         if(!res.ok){
             throw data;
-        }
+        }        
         saldo.innerHTML = `${data.total.toLocaleString('es-PY')} GS.`
         
-    } catch (err) {
+    } catch (err) {        
         showToast(`${err.error}`, 'error')
     }
 }
+
+document.getElementById('btn-movimiento').addEventListener('click', () => {    
+    document.getElementById('modal-movimiento-caja').classList.remove('hidden');
+});
+
+
+document.getElementById('confirmar-movimiento').addEventListener('click', async (e) => {
+    e.preventDefault();    
+    let tipoSelcted;
+    const form = document.getElementById('movimiento-form');
+    const tipos = document.getElementsByName('tipo-movimiento');
+    const concepto = document.getElementById('concepto-mm');
+    const monto = document.getElementById('monto-mm');
+
+    tipos.forEach(tipo => {
+        if(tipo.checked){
+            tipoSelcted = tipo.value;            
+        }         
+    })   
+    if(tipoSelcted == undefined){
+        showToast('Debes Seleccionar un tipo de movimiento', 'error');
+    }
+    if(concepto.value == ''){
+        showToast('Debes Ingresar un concepto', 'error');
+    }
+    if(monto.value == ''){
+        showToast('Debes Ingresar un monto', 'error');
+        return;
+    }
+
+    try{
+        const formData = new FormData();
+        formData.append('tipo', tipoSelcted);
+        formData.append('concepto', concepto.value);
+        formData.append('monto', monto.value);
+
+        const res = await fetch('http://localhost:8080/api/movimiento', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: formData,
+        });
+        const data = await res.json();
+        if(!res.ok){
+            throw data
+        }
+        form.reset();
+        document.getElementById('modal-movimiento-caja').classList.add('hidden');
+        limpiarUI();
+        showToast('Movimiento registrado');
+    }catch(err){        
+        showToast(`${err.error}`, 'error')
+    }
+});

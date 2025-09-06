@@ -1,0 +1,79 @@
+<div id="modal-movimiento-caja" class="hidden fixed inset-0 bg-black/20 flex items-center justify-center z-50 ">
+    <div class="bg-gray-100 rounded-2xl shadow-xl w-full max-w-md p-6 border border-gray-700 relative">
+
+        <button id="closeModalM"
+            class="absolute cursor-pointer top-3 right-3 text-gray-900 hover:text-gray-600 text-2xl">&times;</button>
+
+        <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Movimiento</h2>
+
+        <div class="flex items-center justify-center mb-4">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                </svg>
+
+            </span>
+            <span class="text-gray-900 text-sm">Usuario: </span>
+            <span class="text-gray-800 font-semibold ml-2">{{ auth()->user()->name }}</span>
+        </div>
+
+        <form id="movimiento-form" action="#">    
+            <div class="mb-4 flex items-center">
+                <span class="text-gray-700 mr-4 font-semibold">Tipo de movimiento:</span>
+
+                <div class="flex bg-gray-100 rounded-lg p-1">
+                    <label class="flex-1 cursor-pointer">
+                        <input type="radio" name="tipo-movimiento" value="egreso" class="hidden peer" />
+                        <div
+                            class="px-4 py-2 text-sm font-medium rounded-md peer-checked:bg-red-400 peer-checked:shadow-sm transition-all text-gray-600 peer-checked:text-white">
+                            Egreso
+                        </div>
+                    </label>
+
+                    <label class="flex-1 cursor-pointer">
+                        <input type="radio" name="tipo-movimiento" value="ingreso" class="hidden peer" />
+                        <div
+                            class="px-4 py-2 text-sm font-medium rounded-md peer-checked:bg-green-400 peer-checked:shadow-sm transition-all text-gray-600 peer-checked:text-white">
+                            Ingreso
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="concepto-mm" class="block font-semibold text-gray-900 text-sm mb-2">Concepto</label>
+                <input type="text" id="concepto-mm" name="concepto-mm" placeholder="Ingrese el concepto"
+                    class="w-full px-4 py-2 rounded-lg bg-gray-200 text-black border border-gray-700 focus:border-amarillo focus:ring focus:ring-amarillo/30 outline-none">
+            </div>
+
+            <div class="mb-4">
+                <label for="monto-mm" class="block text-gray-900 font-semibold text-sm mb-2">Monto</label>
+                <input type="number" id="monto-mm" name="monto-mm" step="0.01" placeholder="100.000"
+                    class="w-full px-4 py-2 rounded-lg bg-gray-200 text-black border border-gray-700 focus:border-amarillo focus:ring focus:ring-amarillo/30 outline-none">
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button type="button" id="cancelarModalM"
+                    class="cursor-pointer px-4 py-2 rounded-lg bg-gray-200 text-gray-800 font-bold hover:bg-gray-300">
+                    Cancelar
+                </button>
+                <button type="submit" id="confirmar-movimiento"
+                    class="cursor-pointer px-4 py-2 rounded-lg bg-amarillo text-gray-100 font-bold hover:bg-amber-400">
+                    Confirmar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    const btns = document.querySelectorAll('#closeModalM, #cancelarModalM');
+    btns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            document.getElementById('modal-movimiento-caja').classList.add('hidden');
+        });
+    }, {once: true})
+</script>

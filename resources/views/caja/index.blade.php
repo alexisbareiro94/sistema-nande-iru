@@ -80,7 +80,8 @@
                 </button>
                 <!-- Botón Movimientos Manuales -->
                 <div class="relative">
-                    <button disabled
+                    <button {{ !session('caja') ? 'disabled' : '' }}
+                        id="btn-movimiento"
                         class="cursor-pointer w-full bg-gray-300 hover:bg-gray-400 text-gray-900 font-bold py-4 rounded-xl
                         transition-all duration-300 transform hover:scale-[1.02]">
                         <div class="flex flex-col items-center">
@@ -143,6 +144,7 @@
     @include('caja.includes.modal-abrir-caja')
     @include('caja.includes.modal-add-clientes')    
     @include('caja.venta-completada')
+    @include('caja.movimientos-manuales')
 
 @section('js')
     <script src="{{ asset('js/caja.js') }}"></script>
