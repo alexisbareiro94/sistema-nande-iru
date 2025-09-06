@@ -27,6 +27,9 @@ class CajaController extends Controller
     }
 
     public function abrir(AbrirCajaRequest $request){
+        if(session('caja')){
+            return back()->with('error', 'Ya existe una caja abierta');
+        }
         $res = $request->validated();
         $data = $this->cajaService->set_data($res);
                 
