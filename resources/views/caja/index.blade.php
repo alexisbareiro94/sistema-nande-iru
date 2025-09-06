@@ -46,7 +46,7 @@
                                 @endif
                             </span>
                             <span class="text-gray-400 text-sm -ml-2">
-                                | {{ session('caja')['user']['name'] ?? ''}}
+                                | {{ session('caja')['user']['name'] ?? '' }}
                             </span>
 
                         </div>
@@ -55,7 +55,13 @@
                         <div class="bg-gray-800 rounded-xl p-5 border border-gray-700">
                             <p class="text-gray-400 text-sm mb-1">Saldo actual</p>
                             <p id="saldo-caja" class="text-4xl font-bold text-amarillo">
-                                Gs. {{ session('caja') ? number_format(session('caja')['saldo'], 0, ',', '.') : 0 }}
+                                <svg id="loader-saldo" class="animate-spin h-10 w-10 text-amarillo"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+                                    </path>
+                                </svg>
                             </p>
                         </div>
                     </div>
@@ -80,8 +86,7 @@
                 </button>
                 <!-- Botón Movimientos Manuales -->
                 <div class="relative">
-                    <button {{ !session('caja') ? 'disabled' : '' }}
-                        id="btn-movimiento"
+                    <button {{ !session('caja') ? 'disabled' : '' }} id="btn-movimiento"
                         class="cursor-pointer w-full bg-gray-300 hover:bg-gray-400 text-gray-900 font-bold py-4 rounded-xl
                         transition-all duration-300 transform hover:scale-[1.02]">
                         <div class="flex flex-col items-center">
@@ -109,7 +114,7 @@
 
                 <!-- Botón Ir a Ventas -->
                 <div class="relative">
-                    <button id="ir-a-ventas"  
+                    <button id="ir-a-ventas"
                         class="cursor-pointer h-full z-50 w-full bg-amarillo hover:bg-amber-400 text-gray-900 font-bold py-4 rounded-xl
                         transition-all duration-300 transform hover:scale-[1.02]">
                         <div class="flex flex-col items-center">
@@ -136,15 +141,16 @@
                 </div>
             </div>
 
-            <!-- Historial de movimientos (opcional) -->
-            @include('caja.includes.movimientos')            
+            <!-- Historial de movimientos -->
+            @include('caja.includes.movimientos')
         </div>
     </div>
     @include('caja.includes.modal-venta')
     @include('caja.includes.modal-abrir-caja')
-    @include('caja.includes.modal-add-clientes')    
+    @include('caja.includes.modal-add-clientes')
     @include('caja.venta-completada')
     @include('caja.movimientos-manuales')
+    @include('caja.carrar-caja')
 
 @section('js')
     <script src="{{ asset('js/caja.js') }}"></script>
