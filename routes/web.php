@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/', function () {
         return view('home.index');
     })->name('home');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::middleware(CajaMiddleware::class)->group(function () {
@@ -39,6 +40,7 @@ Route::middleware('auth')->group(function () {
 
         //venta
         Route::post('/api/venta', [VentaController::class, 'store'])->name('venta.store');
+        Route::get('/ventas', [VentaController::class, 'index_view'])->name('venta.index.view');
 
         //movimiento
         Route::get('/api/movimiento', [MovimientoCajaController::class, 'index'])->name('movimiento.index');
@@ -80,11 +82,5 @@ Route::get('/borrar-session', function () {
 });
 
 Route::get('/debug', function(){
-      $egreso = MovimientoCaja::where('tipo', 'egreso')->whereHas('caja', function($query){
-                    $query->where('estado', 'abierto');
-                })->selectRaw('SUM(monto) as total')->first()->total;
-                if($egreso === null){
-                    $egreso = 0;
-                }
-                dd($egreso);
+      dd(now());
 });

@@ -12,4 +12,9 @@
     --color-rojo: #CC0000;
     --color-negro: #CC0000;
     --color-gris: #A4B6B3;
+    --primary: #3B82F6;
+    --secondary: #10B981;
+    --danger: #EF4444;
+    --warning: #F59E0B;
+    --info: #6B7280;
 }

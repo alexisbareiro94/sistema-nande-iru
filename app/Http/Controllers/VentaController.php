@@ -11,6 +11,10 @@ class VentaController extends Controller
 {
     public function __construct(protected VentaService $ventaService) {}
 
+    public function index_view(){
+        return view('caja.historial-completo.index');
+    }
+
     public function store(StoreVentaRequest $request)
     {
         $data = $request->validated();  //aca se valida que llegue el carrito y demas datos        

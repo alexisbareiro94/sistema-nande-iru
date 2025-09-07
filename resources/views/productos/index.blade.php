@@ -3,7 +3,7 @@
 @section('titulo', 'Inventario')
 
 @section('contenido')
-    <div class="max-w-6xl mx-auto mt-8 px-4 bg-gray-300 p-6 rounded-xl shadow-md">
+    <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 bg-gray-200  rounded-md min-h-screen">
         <!-- Encabezado -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4 p-6">
             <div>
@@ -11,8 +11,15 @@
                 <p class="text-gray-600 text-sm">Administra tu inventario de productos y servicios</p>
             </div>
             <a href="{{ route('producto.add') }}"
-                class="cursor-pointer text-lg bg-amber-400 hover:bg-amber-500 text-gray-900 px-8 py-3 font-semibold rounded-lg shadow transition text-center whitespace-nowrap">
-                Agregar Producto
+                class="flex items-center gap-2 cursor-pointer text-lg bg-gray-800 hover:bg-gray-800 text-gray-200 px-4 py-2 font-semibold rounded-lg shadow transition text-center whitespace-nowrap">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+
+                </span>
+                Nuevo Producto
             </a>
         </div>
 
@@ -21,8 +28,11 @@
 
         <div class="overflow-x-auto bg-white shadow rounded-xl">
             <!-- Barra de Búsqueda -->
-            <div class="flex justify-center mb-6 mt-6 gap-2 bg-ama">
-                <div class="relative w-full max-w-2xl">
+            <div class=" justify-center object-center items-center mb-6 mt-6 gap-2 grid grid-cols-8 px-4">
+                <p class="col-span-2 text-left font-semibold text-xl">
+                    Lista de productos
+                </p>
+                <div class="relative col-span-4">
                     <form id="form-inventario" action="" method="get" class="flex">
                         <!-- Icono de búsqueda -->
                         <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500">
@@ -34,7 +44,7 @@
                         </div>
 
                         <input id="i-s-inventario" type="text" placeholder="Buscar productos..."
-                            class="w-full pl-12 pr-40 py-2.5 border border-amber-400 bg-white/20 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all duration-200" />
+                            class="w-full pl-12 pr-40 py-2.5 border border-gray-800 bg-white/20 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all duration-200" />
 
                         <button id="btn-cerrar-inv"
                             class="hidden cursor-pointer absolute z-20 inset-y-0 right-40 rounded-lg px-1 transition-all duration-200 hover:bg-gray-300">
@@ -45,7 +55,7 @@
                         </button>
 
                         <select
-                            class="w-auto px-4 py-2.5 bg-amber-400 border-l border-amber-500 text-white font-medium rounded-r-lg focus:outline-none focus:ring-2 focus:ring-amber-300 cursor-pointer"
+                            class="w-auto px-4 py-2.5 bg-gray-800 border-l border-gray-800 text-white font-medium rounded-r-lg focus:outline-none focus:ring-2 focus:ring-gray-800 cursor-pointer"
                             name="filtro" id="filtro">
                             <option value="">Buscar por</option>
                             <option value="nombre">Nombre</option>
@@ -55,10 +65,18 @@
                         </select>
                     </form>
                 </div>
+                <p class="col-span-1 mx-auto p-2 border border-gray-900 rounded-lg font-semibold text-sm items-center ml-12 flex ">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+                    </svg>
+                    Filtros
+                </p>
             </div>
             <!-- Tabla de Productos -->
             <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-amarillo">
+                <thead class="bg-white border-t border-gray-200">
                     <tr>
                         <th class="pl-6 py-3 text-left text-sm font-semibold text-gray-900 uppercase flex gap-1">
                             Nombre
