@@ -471,7 +471,7 @@ document.getElementById('confirmar-movimiento').addEventListener('click', async 
 
 //cierre de caja
 document.getElementById('btn-cerrar-caja').addEventListener('click', async () => {
-    const modalCierreCaja = document.getElementById('modalCierreCaja');
+    const modalCierreCaja = document.getElementById('modalCierreCaja');    
     modalCierreCaja.classList.remove('hidden')
     await recargarCierreCaja();
 });
@@ -495,7 +495,7 @@ async function recargarCierreCaja() {
         if (!res.ok) {
             throw data;
         }
-        console.log(data)
+
         fechaA = new Date(data.caja.created_at);
         fechaFormateadaA = fechaA.toLocaleString('es-PY', {
             day: '2-digit',
@@ -505,6 +505,7 @@ async function recargarCierreCaja() {
             minute: '2-digit',
             hour12: false
         }).replace(',', ' -');
+
         nombreCC.innerText = `${data.caja.user.name}`
         fechaCC.innerText = `${fechaFormateadaA}`
         montoInicialCC.innerText = `${data.caja.monto_inicial.toLocaleString('es-PY')} Gs.`
@@ -535,12 +536,17 @@ document.getElementById('montoContado').addEventListener('input', async (e) => {
 })
 
 
-document.getElementById('confirmar-cierre').addEventListener('click', async () => {
+document.getElementById('confirmar-cierre').addEventListener('click', async () => {    
     const data = await recargarSaldo(false);
     const montoContado = document.getElementById('montoContado').value
     const observaciones = document.getElementById('observaciones').value;
     const saldoEsperado = data.ingreso - data.egreso;
     const diferencia = montoContado - saldoEsperado
+    
+    if(montoContado == ''){
+        showToast('Debes ingresar el monto contado', 'error')
+        return
+    }
 
     const formData = new FormData();
     formData.append('monto_cierre', montoContado);
@@ -560,9 +566,7 @@ document.getElementById('confirmar-cierre').addEventListener('click', async () =
         const data = await res.json();
         if(!res.ok){
             throw data;
-        }
-        console.log(data)
-        
+        }        
         document.getElementById('modalCierreCaja').classList.add('hidden');
         showToast('Caja Cerrada Correctamente');        
         limpiarUI();
