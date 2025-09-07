@@ -11,15 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
+
         Schema::create('cajas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users'); //cajero responsable
+            $table->foreignId('user_id')->constrained('users'); // cajero que abrió
             $table->integer('monto_inicial');
-            $table->integer('monto_cierre')->nullable();
-            $table->enum('estado', ['abierto', 'cerrado'])->unique();
+            $table->integer('monto_cierre')->nullable(); // monto contado
+            $table->integer('saldo_esperado')->nullable(); // calculado por sistema
             $table->integer('diferencia')->nullable();
-            $table->dateTimeTz('fecha_apertura');
-            $table->dateTimeTz('fecha_cierre')->nullable();
+            $table->text('observaciones')->nullable();
+            $table->dateTime('fecha_apertura');
+            $table->dateTime('fecha_cierre')->nullable(); // cuando se cerró
+            $table->enum('estado', ['abierto', 'cerrado'])->default('abierta');
+            $table->foreignId('created_by')->nullable()->constrained('users');
+            $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->timestamps();
         });
     }

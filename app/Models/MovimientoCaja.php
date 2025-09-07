@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MovimientoCaja extends Model
 {
+    use HasFactory;
     protected $table = 'movimiento_cajas';
 
     protected $fillable = [
@@ -16,6 +18,6 @@ class MovimientoCaja extends Model
     ];
 
     public function caja(){
-        return $this->belongsTo(Caja::class, 'caja_id');
+        return $this->belongsTo(Caja::class);
     }
 }

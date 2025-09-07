@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('pagos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('venta_id')->constrained('ventas');
-            $table->enum('metodo', ['efectivo', 'transferencia', 'tc', 'td', 'mixto']);            
+            $table->enum('metodo', ['efectivo', 'transferencia', 'mixto']);            
             $table->integer('monto');
             $table->enum('estado', ['pendiente', 'completado', 'cancelado'])->default('pendiente');
             $table->timestamps();

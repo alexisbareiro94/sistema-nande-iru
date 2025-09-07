@@ -36,19 +36,15 @@
                             </span>
                             <span class="text-gray-400 text-sm">
                                 @if (session('caja'))
-                                    Última apertura: {{ format_time(session('caja')['fecha_apertura']) }}
+                                    Última apertura: {{ format_time(session('caja')['fecha_apertura']) }} | {{ session('caja')['user']['name'] ?? '' }}
                                 @else
                                     @if ($caja == null)
                                         Aun no se registro ninguna caja
                                     @else
-                                        Último Cierre: {{ format_time($caja->fecha_cierre) }}
+                                        Último Cierre: {{ format_time($caja->fecha_cierre) }} | {{ $caja->user->name }}
                                     @endif
                                 @endif
-                            </span>
-                            <span class="text-gray-400 text-sm -ml-2">
-                                | {{ session('caja')['user']['name'] ?? '' }}
-                            </span>
-
+                            </span>                            
                         </div>
 
                         <!-- Saldo actual -->
@@ -151,6 +147,7 @@
     @include('caja.venta-completada')
     @include('caja.movimientos-manuales')
     @include('caja.carrar-caja')
+    @include('caja.includes.cargando')
 
 @section('js')
     <script src="{{ asset('js/caja.js') }}"></script>

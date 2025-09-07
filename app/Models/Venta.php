@@ -4,15 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Venta extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory;
 
     protected $table = 'ventas';
 
     protected $fillable = [
-        'codigo',        
+        'codigo',
         'caja_id',
         'cliente_id',
         'nro_ticket',
@@ -38,7 +39,13 @@ class Venta extends Model
         return $this->belongsTo(User::class, 'cliente_id');
     }
 
-    public function detalleVentas(){
+    public function detalleVentas()
+    {
         return $this->hasMany(DetalleVenta::class, 'venta_id');
+    }
+
+    public function caja()
+    {
+        return $this->belongsTo(Caja::class, 'caja_id');
     }
 }

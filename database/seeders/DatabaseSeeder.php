@@ -8,6 +8,8 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\TipoCuotaSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Caja;
+use App\Models\Venta;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,10 +19,13 @@ class DatabaseSeeder extends Seeder
   public function run(): void
   {
     $this->call([
-      //MetodosPagoSeeder::class,
-      //TipoCuotaSeeder::class,
       UserSeeder::class,
     ]);
+
+    Caja::factory()
+      ->has(Venta::factory()->count(20))
+      ->create();
+
 
     DB::table('marcas')->insert([
       'nombre' => 'sin marca'
@@ -34,7 +39,6 @@ class DatabaseSeeder extends Seeder
       'nombre' => 'sin distribuidor'
     ]);
 
-      \App\Models\Producto::factory(50)->create();
-
+    \App\Models\Producto::factory(50)->create();
   }
 }

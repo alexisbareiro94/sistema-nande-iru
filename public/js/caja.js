@@ -5,7 +5,6 @@ const abrirCajaForm = document.getElementById('abrir-caja-form')
 
 const modalVentas = document.getElementById('modal-ventas');
 const btnCerrarModalVentas = document.getElementById('cerrar-modal-ventas');
-//const btnAbrirModalVentas = document.getElementById('ir-a-ventas');
 
 if (btnAbrirCaja) {
     btnAbrirCaja.addEventListener('click', () => {
@@ -15,11 +14,11 @@ if (btnAbrirCaja) {
 }
 cerrarModalCaja.forEach(btn => {
     btn.addEventListener('click', () => {
-        modalAbrirCaja.classList.add('hidden');        
+        modalAbrirCaja.classList.add('hidden');
     })
 });
 
-document.getElementById('ir-a-ventas').addEventListener('click', () => {    
+document.getElementById('ir-a-ventas').addEventListener('click', () => {
     modalVentas.classList.remove('hidden');
 });
 
@@ -28,12 +27,12 @@ btnCerrarModalVentas.addEventListener('click', () => {
     modalVentas.classList.add('hidden');
 });
 
-document.getElementById('form-b-productos-ventas').addEventListener('submit', (e)=>{
+document.getElementById('form-b-productos-ventas').addEventListener('submit', (e) => {
     e.preventDefault();
 })
 
 let timerVentas;
-document.getElementById('input-b-producto-ventas').addEventListener('input', (e) => {    
+document.getElementById('input-b-producto-ventas').addEventListener('input', (e) => {
     clearTimeout(timerVentas);
     timerVentas = setTimeout(async () => {
         let query = e.target.value.trim();
@@ -66,7 +65,7 @@ document.getElementById('input-b-producto-ventas').addEventListener('input', (e)
                 }
 
             } catch (err) {
-                showToast(`${err.messages}`,'error');
+                showToast(`${err.messages}`, 'error');
             }
         }
     }, 300);
@@ -98,7 +97,7 @@ async function recargarTablaVentas(data) {
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-5 py-3 font-medium">Gs. ${producto.precio_venta}</td>                                
+                                <td class="px-5 py-3 font-medium">Gs. ${producto.precio_venta.toLocaleString('es-PY')}</td>                                
                                 <td class="px-5 py-3 ${stockClass}">${producto.tipo == 'servicio' ? 'servicio' : producto.stock}</td>
                                 <td class="px-5 py-3 text-center">
                                     <button data-producto='${JSON.stringify(producto)}'
@@ -122,10 +121,10 @@ function addToCart() {
         if (btn) {
             const producto = JSON.parse(btn.dataset.producto);
             let carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
-       
+
             if (carrito[producto.id]) {
                 carrito[producto.id].cantidad += 1;
-            
+
             } else {
                 carrito[producto.id] = {
                     nombre: producto.nombre,
@@ -134,13 +133,13 @@ function addToCart() {
                     stock: producto.stock,
                     imagen: producto.imagen,
                     descuento: false,
-                    precio_descuento: 0,                    
+                    precio_descuento: 0,
                     cantidad: 1
-                };                
+                };
             }
-            
-            sessionStorage.setItem('carrito', JSON.stringify(carrito));            
-            renderCarrito();            
+
+            sessionStorage.setItem('carrito', JSON.stringify(carrito));
+            renderCarrito();
         }
     });
 }
@@ -152,9 +151,9 @@ function renderCarrito() {
     const carritoForm = document.getElementById('carrito-form');
     carritoForm.innerHTML = '';
 
-      Object.entries(carrito).forEach(([id, producto]) => {
+    Object.entries(carrito).forEach(([id, producto]) => {
         const div = document.createElement('div');
-        div.classList.add('flex-1')        
+        div.classList.add('flex-1')
         div.innerHTML = `
             <div id="carrito-container" class="bg-gray-50 p-2 flex justify-between items-start border-b border-gray-300">                                
                 <div class="flex-1">
@@ -172,42 +171,42 @@ function renderCarrito() {
                 </div>  
                 <div class="ml-3 font-medium flex-col gap-1">
                     Gs. <input data-id="${id}" class="input-precio max-w-24 border border-none hover:border-gray-300 focus:border-gray-200 px-2" type="number"
-                        value="${(producto.descuento ? producto.precio_descuento * producto.cantidad : producto.precio * producto.cantidad ).toLocaleString('es-PY')}">                                                            
-                        ${producto.descuento ? 
-                            `<div class="text-xs ml-2 mt-1 text-red-600 font-normal">Gs. ${producto.precio}</div>`
-                            : ''
-                        }
+                        value="${producto.descuento ? (producto.precio_descuento * producto.cantidad).toLocaleString('es-PY') : (producto.precio * producto.cantidad).toLocaleString('es-PY')}">                                                            
+                        ${producto.descuento ?
+                `<div class="text-xs ml-2 -mt-1.5 text-red-600 font-normal">Gs. ${producto.precio.toLocaleString('es-PY')}</div>`
+                : ''
+            }
                 </div>
             </div>
         `;
-        carritoForm.appendChild(div);    
+        carritoForm.appendChild(div);
         descuento();
-        totalCarrito();               
+        totalCarrito();
     });
 }
 
-function descuento(){
+function descuento() {
     let timerInPrecio;
     document.querySelectorAll('.input-precio').forEach(input => {
-        input.addEventListener('input', ()=>{        
-            const nuevoPrecio = input.value;            
+        input.addEventListener('input', () => {
+            const nuevoPrecio = input.value;
             const id = input.dataset.id;
 
             clearTimeout(timerInPrecio);
-            timerInPrecio = setTimeout(()=>{
-                carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};                
+            timerInPrecio = setTimeout(() => {
+                carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
                 carrito[id].descuento = true;
                 carrito[id].precio_descuento = nuevoPrecio;
 
-                if(nuevoPrecio == carrito[id].precio){
+                if (nuevoPrecio == carrito[id].precio) {
                     carrito[id].descuento = false;
                     carrito[id].precio_descuento = 0;
                 }
-                sessionStorage.setItem('carrito', JSON.stringify(carrito))                
+                sessionStorage.setItem('carrito', JSON.stringify(carrito))
                 totalCarrito();
                 renderCarrito();
             }, 1000)
-        
+
         })
     })
 }
@@ -219,39 +218,39 @@ document.getElementById('carrito-form').addEventListener('click', (e) => {
         const btn = e.target.closest('.decaum');
         const action = btn.dataset.action;
         const id = btn.dataset.id;
-        
-        if(action == 'aum'){            
-            carrito[id].cantidad++;            
-        }else{            
+
+        if (action == 'aum') {
+            carrito[id].cantidad++;
+        } else {
             carrito[id].cantidad--;
-            if(carrito[id].cantidad <= 0){
-                delete carrito[id];  
-                let totalVenta = document.getElementById('totalCarrito');                          
+            if (carrito[id].cantidad <= 0) {
+                delete carrito[id];
+                let totalVenta = document.getElementById('totalCarrito');
                 totalVenta.innerHTML = '';
             }
-        }        
+        }
 
-        sessionStorage.setItem('carrito', JSON.stringify(carrito));        
+        sessionStorage.setItem('carrito', JSON.stringify(carrito));
         renderCarrito();
     }
 });
 
-function totalCarrito(){    
+function totalCarrito() {
     let totalP = 0;
     let subTotal = 0;
     let cantidadTotal = 0;
     let totalVenta = document.getElementById('totalCarrito');
     const subtotalVenta = document.getElementById('subTotalCarrito');
     const carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
-        
+
     Object.entries(carrito).forEach(([id, producto]) => {
-        if(carrito[id].descuento && carrito[id].precio_descuento > 0){
+        if (carrito[id].descuento && carrito[id].precio_descuento > 0) {
             totalP += producto.cantidad * producto.precio_descuento;
-        }else{
-            totalP += producto.cantidad * producto.precio;                
+        } else {
+            totalP += producto.cantidad * producto.precio;
         }
         cantidadTotal += producto.cantidad;
-        subTotal += producto.cantidad * producto.precio;        
+        subTotal += producto.cantidad * producto.precio;
     })
 
     totalCarritoSession = JSON.parse(sessionStorage.getItem('totalCarrito')) || {};
@@ -259,11 +258,11 @@ function totalCarrito(){
         total: totalP,
         subtotal: subTotal,
         cantidadTotal: cantidadTotal,
-    };    
-    sessionStorage.setItem('totalCarrito', JSON.stringify(totalCarritoSession));        
+    };
+    sessionStorage.setItem('totalCarrito', JSON.stringify(totalCarritoSession));
 
-    subtotalVenta.innerHTML = `Gs. ${subTotal.toLocaleString('es-PY')}`;    
-    totalVenta.innerHTML = `Gs. ${totalP.toLocaleString('es-PY')}`;    
+    subtotalVenta.innerHTML = `Gs. ${subTotal.toLocaleString('es-PY')}`;
+    totalVenta.innerHTML = `Gs. ${totalP.toLocaleString('es-PY')}`;
 }
 
 const form = document.getElementById('form-cliente-venta');
@@ -276,7 +275,7 @@ form.addEventListener('submit', async (e) => {
     const listaUsers = document.getElementById('listaUsuarios');
     listaUsers.innerHTML = '';
     const q = inputRucCi ?? inputNombreRazon;
-    if(q.length <= 0){
+    if (q.length <= 0) {
         return;
     }
     try {
@@ -290,7 +289,7 @@ form.addEventListener('submit', async (e) => {
         const data = await res.json();
         if (!res.ok) {
             throw data;
-        }        
+        }
         if (data.users && Object.keys(data.users).length > 0) {
             data.users.forEach(async user => {
                 const li = document.createElement('li');
@@ -374,23 +373,22 @@ formAddCliente.addEventListener('submit', async (e) => {
         inputRazonSocial.value = razon;
         inputRucCi.value = ruc;
 
-        document.getElementById('modalUsuarios').classList.add('hidden');        
+        document.getElementById('modalUsuarios').classList.add('hidden');
         listaUsers.classList.add('hidden');
         document.getElementById('modal-add-cliente').classList.add('hidden');
 
         showToast('Cliente Agregado con éxito', 'success');
-    } catch (err) {        
+    } catch (err) {
         showToast(`${err.error}`, 'error');
     }
 })
 
-window.addEventListener('DOMContentLoaded', async ()=>{
+window.addEventListener('DOMContentLoaded', async () => {
     await recargarSaldo();
 });
 
-async function recargarSaldo(){
+async function recargarSaldo(flag = true) {
     const saldo = document.getElementById('saldo-caja');
-    saldo.innerText = '';
     try {
         const res = await fetch(`http://localhost:8080/api/movimiento/total`, {
             method: 'GET',
@@ -399,23 +397,25 @@ async function recargarSaldo(){
             },
         });
         const data = await res.json();
-        if(!res.ok){
+        if (!res.ok) {
             throw data;
-        }        
-        saldo.innerHTML = `${data.total.toLocaleString('es-PY')} GS.`
-        
-    } catch (err) {        
+        }
+        if (flag === true) {
+            saldo.innerText = `${data.total.toLocaleString('es-PY')} GS.`;
+        }
+        return data;
+    } catch (err) {
         showToast(`${err.error}`, 'error')
     }
 }
 
-document.getElementById('btn-movimiento').addEventListener('click', () => {    
+document.getElementById('btn-movimiento').addEventListener('click', () => {
     document.getElementById('modal-movimiento-caja').classList.remove('hidden');
 });
 
-
 document.getElementById('confirmar-movimiento').addEventListener('click', async (e) => {
-    e.preventDefault();    
+    e.preventDefault();
+    let errores = '';
     let tipoSelcted;
     const form = document.getElementById('movimiento-form');
     const tipos = document.getElementsByName('tipo-movimiento');
@@ -423,22 +423,27 @@ document.getElementById('confirmar-movimiento').addEventListener('click', async 
     const monto = document.getElementById('monto-mm');
 
     tipos.forEach(tipo => {
-        if(tipo.checked){
-            tipoSelcted = tipo.value;            
-        }         
-    })   
-    if(tipoSelcted == undefined){
+        if (tipo.checked) {
+            tipoSelcted = tipo.value;
+        }
+    })
+    if (tipoSelcted == undefined) {
         showToast('Debes Seleccionar un tipo de movimiento', 'error');
+        errores = '1'
     }
-    if(concepto.value == ''){
+    if (concepto.value == '') {
         showToast('Debes Ingresar un concepto', 'error');
+        errores = '2';
     }
-    if(monto.value == ''){
+    if (monto.value == '') {
         showToast('Debes Ingresar un monto', 'error');
+        errores = '3';
+    }
+    if (errores != '') {
         return;
     }
 
-    try{
+    try {
         const formData = new FormData();
         formData.append('tipo', tipoSelcted);
         formData.append('concepto', concepto.value);
@@ -452,14 +457,122 @@ document.getElementById('confirmar-movimiento').addEventListener('click', async 
             body: formData,
         });
         const data = await res.json();
-        if(!res.ok){
+        if (!res.ok) {
             throw data
         }
         form.reset();
         document.getElementById('modal-movimiento-caja').classList.add('hidden');
         limpiarUI();
         showToast('Movimiento registrado');
-    }catch(err){        
+    } catch (err) {
+        showToast(`${err.error}`, 'error')
+    }
+});
+
+//cierre de caja
+document.getElementById('btn-cerrar-caja').addEventListener('click', async () => {
+    const modalCierreCaja = document.getElementById('modalCierreCaja');
+    modalCierreCaja.classList.remove('hidden')
+    await recargarCierreCaja();
+});
+
+async function recargarCierreCaja() {
+    const nombreCC = document.getElementById('nombre-cc');
+    const fechaCC = document.getElementById('fecha-cc');
+    const montoInicialCC = document.getElementById('monto-inicial-cc')
+    const ingresos = document.getElementById('ingresos-cc');
+    const egresos = document.getElementById('egresos-cc');
+    const saldoEsperado = document.getElementById('saldo-esperado');
+
+    try {
+        const res = await fetch('http://localhost:8080/api/movimiento/total', {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+            }
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            throw data;
+        }
+        console.log(data)
+        fechaA = new Date(data.caja.created_at);
+        fechaFormateadaA = fechaA.toLocaleString('es-PY', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).replace(',', ' -');
+        nombreCC.innerText = `${data.caja.user.name}`
+        fechaCC.innerText = `${fechaFormateadaA}`
+        montoInicialCC.innerText = `${data.caja.monto_inicial.toLocaleString('es-PY')} Gs.`
+        ingresos.innerText = `${data.ingreso.toLocaleString('es-PY')} GS.`
+        egresos.innerText = `${data.egreso.toLocaleString('es-PY')} GS.`
+        saldoEsperado.innerText = `${(data.ingreso - data.egreso).toLocaleString('es-PY')} Gs.`
+    } catch (err) {
+        showToast(`${err.error}`, 'error')
+    }
+}
+
+let timerCC;
+document.getElementById('montoContado').addEventListener('input', async (e) => {
+    const data = await recargarSaldo(false);
+    const montoContado = document.getElementById('montoContado').value
+    const diferencia = document.getElementById('diferencia');
+    const saldoEsperado = data.ingreso - data.egreso;
+
+    e.preventDefault();
+    clearTimeout(timerCC)
+    if (montoContado == '') {
+        diferencia.innerText = '0 GS.'
+        return;
+    }
+    timerCC = setTimeout(() => {
+        diferencia.innerText = (montoContado - saldoEsperado).toLocaleString('es-PY') + ' GS.';
+    }, 800)
+})
+
+
+document.getElementById('confirmar-cierre').addEventListener('click', async () => {
+    const data = await recargarSaldo(false);
+    const montoContado = document.getElementById('montoContado').value
+    const observaciones = document.getElementById('observaciones').value;
+    const saldoEsperado = data.ingreso - data.egreso;
+    const diferencia = montoContado - saldoEsperado
+
+    const formData = new FormData();
+    formData.append('monto_cierre', montoContado);
+    formData.append('saldo_esperado', saldoEsperado);
+    formData.append('diferencia', diferencia);
+    formData.append('observaciones', observaciones);
+
+    try {
+        const res = await fetch('http://localhost:8080/caja', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: formData,
+        });
+
+        const data = await res.json();
+        if(!res.ok){
+            throw data;
+        }
+        console.log(data)
+        
+        document.getElementById('modalCierreCaja').classList.add('hidden');
+        showToast('Caja Cerrada Correctamente');        
+        limpiarUI();
+        document.getElementById('modal-carga').classList.remove('hidden');
+        setTimeout(() => {
+            document.getElementById('modal-carga').classList.add('hidden');
+            window.location.href = '/caja';
+        }, 900);
+    } catch (err) {
+        console.log(err)
         showToast(`${err.error}`, 'error')
     }
 });

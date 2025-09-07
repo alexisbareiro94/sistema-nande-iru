@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('subtotal'); // cantidad * precio_unitario o precio_descuento
             $table->integer('total'); 
             $table->timestamps();
-            $table->unique(['venta_id', 'producto_id']);
+            //$table->unique(['venta_id', 'producto_id']);
             $table->foreignId('created_by')->nullable()->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->foreignId('deleted_by')->nullable()->constrained('users');

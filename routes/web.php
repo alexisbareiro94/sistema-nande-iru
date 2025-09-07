@@ -12,6 +12,7 @@ use App\Http\Controllers\VentaController;
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
+use App\Models\MovimientoCaja;
 
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +31,7 @@ Route::middleware('auth')->group(function () {
         //caja
         Route::get('/caja', [CajaController::class, 'index_view'])->name('caja.index');
         Route::post('/abrir-caja', [CajaController::class, 'abrir'])->name('caja.abrir');
+        Route::post('/caja', [CajaController::class, 'update'])->name('caja.update');
 
         //users
         Route::get('/api/users', [UserController::class, 'index'])->name('user.index');
@@ -73,7 +75,16 @@ Route::get('/session/{nombre}', function ($nombre) {
 });
 
 Route::get('/borrar-session', function () {
-    session()->flush();
+    $ingreso = MovimientoCaja::where('tipo', 'ingreso')->selectRaw('SUM(monto) as total')->pluck('total');
+    dd($ingreso);
 });
 
-Route::get('/debug', [CajaController::class, 'index']);
+Route::get('/debug', function(){
+      $egreso = MovimientoCaja::where('tipo', 'egreso')->whereHas('caja', function($query){
+                    $query->where('estado', 'abierto');
+                })->selectRaw('SUM(monto) as total')->first()->total;
+                if($egreso === null){
+                    $egreso = 0;
+                }
+                dd($egreso);
+});

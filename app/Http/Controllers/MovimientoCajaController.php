@@ -15,13 +15,28 @@ class MovimientoCajaController extends Controller
     }    
 
     public function total(){
+        $ingreso = 0;
+        $egreso = 0;
         try{
-            $ingreso = MovimientoCaja::where('tipo', 'ingreso')->selectRaw('SUM(monto) as total')->pluck('total');
-            $egreso = MovimientoCaja::where('tipo', 'egreso')->selectRaw('SUM(monto) as total')->pluck('total');
-            $total = $ingreso[0] - $egreso[0];
+            if(session('caja')){
+                $ingreso = MovimientoCaja::where('tipo', 'ingreso')->whereHas('caja', function($query){
+                    $query->where('estado', 'abierto');
+                })->selectRaw('SUM(monto) as total')->first()->total;
+
+                $egreso = MovimientoCaja::where('tipo', 'egreso')->whereHas('caja', function($query){
+                    $query->where('estado', 'abierto');
+                })->selectRaw('SUM(monto) as total')->first()->total;
+                if($egreso === null){
+                    $egreso = 0;
+                }                
+            }
+            $total = $ingreso - $egreso;
             return response()->json([
                 'success' => true,
                 'total' => $total,
+                'egreso' => $egreso,
+                'ingreso' => $ingreso,
+                'caja' => session('caja'),
             ]);
         }catch(\Exception $e){
             return response()->json([

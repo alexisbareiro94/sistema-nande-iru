@@ -12,20 +12,19 @@ class ProductoFactory extends Factory
     public function definition(): array
     {
         $tipo = $this->faker->randomElement(['producto', 'servicio']);
-        $codigoAuto = $this->faker->boolean(50); // 50% chance de generar código
+        $codigoAuto = $this->faker->boolean(80); // 50% chance de generar código
 
         return [
-            'nombre' => $this->faker->words(3, true),
-            'tipo' => $tipo,
-            // Solo generamos código si no es automático
+            'nombre' => $this->faker->words(2, true),
+            'tipo' => $tipo,            
             'codigo' => $codigoAuto ? null : $this->faker->unique()->regexify('[A-Z0-9]{8}'),
             'marca_id' => $tipo === 'producto' ? Marca::inRandomOrder()->value('id') : null,
             'categoria_id' => Categoria::inRandomOrder()->value('id'),
             'descripcion' => $this->faker->sentence(),
-            'stock' => $tipo === 'producto' ? $this->faker->numberBetween(0, 100) : null,
-            'stock_minimo' => $tipo === 'producto' ? $this->faker->numberBetween(0, 10) : null,
-            'precio_venta' => $this->faker->numberBetween(25, 425),
-            'precio_compra' => $tipo === 'producto' ? $this->faker->numberBetween(5, 200) : null,
+            'stock' => $tipo === 'producto' ? $this->faker->numberBetween(0, 12) : null,
+            'stock_minimo' => $tipo === 'producto' ? $this->faker->numberBetween(0, 4) : null,
+            'precio_venta' => $this->faker->numberBetween(20000, 425000),
+            'precio_compra' => $tipo === 'producto' ? $this->faker->numberBetween(143000, 210000) : null,
             'distribuidor_id' => $tipo === 'producto' ? Distribuidor::inRandomOrder()->value('id') : null,
             'imagen' => null,
         ];

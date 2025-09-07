@@ -51,6 +51,6 @@ class User extends Authenticatable
     }
 
     public function cajas(){
-        return $this->hasMany(Caja::class);
+        return $this->hasMany(Caja::class, 'user_id');
     }
 }
