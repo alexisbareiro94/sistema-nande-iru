@@ -61,6 +61,7 @@ class CajaController extends Controller
     public function update(UpdateCajaRequest $request)
     {
         $data = $request->validated();
+        //return response()->json([$data, now()]);
         $ingreso = 0;
         $egreso = 0;
         try {
@@ -81,14 +82,13 @@ class CajaController extends Controller
             if ($egreso === null) {
                 $egreso = 0;
             }
-            $total = $ingreso - $egreso;
-            
+            $total = $ingreso - $egreso;            
             $caja->update([
                 'monto_cierre' => $data['monto_cierre'], // monto contado
                 'saldo_esperado' => $total,
                 'diferencia' => $data['diferencia'],
                 'observaciones' => $data['observaciones'],
-                'fecha_ciere' => now(),
+                'fecha_cierre' => now(),
                 'estado' => 'cerrado',
                 'updated_by' => auth()->user()->id,
             ]);
