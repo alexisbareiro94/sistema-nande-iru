@@ -17,8 +17,21 @@ class ProductoController extends Controller
     public function __construct(protected ProductService $productService) {}
     public function index()
     {
+        $query = Producto::query();
+        $productos = $query->get();
+        $total = count($productos);
+        $totalServicios = count($productos->where('tipo', 'servicio'));
+        $totalProductos = count($productos->where('tipo', 'producto'));
+        $stock = count($productos->where('tipo', 'producto')->filter(function($producto){
+            return $producto->stock_minimo >= $producto->stock;
+        }));
+        
         return view('productos.index', [
-            'productos' => Producto::orderBy('id','desc')->paginate(15),
+            'productos' => $query->orderBy('id', 'desc')->paginate(15),
+            'stock' => $stock,
+            'total' => $total,
+            'totalProductos' => $totalProductos,
+            'totalServicios' => $totalServicios,
             'categorias' => Categoria::all(),
             'marcas' => Marca::all(),
             'distribuidores' => Distribuidor::all(),
