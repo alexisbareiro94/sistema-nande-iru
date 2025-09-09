@@ -11,8 +11,45 @@ class VentaController extends Controller
 {
     public function __construct(protected VentaService $ventaService) {}
 
-    public function index_view(){
-        return view('caja.historial-completo.index');
+    public function index_view()
+    {
+        $query = Venta::query();
+        $clientes = User::where('role', 'cliente')->selectRaw('count(*) as total_users')->first()->total_users;
+        $totalVentas = count($query->get());
+        $ingresos = $query->sum('total');
+        $ingresosHoy = $query->where('created_at', '>=', now()->format('Y-m-d'))->get()->sum('total');
+        $ventas = Venta::orderByDesc('id')->with('cliente')->paginate(10);
+
+        return view('caja.historial-completo.index', [
+            'clientes' => $clientes,
+            'totalVentas' => $totalVentas,
+            'ingresos' => $ingresos,
+            'ingresosHoy' => $ingresosHoy,
+            'ventas' => $ventas,
+        ]);
+    }
+
+    public function show(string $codigo)
+    {
+        try {
+            $venta = Venta::where('codigo', $codigo)->with(['detalleVentas', 'cliente', 'pagos'])->first();
+            $productos = Producto::whereHas('detalles', function ($query) use ($venta) {
+                            return $query->where('venta_id', $venta->id);
+                        })->with(['detalles' => function ($query) use ($venta) {
+                            $query->where('venta_id', $venta->id);
+                        }])->get();
+
+            return response()->json([
+                'success' => true,
+                'productos' => $productos,
+                'venta' => $venta,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function store(StoreVentaRequest $request)
@@ -59,7 +96,7 @@ class VentaController extends Controller
                 'concepto' => 'Venta de productos',
                 'monto' => $venta->total,
             ]);
-            
+
             $productos = [];
             foreach ($carrito as $id => $producto) {
                 DetalleVenta::create([
@@ -71,8 +108,8 @@ class VentaController extends Controller
                     'precio_descuento' => $producto->precio_descuento,
                     'subtotal' => $producto->cantidad * $producto->precio,
                     'total' => $producto->descuento === true ? $producto->cantidad * $producto->precio_descuento : $producto->cantidad * $producto->precio,
-                ]);         
-                       
+                ]);
+
                 $productdb = Producto::find($id);
                 $productos[] = $productdb;
                 if ($productdb->tipo === 'producto') {
