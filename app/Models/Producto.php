@@ -32,12 +32,12 @@ class Producto extends Model
     public function marca(): \Illuminate\Database\Eloquent\Relations\BelongsTo{
         return $this->belongsTo(Marca::class);
     }
-
-    public function ventas(): \Illuminate\Database\Eloquent\Relations\HasMany{
-        return $this->hasMany(Venta::class, 'producto_id');
-    }
-
+    
     public function distribuidor():\Illuminate\Database\Eloquent\Relations\BelongsTo{
         return $this->belongsTo(Distribuidor::class);
+    }
+
+    public function detalles(){
+        return $this->hasMany(DetalleVenta::class, 'producto_id');
     }
 }
