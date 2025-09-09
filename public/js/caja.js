@@ -97,7 +97,7 @@ async function recargarTablaVentas(data) {
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-5 py-3 font-medium">Gs. ${producto.precio_venta.toLocaleString('es-PY')}</td>                                
+                                <td class="px-5 py-3 font-medium">Gs. ${producto.precio_venta.toLocaleString('es-PY')}</td>
                                 <td class="px-5 py-3 ${stockClass}">${producto.tipo == 'servicio' ? 'servicio' : producto.stock}</td>
                                 <td class="px-5 py-3 text-center">
                                     <button data-producto='${JSON.stringify(producto)}'
@@ -155,7 +155,7 @@ function renderCarrito() {
         const div = document.createElement('div');
         div.classList.add('flex-1')
         div.innerHTML = `
-            <div id="carrito-container" class="bg-gray-50 p-2 flex justify-between items-start border-b border-gray-300">                                
+            <div id="carrito-container" class="bg-gray-50 p-2 flex justify-between items-start border-b border-gray-300">
                 <div class="flex-1">
                     <p class="text-xs font-semibold">${producto.nombre}</p>
                     <p class="text-xs text-gray-500">Código: ${producto.codigo}</p>
@@ -168,10 +168,10 @@ function renderCarrito() {
                     <button data-action="aum" data-id="${id}" class="decaum w-5 h-5 rounded-md bg-yellow-500 text-white flex items-center justify-center hover:bg-yellow-600 transition-colors">
                         <span>+</span>
                     </button>
-                </div>  
+                </div>
                 <div class="ml-3 font-medium flex-col gap-1">
                     Gs. <input data-id="${id}" class="input-precio max-w-24 border border-none hover:border-gray-300 focus:border-gray-200 px-2" type="number"
-                        value="${producto.descuento ? (producto.precio_descuento * producto.cantidad).toLocaleString('es-PY') : (producto.precio * producto.cantidad).toLocaleString('es-PY')}">                                                            
+                        value="${producto.descuento ? (producto.precio_descuento * producto.cantidad).toLocaleString('es-PY') : (producto.precio * producto.cantidad).toLocaleString('es-PY')}">
                         ${producto.descuento ?
                 `<div class="text-xs ml-2 -mt-1.5 text-red-600 font-normal">Gs. ${producto.precio.toLocaleString('es-PY')}</div>`
                 : ''
@@ -219,7 +219,7 @@ document.getElementById('carrito-form').addEventListener('click', (e) => {
         const action = btn.dataset.action;
         const id = btn.dataset.id;
 
-        if (action == 'aum') {
+        if (action === 'aum') {
             carrito[id].cantidad++;
         } else {
             carrito[id].cantidad--;
@@ -291,23 +291,23 @@ form.addEventListener('submit', async (e) => {
             throw data;
         }
         if (data.users && Object.keys(data.users).length > 0) {
-            data.users.forEach(async user => {
+            data.users.forEach(user => {
                 const li = document.createElement('li');
                 li.classList.add('clientes', 'hover:bg-amarillo/20', 'px-2', 'py-2', 'cursor-pointer');
                 li.dataset.razon = user.razon_social;
                 li.dataset.ruc = user.ruc_ci;
-                li.innerHTML = `                    
-                        <p> <strong> Nombre:</strong> ${user.razon_social}</p>                
-                        <p> <strong> RUC/CI:</strong> ${user.ruc_ci}</p>                    
+                li.innerHTML = `
+                        <p> <strong> Nombre:</strong> ${user.razon_social}</p>
+                        <p> <strong> RUC/CI:</strong> ${user.ruc_ci}</p>
                 `;
                 listaUsers.appendChild(li);
-                await selectUser();
+                selectUser();
             });
         } else {
             listaUsers.innerHTML = `
             <div class="items-center justify-center text-center">
                 <p class="text-center text-gray-400">No hay registro</p>
-                <br>                
+                <br>
             </div>
             `;
         }
@@ -318,13 +318,13 @@ form.addEventListener('submit', async (e) => {
     modalUsuarios.classList.remove('hidden')
 });
 
-async function selectUser() {
+function selectUser() {
     const listaUsers = document.getElementById('listaUsuarios');
 
     const inputRazonSocial = document.getElementById('i-nombre-razon');
     const inputRucCi = document.getElementById('i-ruc-ci');
 
-    listaUsers.addEventListener('click', async (e) => {
+    listaUsers.addEventListener('click',  (e) => {
         const btn = e.target.closest('.clientes');
         if (btn) {
             const razon = btn.dataset.razon;
@@ -374,7 +374,6 @@ formAddCliente.addEventListener('submit', async (e) => {
         inputRucCi.value = ruc;
 
         document.getElementById('modalUsuarios').classList.add('hidden');
-        listaUsers.classList.add('hidden');
         document.getElementById('modal-add-cliente').classList.add('hidden');
 
         showToast('Cliente Agregado con éxito', 'success');
@@ -471,7 +470,7 @@ document.getElementById('confirmar-movimiento').addEventListener('click', async 
 
 //cierre de caja
 document.getElementById('btn-cerrar-caja').addEventListener('click', async () => {
-    const modalCierreCaja = document.getElementById('modalCierreCaja');    
+    const modalCierreCaja = document.getElementById('modalCierreCaja');
     modalCierreCaja.classList.remove('hidden')
     await recargarCierreCaja();
 });
@@ -536,13 +535,13 @@ document.getElementById('montoContado').addEventListener('input', async (e) => {
 })
 
 
-document.getElementById('confirmar-cierre').addEventListener('click', async () => {    
+document.getElementById('confirmar-cierre').addEventListener('click', async () => {
     const data = await recargarSaldo(false);
     const montoContado = document.getElementById('montoContado').value
     const observaciones = document.getElementById('observaciones').value;
     const saldoEsperado = data.ingreso - data.egreso;
     const diferencia = montoContado - saldoEsperado
-    
+
     if(montoContado == ''){
         showToast('Debes ingresar el monto contado', 'error')
         return
@@ -566,9 +565,9 @@ document.getElementById('confirmar-cierre').addEventListener('click', async () =
         const data = await res.json();
         if(!res.ok){
             throw data;
-        }        
+        }
         document.getElementById('modalCierreCaja').classList.add('hidden');
-        showToast('Caja Cerrada Correctamente');        
+        showToast('Caja Cerrada Correctamente');
         limpiarUI();
         document.getElementById('modal-carga').classList.remove('hidden');
         setTimeout(() => {
