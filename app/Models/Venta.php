@@ -48,4 +48,14 @@ class Venta extends Model
     {
         return $this->belongsTo(Caja::class, 'caja_id');
     }
+
+    public function pagos()
+    {
+        return $this->hasMany(Pago::class, 'venta_id');
+    }
+
+    public function productos()
+    {
+        return $this->hasManyThrough(Producto::class, DetalleVenta::class, 'venta_id', 'id', 'id', 'producto_id');
+    }
 }
