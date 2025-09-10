@@ -83,15 +83,20 @@ document.getElementById('confirmar-venta').addEventListener('click', async () =>
         }
     }
     const data = await confirmarVenta(formaPago);
-    resumenVenta(data);    
-    limpiarUI();    
+    document.getElementById('modal-carga').classList.remove('hidden');
+    setTimeout(() => {        
+        document.getElementById('modal-carga').classList.add('hidden');
+        resumenVenta(data);
+        limpiarUI();
+    }, 800);
+
 });
 
 
 function resumenVenta(data) {
     const modalVentaCompletada = document.getElementById('modal-venta-completada');
     const resumenVenta = document.getElementById('resumen-venta');
-    modalVentaCompletada.classList.remove('hidden'); 
+    modalVentaCompletada.classList.remove('hidden');
     resumenVenta.innerHTML = '';
     const ul = document.createElement('ul');
     ul.classList.add('space-y-1');
@@ -115,7 +120,7 @@ function resumenVenta(data) {
 
     const li = document.getElementById('li-productos');
     li.innerHTML = '';
-   
+
     data.productos.forEach(producto => {
         const ulP = document.createElement('ul');
         ulP.classList.add('ml-4', 'list-disc', 'list-inside')
@@ -190,6 +195,7 @@ efectivoTransf.forEach(btn => {
     })
 })
 
+let timerVentaC;
 async function confirmarVenta(formaPago) {
     try {
         carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
@@ -213,6 +219,7 @@ async function confirmarVenta(formaPago) {
         if (!res.ok) {
             throw data;
         }
+
         showToast('Venta realizado con éxito');
         return data;
     } catch (err) {
