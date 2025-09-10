@@ -12,7 +12,7 @@ use App\Http\Controllers\VentaController;
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
-use App\Models\MovimientoCaja;
+use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto};
 
 use Illuminate\Support\Facades\Route;
 
@@ -41,12 +41,13 @@ Route::middleware('auth')->group(function () {
         //venta
         Route::post('/api/venta', [VentaController::class, 'store'])->name('venta.store');
         Route::get('/ventas', [VentaController::class, 'index_view'])->name('venta.index.view');
+        Route::get('/venta/{codigo}', [VentaController::class, 'show']);
+        Route::get('/venta', [VentaController::class, 'index']);
 
         //movimiento
         Route::get('/api/movimiento', [MovimientoCajaController::class, 'index'])->name('movimiento.index');
         Route::get('/api/movimiento/total', [MovimientoCajaController::class, 'total'])->name('movimiento.total');
         Route::post('/api/movimiento', [MovimientoCajaController::class, 'store'])->name('movimiento.store');
-        
     });
 
     Route::middleware(AdminMiddleware::class)->group(function () {
@@ -73,7 +74,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/session/{nombre}', function ($nombre) {
-    dd(session("$nombre"), gettype(session("$nombre")));
+    return [session("$nombre"), gettype(session("$nombre"))];
+    session()->forget($nombre);
 });
 
 Route::get('/borrar-session', function () {
@@ -81,6 +83,10 @@ Route::get('/borrar-session', function () {
     dd($ingreso);
 });
 
-Route::get('/debug', function(){
-      dd(now());
+Route::get('/debug', function () {
+    $ventasRes = Venta::orderByDesc('id')->with('cliente')->paginate(10);
+    $movimientoRes = MovimientoCaja::all();
+    $ventas = $ventasRes->union($movimientoRes);
+
+    return $ventas;
 });
