@@ -150,7 +150,7 @@ function renderCarrito() {
     const carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
     const carritoForm = document.getElementById('carrito-form');
     carritoForm.innerHTML = '';
-
+    console.log(carrito)
     Object.entries(carrito).forEach(([id, producto]) => {
         const div = document.createElement('div');
         div.classList.add('flex-1')
@@ -170,7 +170,7 @@ function renderCarrito() {
                     </button>
                 </div>
                 <div class="ml-3 font-medium flex-col gap-1">
-                    Gs. <input data-id="${id}" class="input-precio max-w-24 border border-none hover:border-gray-300 focus:border-gray-200 px-2" type="number"
+                    Gs. <input data-id="${id}" class="input-precio max-w-25 border border-white hover:border-gray-300 focus:border-gray-200 px-2" type="text"
                         value="${producto.descuento ? (producto.precio_descuento * producto.cantidad).toLocaleString('es-PY') : (producto.precio * producto.cantidad).toLocaleString('es-PY')}">
                         ${producto.descuento ?
                 `<div class="text-xs ml-2 -mt-1.5 text-red-600 font-normal">Gs. ${producto.precio.toLocaleString('es-PY')}</div>`
@@ -227,6 +227,7 @@ document.getElementById('carrito-form').addEventListener('click', (e) => {
                 delete carrito[id];
                 let totalVenta = document.getElementById('totalCarrito');
                 totalVenta.innerHTML = '';
+                document.getElementById('subTotalCarrito').innerHTML = '';
             }
         }
 
@@ -342,13 +343,12 @@ const formAddCliente = document.getElementById('form-add-cliente');
 
 formAddCliente.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const listaUsers = document.getElementById('listaUsuarios');
-    //document.getElementById('modalUsuarios').classList.add('hidden');
-    const addCliente = new FormData();
-    addCliente.append('name', document.getElementById('name').value.trim());
-    addCliente.append('surname', document.getElementById('surname').value.trim());
+    const listaUsers = document.getElementById('listaUsuarios');    
+    const addCliente = new FormData();    
     addCliente.append('razon_social', document.getElementById('razon_social').value.trim());
     addCliente.append('ruc_ci', document.getElementById('ruc_ci').value.trim())
+    addCliente.append('email', document.getElementById('correo-c').value.trim());
+    addCliente.append('telefono', document.getElementById('telefono-c').value.trim());
 
     try {
         const res = await fetch(`http://localhost:8080/api/users`, {
@@ -364,7 +364,7 @@ formAddCliente.addEventListener('submit', async (e) => {
         if (!res.ok) {
             throw data;
         }
-
+        console.log(data)
         const inputRazonSocial = document.getElementById('i-nombre-razon');
         const inputRucCi = document.getElementById('i-ruc-ci');
         const razon = data.cliente.razon_social;
@@ -378,6 +378,7 @@ formAddCliente.addEventListener('submit', async (e) => {
 
         showToast('Cliente Agregado con éxito', 'success');
     } catch (err) {
+        console.log(err)
         showToast(`${err.error}`, 'error');
     }
 })
