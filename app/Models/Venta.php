@@ -21,6 +21,7 @@ class Venta extends Model
         'cantidad_productos',
         'con_descuento',
         'monto_descuento',
+        'forma_pago',
         'subtotal',
         'total',
         'estado',
@@ -57,5 +58,9 @@ class Venta extends Model
     public function productos()
     {
         return $this->hasManyThrough(Producto::class, DetalleVenta::class, 'venta_id', 'id', 'id', 'producto_id');
+    }   
+    
+    public function movimiento(){
+        return $this->belongsTo(MovimientoCaja::class, 'venta_id');
     }
 }
