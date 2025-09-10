@@ -173,29 +173,50 @@ document.getElementById('dv-buscar').addEventListener('click', () => {
     const hasta = document.getElementById('dv-hasta').value;
     const estado = document.getElementById('dv-i-estado').value;
     const formaPago = document.getElementById('dv-forma-pago').value;
+    const tipo = document.getElementById('dv-tipo').value;
+
+    if(desde == '' && hasta == '' && estado == '' && formaPago == '' && tipo == ''){
+        window.location.href = '/ventas'
+        return;
+    }
 
     let datos = JSON.parse(sessionStorage.getItem('datos')) ?? {};
-
+    document.getElementById('dv-borrar-filtros').classList.remove('hidden')
     datos = {
         desde: desde,
         hasta: hasta,
         estado: estado,
         formaPago: formaPago,
+        tipo: tipo,
     }
-    sessionStorage.setItem('datos', JSON.stringify(datos))
+    sessionStorage.setItem('datos', JSON.stringify(datos))        
     buscar();
 });
 
-async function buscar() {
+window.addEventListener('DOMContentLoaded', () => {
+    let datos = JSON.parse(sessionStorage.getItem('datos'));
+    console.log(datos)
+    if(datos != null){
+        document.getElementById('dv-borrar-filtros').classList.remove('hidden')
+    }
+})
 
+document.getElementById('dv-borrar-filtros').addEventListener('click', (e)=>{
+    e.target.classList.add('hidden');
+    sessionStorage.removeItem('datos')
+    window.location.href = '/ventas'
+});
+
+async function buscar() {
     const datos = JSON.parse(sessionStorage.getItem('datos')) || {};
     const desde = datos.desde ?? '';
     const hasta = datos.hasta ?? '';
     const estado = datos.estado ?? '';
     const formaPago = datos.formaPago ?? '';
+    const tipo = datos.tipo ?? '';
     const q = document.getElementById('dv-input-s').value;
     try {
-        const res = await fetch(`http://localhost:8080/venta?q=${encodeURIComponent(q)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&estado${encodeURIComponent(estado)}`, {
+        const res = await fetch(`http://localhost:8080/venta?q=${encodeURIComponent(q)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&estado=${encodeURIComponent(estado)}&formaPago=${encodeURIComponent(formaPago)}&tipo=${encodeURIComponent(tipo)}`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -204,10 +225,11 @@ async function buscar() {
         const data = await res.json();
         if (!res.ok) {
             throw data;
-        }
-        recargarTablaHistorialVentas(data);
+        }        
+       recargarTablaHistorialVentas(data);
 
     } catch (err) {
+        console.log(err)
         showToast(`${err.error}`, 'error')
     }
 
@@ -222,17 +244,16 @@ document.getElementById('dv-input-s').addEventListener('input', () => {
 
 function recargarTablaHistorialVentas(data) {
     const bodyTabla = document.getElementById('dv-body-tabla');
-    bodyTabla.innerText = ''
-
+    bodyTabla.innerText = ''    
     const svg = `
 
-                                        <span class="cursor-help" title="Venta con descuento">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m8.99 14.993 6-6m6 3.001c0 1.268-.63 2.39-1.593 3.069a3.746 3.746 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043 3.745 3.745 0 0 1-3.068 1.593c-1.268 0-2.39-.63-3.068-1.593a3.745 3.745 0 0 1-3.296-1.043 3.746 3.746 0 0 1-1.043-3.297 3.746 3.746 0 0 1-1.593-3.068c0-1.268.63-2.39 1.593-3.068a3.746 3.746 0 0 1 1.043-3.297 3.745 3.745 0 0 1 3.296-1.042 3.745 3.745 0 0 1 3.068-1.594c1.268 0 2.39.63 3.068 1.593a3.745 3.745 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.297 3.746 3.746 0 0 1 1.593 3.068ZM9.74 9.743h.008v.007H9.74v-.007Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm4.125 4.5h.008v.008h-.008v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                                            </svg>
-                                        </span>
+                                    <span class="cursor-help" title="Venta con descuento">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="m8.99 14.993 6-6m6 3.001c0 1.268-.63 2.39-1.593 3.069a3.746 3.746 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043 3.745 3.745 0 0 1-3.068 1.593c-1.268 0-2.39-.63-3.068-1.593a3.745 3.745 0 0 1-3.296-1.043 3.746 3.746 0 0 1-1.043-3.297 3.746 3.746 0 0 1-1.593-3.068c0-1.268.63-2.39 1.593-3.068a3.746 3.746 0 0 1 1.043-3.297 3.745 3.745 0 0 1 3.296-1.042 3.745 3.745 0 0 1 3.068-1.594c1.268 0 2.39.63 3.068 1.593a3.745 3.745 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.297 3.746 3.746 0 0 1 1.593 3.068ZM9.74 9.743h.008v.007H9.74v-.007Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm4.125 4.5h.008v.008h-.008v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                                        </svg>
+                                    </span>
     `;    
     data.ventas.forEach(venta => {
         if (venta.venta_id != null) {            
@@ -401,5 +422,6 @@ function recargarTablaHistorialVentas(data) {
             bodyTabla.appendChild(tr);
         }
     });
+    document.getElementById('paginacion').innerHTML = '';
     abrirModalDetalles();
 }
