@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreVentaRequest;
 use App\Services\VentaService;
 use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto};
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class VentaController extends Controller
 {
@@ -18,8 +20,9 @@ class VentaController extends Controller
         $totalVentas = count($query->get());
         $ingresos = $query->sum('total');
         $ingresosHoy = $query->where('created_at', '>=', now()->format('Y-m-d'))->get()->sum('total');
-        $ventas = Venta::orderByDesc('id')->with('cliente')->paginate(10);
-
+        $ventas = MovimientoCaja::orderByDesc('id')->with('venta')->paginate(10);
+        
+   
         return view('caja.historial-completo.index', [
             'clientes' => $clientes,
             'totalVentas' => $totalVentas,
@@ -29,15 +32,64 @@ class VentaController extends Controller
         ]);
     }
 
+    public function index(Request $request)
+    {
+        try {
+            $query = MovimientoCaja::query();            
+            $desdeC = $request->query('desde');
+            $hastaC = $request->query('hasta');
+            $estado = $request->query('estado');
+            $formaPago = $request->query('formaPago');
+            $search = $request->query('q');
+            $orderBy = $request->query('orderBy');
+            $dir = $request->query('direction');
+
+            if (filled($desdeC)) {
+                $desde = Carbon::parse($desdeC)->startOfDay();
+                $query->where('created_at', '>=', $desde);
+            }
+            if (filled($hastaC)) {
+                $hasta = Carbon::parse($hastaC)->endOfDay();
+                $query->where('crated_at', '<=', $hasta);
+            }
+            if (filled($estado)) {
+                $query->where('estado', $estado);
+            }
+            if (filled($search)) {
+                $query->whereHas('venta', function($q) use ($search){
+                    $q->whereLike('codigo', "%$search%")->orWhereHas('cliente', function($q) use ($search){
+                        $q->whereLike('razon_social', "%$search%");
+                    });
+                })->with('venta.cliente');                
+            } else {
+                $query->with('venta.cliente');
+            }
+            if (filled($orderBy) && filled($dir)) {
+                $query->orderBy($orderBy, $dir);
+            }
+            $ventas = $query->orderByDesc('id')->get();         
+
+            return response()->json([
+                'success' => true,
+                'ventas' => $ventas,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function show(string $codigo)
     {
         try {
             $venta = Venta::where('codigo', $codigo)->with(['detalleVentas', 'cliente', 'pagos'])->first();
             $productos = Producto::whereHas('detalles', function ($query) use ($venta) {
-                            return $query->where('venta_id', $venta->id);
-                        })->with(['detalles' => function ($query) use ($venta) {
-                            $query->where('venta_id', $venta->id);
-                        }])->get();
+                return $query->where('venta_id', $venta->id);
+            })->with(['detalles' => function ($query) use ($venta) {
+                $query->where('venta_id', $venta->id);
+            }])->get();
 
             return response()->json([
                 'success' => true,
@@ -71,7 +123,8 @@ class VentaController extends Controller
         $ruc = $data['ruc'];
         $userId = User::where('ruc_ci', $ruc)->pluck('id')->first();
         $cajaId = Caja::where('estado', 'abierto')->pluck('id')->first();
-
+        $metodoPago = $formaPago->keys();
+        session(['key' => $metodoPago[0]]);
         $tieneDescuento = $carrito->contains(function ($item) {
             return $item->descuento === true;
         });
@@ -83,6 +136,7 @@ class VentaController extends Controller
                 'codigo' => generate_code(),
                 'cliente_id' => $userId,
                 'cantidad_productos' => $totalCarrito['cantidadTotal'],
+                'forma_pago' => $metodoPago[0],
                 'con_descuento' => $tieneDescuento,
                 'monto_descuento' => $totalCarrito['subtotal'] - $totalCarrito['total'],
                 'subtotal' => $totalCarrito['subtotal'],
@@ -93,6 +147,7 @@ class VentaController extends Controller
             MovimientoCaja::create([
                 'caja_id' => $cajaId,
                 'tipo' => 'ingreso',
+                'venta_id' => $venta->id,
                 'concepto' => 'Venta de productos',
                 'monto' => $venta->total,
             ]);
@@ -113,7 +168,7 @@ class VentaController extends Controller
                 $productdb = Producto::find($id);
                 $productos[] = $productdb;
                 if ($productdb->tipo === 'producto') {
-                    if ($producto->cantidad < $productdb->stock) {
+                    if ($producto->cantidad <= $productdb->stock) {
                         $productdb->decrement('stock', $producto->cantidad);
                     } else {
                         DB::rollBack();
