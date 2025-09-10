@@ -18,6 +18,7 @@ return new class extends Migration
             $table->enum('role', ['admin', 'caja', 'user', 'cliente'])->default('cliente');
             $table->string('razon_social')->nullable();
             $table->string('ruc_ci')->nullable()->unique();
+            $table->integer('telefono')->nullable();
             $table->string('email')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();

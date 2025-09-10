@@ -28,7 +28,9 @@ class StoreUserRequest extends FormRequest
             'name' => 'nullable|string',
             'surname' => 'nullable|string',
             'razon_social' => 'required|string',
-            'ruc_ci' => 'required|string'
+            'ruc_ci' => 'required|string',
+            'email' => 'nullable|email',
+            'telefono' => 'nullable|numeric'
         ];
     }
 
