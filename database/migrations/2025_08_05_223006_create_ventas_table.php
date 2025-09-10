@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('nro_ticket')->nullable()->unique();
             $table->string('nro_factura')->nullable()->unique();
             $table->integer('cantidad_productos');
+            $table->enum('forma_pago', ['efectivo', 'transferencia', 'mixto']);
             $table->boolean('con_descuento')->default(false);
             $table->integer('monto_descuento')->nullable();
             $table->integer('subtotal');
