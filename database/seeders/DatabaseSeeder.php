@@ -8,8 +8,11 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\TipoCuotaSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Producto;
 use App\Models\Caja;
+use App\Models\MovimientoCaja;
 use App\Models\Venta;
+use Database\Factories\VentaFactory;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,27 +21,31 @@ class DatabaseSeeder extends Seeder
    */
   public function run(): void
   {
-    $this->call([
-      UserSeeder::class,
-    ]);
+    // $this->call([
+    //   UserSeeder::class,
+    // ]);
 
-    Caja::factory()
-      ->has(Venta::factory()->count(20))
-      ->create();
+    // DB::table('marcas')->insert([
+    //   'nombre' => 'sin marca'
+    // ]);
 
+    // DB::table('categorias')->insert([
+    //   'nombre' => 'sin categoria',
+    // ]);
 
-    DB::table('marcas')->insert([
-      'nombre' => 'sin marca'
-    ]);
+    // DB::table('distribuidores')->insert([
+    //   'nombre' => 'sin distribuidor'
+    // ]);
 
-    DB::table('categorias')->insert([
-      'nombre' => 'sin categoria',
-    ]);
+    // \App\Models\Producto::factory(50)->create();
+    
+    // User::factory(11)->create();    
+    // Venta::factory(79)->create([
+    //   'cliente_id' => User::all()->random()->id,
+    //   'total' => 2000000,
+    // ]);
 
-    DB::table('distribuidores')->insert([
-      'nombre' => 'sin distribuidor'
-    ]);
-
-    \App\Models\Producto::factory(50)->create();
+    MovimientoCaja::factory(12)->create();
+    
   }
 }

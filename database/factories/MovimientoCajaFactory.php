@@ -3,8 +3,6 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\MovimientoCaja;
-use App\Models\Caja;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MovimientoCaja>
@@ -16,15 +14,14 @@ class MovimientoCajaFactory extends Factory
      *
      * @return array<string, mixed>
      */
-     protected $model = MovimientoCaja::class;
-
-    public function definition()
+    public function definition(): array
     {
         return [
-            'caja_id' => Caja::factory(),
-            'tipo' => 'ingreso',
-            'concepto' => 'Ingreso inicial',
-            'monto' => $this->faker->numberBetween(10000, 50000),
+            'caja_id' => 1,
+            'tipo' => 'egreso',
+            'concepto' => $this->faker->randomElement(['Pago proveedores', 'extraccion', 'compra']),
+            'monto' => $this->faker->numberBetween(10000, 500000),
+            'created_at' => $this->faker->dateTimeBetween('2025-09-07', now()),
         ];
     }
 }

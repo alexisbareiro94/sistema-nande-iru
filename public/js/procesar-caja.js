@@ -195,6 +195,8 @@ efectivoTransf.forEach(btn => {
     })
 })
 
+
+
 let timerVentaC;
 async function confirmarVenta(formaPago) {
     try {
@@ -248,3 +250,7 @@ async function limpiarUI() {
     await recargarMovimientos();
     await recargarSaldo();
 }
+
+document.getElementById('form-monto-recibido').addEventListener('submit', (e) => {
+    e.preventDefault();
+});

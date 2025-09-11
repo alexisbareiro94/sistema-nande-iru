@@ -2,7 +2,7 @@
     class="hidden fixed inset-0 bg-black/20 flex items-center justify-center z-40 transition-opacity duration-300">
     <div class="bg-white rounded-2xl w-full max-w-2xl overflow-hidden flex flex-col h-[100vh]">
         <!-- header -->
-        <div class="bg-gradient-to-r from-yellow-500 to-amarillo p-4 flex justify-between items-center">
+        <div class="bg-gradient-to-r from-gray-500 to-gray-600 p-4 flex justify-between items-center">
             <div class="flex space-x-20 items-center text-center object-center">
                 <h2 class="text-white text-2xl font-bold flex items-center gap-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
@@ -25,7 +25,7 @@
             </div>
             <!-- cerrar modal x -->
             <button id="cerrar-m-confirmar-ventas"
-                class="text-white cursor-pointer hover:bg-yellow-700 rounded-full p-2 transition-colors">
+                class="text-white cursor-pointer hover:bg-gray-700 rounded-full p-2 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -150,7 +150,7 @@
 
             <!-- resumen del carrito -->
             <div class="mt-4 border border-gray-200 bg-gray-100 shadow-md rounded-md">
-                <h3 class="text-lg font-semibold p-4 border-b border-gray-200 text-center">Resumen</h3>
+                <h3 class="text-lg font-semibold p-4 border-b border-gray-200 text-center">Productos y Servicios</h3>
                 <div class="relative overflow-x-auto">
                     <table class="w-full text-sm text-left text-gray-500 ">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-200 ">
@@ -186,7 +186,7 @@
                 Cancelar
             </button>
             <button id="confirmar-venta"
-                class="cursor-pointer px-4 py-2 bg-yellow-500 text-white font-semibold rounded-xl hover:bg-yellow-600 transition-colors">
+                class="cursor-pointer px-4 py-2 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-colors">
                 Confirmar
             </button>
         </div>

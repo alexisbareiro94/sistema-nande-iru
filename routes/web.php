@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
 
         //venta
         Route::post('/api/venta', [VentaController::class, 'store'])->name('venta.store');
-        Route::get('/ventas', [VentaController::class, 'index_view'])->name('venta.index.view');
+        Route::get('/movimientos', [VentaController::class, 'index_view'])->name('venta.index.view');
         Route::get('/venta/{codigo}', [VentaController::class, 'show']);
         Route::get('/venta', [VentaController::class, 'index']);
 

@@ -1,8 +1,8 @@
 <div id="modal-ventas"
-    class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-40 transition-opacity duration-300">
+    class="hidden fixed inset-0 backdrop-blur-xs bg-black/20 flex items-center justify-center z-40 transition-opacity duration-300">
     <div class="bg-white rounded-2xl w-full max-w-[80%] shadow-2xl overflow-hidden flex flex-col h-[90vh]">
         <!-- Header con título y botón de cierre -->
-        <div class="bg-gradient-to-r from-yellow-500 to-amarillo p-4 flex justify-between items-center">
+        <div class="bg-gradient-to-r from-gray-800 to-gray-900 p-4 flex justify-between items-center">
             <div class="flex space-x-20 items-center text-center object-center">
                 <h2 class="text-white text-2xl font-bold flex items-center gap-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
@@ -27,7 +27,7 @@
 
             <!-- cerrar modal x -->
             <button id="cerrar-modal-ventas"
-                class="text-white cursor-pointer hover:bg-yellow-700 rounded-full p-2 transition-colors">
+                class="text-white cursor-pointer hover:bg-gray-700 rounded-full p-2 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -50,15 +50,15 @@
                     <form id="form-b-productos-ventas" action="">
                         <input id="input-b-producto-ventas" type="text"
                             placeholder="Buscar producto por nombre, código o categoría..."
-                            class="w-full pl-12 pr-4 py-3 border border-gray-300  rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all">
+                            class="w-full pl-12 pr-4 py-3 border border-gray-300  rounded-xl focus:ring-2 focus:ring-gray-400 focus:border-gray-400 transition-all">
                     </form>
                 </div>
 
                 <!-- Tabla de productos con mejor diseño -->
                 <div class="overflow-y-auto rounded-xl border border-gray-200 shadow-sm flex-1">
                     <table class="w-full text-left">
-                        <thead class="bg-gradient-to-r from-yellow-50 to-yellow-100 sticky top-0 z-10">
-                            <tr class="text-yellow-800">
+                        <thead class="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-10">
+                            <tr class="text-gray-800">
                                 <th class="px-5 py-3 font-semibold">Producto</th>
                                 <th class="px-5 py-3 font-semibold">Precio</th>
                                 <th class="px-5 py-3 font-semibold">Stock</th>
@@ -66,6 +66,7 @@
                             </tr>
                         </thead>
                         <tbody id="tabla-venta-productos" class="divide-y divide-gray-100">
+                            {{-- aca se renderizan los productos --}}
                         </tbody>
                     </table>
                 </div>
@@ -76,7 +77,7 @@
                 @include('caja.includes.modal-usuarios')
                 <!-- Información del cliente -->
                 <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-                    <h3 class="font-bold text-lg text-yellow-700 mb-3 flex items-center gap-2">
+                    <h3 class="font-bold text-lg text-gray-700 mb-3 flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -100,7 +101,7 @@
                                         </svg>
                                     </div>
                                     <input id="i-ruc-ci" type="string" placeholder="Ingrese RUC o CI" value=""
-                                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400">
+                                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400">
                                 </div>
                             </div>
 
@@ -118,7 +119,7 @@
                                     </div>
                                     <input id="i-nombre-razon" type="text"
                                         placeholder="Ingrese nombre o razón social" value=""
-                                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400">
+                                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400">
                                 </div>
                             </div>
                             <button class="sr-only" type="submit">b</button>
@@ -130,7 +131,7 @@
                 <div
                     class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 flex-1 flex flex-col overflow-y-auto">
                     <div class="flex justify-between items-center mb-3">
-                        <h4 class="font-bold text-yellow-700 flex items-center gap-2">
+                        <h4 class="font-bold text-gray-700 flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -139,7 +140,7 @@
                             Carrito
                         </h4>
                         <button id="limpiar-carrito"
-                            class="cursor-pointer text-sm text-yellow-600 hover:text-yellow-800 font-medium flex items-center gap-1">
+                            class="cursor-pointer text-sm text-gray-600 hover:text-gray-800 font-medium flex items-center gap-1">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -164,7 +165,7 @@
                         </div>
                         <div class="flex justify-between items-center text-lg font-bold">
                             <span class="text-gray-600">TOTAL:</span>
-                            <span id="totalCarrito" class="text-yellow-600 text-2xl"><!-- total del carrito --></span>
+                            <span id="totalCarrito" class="text-gray-600 text-2xl"><!-- total del carrito --></span>
                         </div>
                     </div>
 
@@ -181,7 +182,7 @@
                         Cancelar
                     </button>
                     <button id="procesar-venta"
-                        class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-xl transition-colors shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                        class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-colors shadow-md hover:shadow-lg flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

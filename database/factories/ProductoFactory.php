@@ -12,7 +12,7 @@ class ProductoFactory extends Factory
     public function definition(): array
     {
         $tipo = $this->faker->randomElement(['producto', 'servicio']);
-        $codigoAuto = $this->faker->boolean(80); // 50% chance de generar código
+        $codigoAuto = $this->faker->boolean(20); // 50% chance de generar código
 
         return [
             'nombre' => $this->faker->words(2, true),
