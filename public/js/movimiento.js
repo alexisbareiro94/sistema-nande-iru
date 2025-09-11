@@ -37,13 +37,13 @@ async function recargarMovimientos() {
             hour12: false
         }).replace(',', ' -');
         const div = document.createElement('div');
-        let montoClass = movimiento.tipo == 'ingreso' ? 'text-green-400' : 'text-red-400';
+        let montoClass = movimiento.tipo == 'ingreso' ? 'text-green-400' : 'text-red-600';
         let simbolo = movimiento.tipo == 'ingreso' ? '+' : '-';
-        div.classList.add('flex', 'items-center', 'justify-between', 'p-3', 'bg-gray-800/50', 'rounded-lg');
+        div.classList.add('flex', 'items-center', 'justify-between', 'p-3', 'bg-gray-200', 'rounded-lg');
         div.innerHTML = `
                 <div>
-                    <p id="concepto-m" class="font-medium text-white">${movimiento.concepto}</p>
-                    <p id="fecha-m" class="text-gray-400 text-sm">${fechaFormateada}</p>
+                    <p id="concepto-m" class="font-medium text-gray-800">${movimiento.concepto}</p>
+                    <p id="fecha-m" class="text-gray-500 text-sm">${fechaFormateada}</p>
                 </div>
                 <span id="monto" class="${montoClass} font-bold">${simbolo} ${movimiento.monto.toLocaleString('es-PY')} Gs.</span>            
         `;

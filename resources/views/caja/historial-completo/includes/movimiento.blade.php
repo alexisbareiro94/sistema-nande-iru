@@ -32,8 +32,8 @@
     </td>
     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
         <div class="flex space-x-2">
-            <button id="btn-detalle-venta" data-ventaId=""
-                class="detalle-venta cursor-pointer text-blue-600 hover:text-blue-900" title="Ver detalles">
+            <button id="btn-detalle-movimiento" data-ventaM="{{ $venta->id }}"
+                class="detalle-movimiento cursor-pointer text-blue-600 hover:text-blue-900" title="Ver detalles">
                 <i class="fas fa-eye">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
                         <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
