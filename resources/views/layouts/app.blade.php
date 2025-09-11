@@ -19,12 +19,33 @@
                 @include('home.aside')
             </aside>
         </div>
-
         <section class="col-span-4 p-6">
-            <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 bg-gray-200 rounded-lg min-h-screen">            
+            <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 bg-gray-200 rounded-lg min-h-screen">
+                <!-- Breadcrumb -->
+                <nav class="text-sm font-semibold text-gray-700 mb-4" aria-label="Breadcrumb">
+                    <ol class="list-reset flex">
+                        <li>
+                            <a href="{{ route('home') }}" class="text-blue-600 hover:underline">Inicio</a>
+                        </li>                        
+                        @if (View::hasSection('ruta-anterior'))
+                            <li><span class="mx-2">/</span></li>
+                            <li class="text-gray-500">
+                                <a href="@yield('url')">@yield('ruta-anterior')</a>
+                            </li>
+                        @endif
+                        @if (View::hasSection('ruta-actual'))                            
+                        <li><span class="mx-2">/</span></li>
+                        <li class="text-gray-500">
+                            @yield('ruta-actual')
+                        </li>
+                        @endif
+                    </ol>
+                </nav>
+
                 @yield('contenido')
             </div>
         </section>
+
         @include('includes.cerrar-sesion')
     </main>
 
