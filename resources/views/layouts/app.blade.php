@@ -21,7 +21,9 @@
         </div>
 
         <section class="col-span-4 p-6">
-            @yield('contenido')
+            <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 bg-gray-200 rounded-lg min-h-screen">            
+                @yield('contenido')
+            </div>
         </section>
         @include('includes.cerrar-sesion')
     </main>

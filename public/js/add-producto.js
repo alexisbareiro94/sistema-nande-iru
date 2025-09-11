@@ -24,16 +24,23 @@ document.getElementById('codigo-auto').addEventListener('click', function(){
 
 const labelServicio = document.getElementById("l-servicio");
 const labelProducto = document.getElementById("l-producto");
+const spanProducto = document.getElementById('s-producto');
+const spanServicio = document.getElementById('s-servicio');
+
 let tipoSeleccionado = "producto";
 tipoProductoRadios.forEach(radio => {
     radio.addEventListener('change', (e) => {
         if (e.target.value === 'servicio') {
-            labelServicio.classList.add('bg-amarillo');
-            labelProducto.classList.remove('bg-amarillo');
+            labelServicio.classList.add('bg-gray-700');
+            labelProducto.classList.remove('bg-gray-700');
+            spanProducto.classList = 'text-gray-800 font-black'    
+            spanServicio.classList = 'text-white font-black'    
             tipoSeleccionado = "servicio";
         } else {
-            labelServicio.classList.remove('bg-amarillo');
-            labelProducto.classList.add('bg-amarillo');
+            labelServicio.classList.remove('bg-gray-700');
+            labelProducto.classList.add('bg-gray-700');
+            spanServicio.classList = 'text-gray-800 font-black'    
+            spanProducto.classList = 'text-white font-black'    
             tipoSeleccionado = "producto";
         }
     });

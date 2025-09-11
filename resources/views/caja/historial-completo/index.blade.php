@@ -3,9 +3,7 @@
 @section('titulo', 'Historial de ventas')
 
 @section('contenido')
-
-    <!-- Filtros y Estadísticas -->
-    <div class=" w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 bg-gray-200  rounded-md min-h-screen">
+    <!-- Filtros y Estadísticas -->    
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4 p-6">
             <div>
                 <h2 class="text-2xl font-bold text-gray-800">Historial de Movimientos</h2>
@@ -242,7 +240,7 @@
                 {{ $ventas->links() }}
             </div>
         </div>
-    </div>
+
 @section('js')
     <script src="{{ asset('js/historial-ventas.js') }}"></script>
     <script src="{{ asset('js/detalle-movimiento.js') }}"></script>

@@ -3,7 +3,7 @@
 @section('titulo', 'Inventario')
 
 @section('contenido')
-    <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 bg-gray-200  rounded-md min-h-screen">
+    
         <!-- Encabezado -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4 p-6">
             <div>
@@ -164,12 +164,12 @@
                     @endforeach
                 </tbody>
             </table>
-            <div id="links" class="max-w-xl items-center mx-auto my-4">
+            <div id="links" class=" px-4  py-2 text-gray-900">
                 {{ $productos->links() }}
             </div>
         </div>
 
         <!-- Modal Eliminar -->
         @include('productos.includes.modal-delete')
-    </div>
+    
 @endsection
