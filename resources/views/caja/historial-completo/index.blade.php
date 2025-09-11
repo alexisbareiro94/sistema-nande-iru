@@ -108,7 +108,6 @@
             <div class="p-6">
                 <div class="flex justify-between">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Filtros de Búsqueda</h3>
-
                     <span id="dv-borrar-filtros" title="Borrar filtros" class="hidden group cursor-pointer">
                         <svg class="w-[24px] h-[24px]  group-hover:text-white group-hover:bg-gray-800 rounded-full  text-gray-800 "
                             aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -116,10 +115,10 @@
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"
                                 d="M14.5 8.046H11V6.119c0-.921-.9-1.446-1.524-.894l-5.108 4.49a1.2 1.2 0 0 0 0 1.739l5.108 4.49c.624.556 1.524.027 1.524-.893v-1.928h2a3.023 3.023 0 0 1 3 3.046V19a5.593 5.593 0 0 0-1.5-10.954Z" />
                         </svg>
-
+                        
                     </span>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Fecha Desde</label>
                         <input id="dv-desde" type="date"
@@ -149,8 +148,22 @@
                             <option value="transferencia">Transferencia</option>
                             <option value="efectivo">Efectivo</option>
                             <option value="mixto">Mixto</option>
+                        </select>   
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                        <select id="dv-tipo"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Todos</option>
+                            <option value="venta">Venta</option>
+                            <option value="con_descuento">Venta con descuento</option>
+                            <option value="venta-ingreso">Ventas e Ingreso</option>
+                            <option value="ingreso">Ingreso</option>
+                            <option value="egreso">Egreso</option>
                         </select>
                     </div>
+
                     <div class="flex items-end">
                         <button id="dv-buscar"
                             class="w-full bg-gray-800 hover:bg-gray-800 cursor-pointer text-white px-4 py-2 rounded-md transition-colors">
@@ -225,13 +238,15 @@
             </div>
 
             <!-- Paginación -->
-            <div class="min-w-full px-6 py-4 bg-white border-t border-gray-200 ">
+            <div id="paginacion" class="min-w-full px-6 py-4 bg-white border-t border-gray-200 ">
                 {{ $ventas->links() }}
             </div>
         </div>
     </div>
 @section('js')
     <script src="{{ asset('js/historial-ventas.js') }}"></script>
+    <script src="{{ asset('js/detalle-movimiento.js') }}"></script>
 @endsection
 @include('caja.historial-completo.detalle-venta')
+@include('caja.historial-completo.detalle-movimiento')
 @endsection
