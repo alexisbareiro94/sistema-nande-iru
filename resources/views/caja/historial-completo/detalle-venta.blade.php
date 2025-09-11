@@ -5,6 +5,12 @@
         <!-- Header del Modal -->
         <div class="border-b px-6 py-4 flex justify-between items-center">
             <h2 id="d-v-codigo" class="text-xl font-bold text-gray-900">Detalle de Venta #V-001</h2>
+            <!-- datos del cajero -->
+            <div class="flex justify-between gap-1 bg-gray-200 px-2 py-0.5 rounded-xl">
+                <span class="font-semibold">Cajero:</span>
+                <p id="dv-cajero">adda</p>
+            </div>
+            <!-- boton para cerrar el modal -->
             <button onclick="cerrarModalDetalle()" class="cursor-pointer text-gray-400 hover:text-gray-600">
                 <span class="text-xl">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -12,26 +18,25 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
                 </span>
-            </button>
+            </button>            
         </div>
 
         <!-- Contenido del Modal -->
-        <div class="p-6">
-            <!-- Información General -->
+        <div class="p-6">            
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-3">Información de la Venta</h3>
+                    <h3 id="dv-info-venta" class="text-lg font-medium text-gray-900 mb-3">Información de la Venta</h3>
                     <div class="space-y-2">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Fecha:</span>
                             <span id="d-v-fecha" class="font-medium">Cargando...</span>
                         </div>
-                        <div class="flex justify-between">
+                        <div id="dv-estado-cont" class="flex justify-between">
                             <span class="text-gray-600">Estado:</span>
                             <span id="d-v-estado"
                                 class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Completado</span>
                         </div>
-                        <div class="flex justify-between">
+                        <div id="dv-met-pago-cont" class="flex justify-between">
                             <span class="text-gray-600">Método de Pago:</span>
                             <div class="flex gap-2 relative">
                                 <span id="d-v-pago" class="font-medium">Cargando...</span>
@@ -84,7 +89,7 @@
                 </div>
 
                 <div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-3">Información del Cliente</h3>
+                    <h3 id="dv-info-cli" class="text-lg font-medium text-gray-900 mb-3">Información del Cliente</h3>
                     <div class="space-y-2">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Nombre:</span>
@@ -104,8 +109,8 @@
 
             <!-- Tabla de Productos -->
             <div class="mb-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-3">Productos</h3>
-                <div class="overflow-x-auto">
+                <h3 id="dv-concepto" class="text-lg font-medium text-gray-900 mb-3">Productos</h3>
+                <div id="table-container" class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
