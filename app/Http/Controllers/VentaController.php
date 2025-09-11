@@ -20,9 +20,9 @@ class VentaController extends Controller
         $totalVentas = count($query->get());
         $ingresos = $query->sum('total');
         $ingresosHoy = $query->where('created_at', '>=', now()->format('Y-m-d'))->get()->sum('total');
-        $ventas = MovimientoCaja::orderByDesc('id')->with('venta')->paginate(10);
-        
-   
+        $ventas = MovimientoCaja::orderByDesc('created_at')->with('venta')->paginate(10);
+
+
         return view('caja.historial-completo.index', [
             'clientes' => $clientes,
             'totalVentas' => $totalVentas,
@@ -35,11 +35,12 @@ class VentaController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = MovimientoCaja::query();            
+            $query = MovimientoCaja::query();
             $desdeC = $request->query('desde');
             $hastaC = $request->query('hasta');
             $estado = $request->query('estado');
             $formaPago = $request->query('formaPago');
+            $tipo = $request->query('tipo');
             $search = $request->query('q');
             $orderBy = $request->query('orderBy');
             $dir = $request->query('direction');
@@ -50,24 +51,46 @@ class VentaController extends Controller
             }
             if (filled($hastaC)) {
                 $hasta = Carbon::parse($hastaC)->endOfDay();
-                $query->where('crated_at', '<=', $hasta);
+                $query->where('created_at', '<=', $hasta);
             }
             if (filled($estado)) {
-                $query->where('estado', $estado);
+                $query->whereHas('venta', function ($q) use ($estado) {
+                    $q->where('estado', $estado);
+                });
+            }
+            if (filled($formaPago)) {
+                $query->whereHas('venta', function ($q) use ($formaPago) {
+                    $q->where('forma_pago', $formaPago);
+                });
+            }
+            if (filled($tipo)) {
+                if ($tipo === 'venta') {
+                    $query->where('venta_id', '!=', null);
+                } elseif ($tipo === 'venta-ingreso') {
+                    $query->where('tipo', 'ingreso');
+                } elseif ($tipo === 'egreso') {
+                    $query->where('tipo', 'egreso');
+                } elseif ($tipo === 'ingreso') {
+                    $query->where('tipo', 'ingreso')->where('concepto', '!=', 'Venta de productos');
+                } elseif ($tipo === 'con_descuento') {
+                    $query->whereHas('venta', function ($q) {
+                        $q->where('con_descuento', true);
+                    });
+                }
             }
             if (filled($search)) {
-                $query->whereHas('venta', function($q) use ($search){
-                    $q->whereLike('codigo', "%$search%")->orWhereHas('cliente', function($q) use ($search){
+                $query->whereHas('venta', function ($q) use ($search) {
+                    $q->whereLike('codigo', "%$search%")->orWhereHas('cliente', function ($q) use ($search) {
                         $q->whereLike('razon_social', "%$search%");
                     });
-                })->with('venta.cliente');                
+                })->with('venta.cliente');
             } else {
                 $query->with('venta.cliente');
             }
             if (filled($orderBy) && filled($dir)) {
                 $query->orderBy($orderBy, $dir);
             }
-            $ventas = $query->orderByDesc('id')->get();         
+            $ventas = $query->orderByDesc('created_at')->get();
 
             return response()->json([
                 'success' => true,
@@ -80,20 +103,25 @@ class VentaController extends Controller
             ]);
         }
     }
-
     public function show(string $codigo)
     {
         try {
-            $venta = Venta::where('codigo', $codigo)->with(['detalleVentas', 'cliente', 'pagos'])->first();
-            $productos = Producto::whereHas('detalles', function ($query) use ($venta) {
-                return $query->where('venta_id', $venta->id);
-            })->with(['detalles' => function ($query) use ($venta) {
-                $query->where('venta_id', $venta->id);
-            }])->get();
+            if(!is_numeric($codigo)){
+                $venta = Venta::where('codigo', $codigo)->with(['detalleVentas', 'cliente', 'pagos', 'caja.user'])->first();
+                
+                $productos = Producto::whereHas('detalles', function ($query) use ($venta) {
+                    return $query->where('venta_id', $venta->id);
+                })->with(['detalles' => function ($query) use ($venta) {
+                    $query->where('venta_id', $venta->id);
+                }])->get();
+            }
+            if(is_numeric($codigo)){
+                $venta = MovimientoCaja::find($codigo)->load('caja.user');
+            }
 
             return response()->json([
                 'success' => true,
-                'productos' => $productos,
+                'productos' => $productos ?? '',
                 'venta' => $venta,
             ]);
         } catch (\Exception $e) {
