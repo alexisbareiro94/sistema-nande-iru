@@ -20,6 +20,12 @@ cerrarModalCaja.forEach(btn => {
 
 document.getElementById('ir-a-ventas').addEventListener('click', () => {
     modalVentas.classList.remove('hidden');
+    const carrito = JSON.parse(sessionStorage.getItem('carrito'));
+    if (carrito == null) {
+        document.getElementById('input-b-producto-ventas').focus();
+    } else if (carrito != null) {
+        document.getElementById('i-ruc-ci').focus();
+    }
 });
 
 
@@ -79,13 +85,13 @@ async function recargarTablaVentas(data) {
         const row = document.createElement('tr');
         const stockClass = producto.tipo == 'servicio' ? 'text-gray-300 font-semibold' : producto.stock < producto.stock_minimo ? 'text-red-500 font-semibold' : 'text-green-500 font-semibold'
 
-        row.classList.add('hover:bg-yellow-50', 'transition-colors');
+        row.classList.add('hover:bg-gray-50', 'transition-colors');
 
         row.innerHTML = `
                                 <td class="px-5 py-3">
                                     <div class="flex items-center gap-3">
-                                        <div class="bg-yellow-100 p-2 rounded-lg">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600"
+                                        <div class="bg-gray-100 p-2 rounded-lg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M15 5v2m0 4v2m0 4v2M5 8a2 2 0 012-2h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V8z" />
@@ -101,12 +107,16 @@ async function recargarTablaVentas(data) {
                                 <td class="px-5 py-3 ${stockClass}">${producto.tipo == 'servicio' ? 'servicio' : producto.stock}</td>
                                 <td class="px-5 py-3 text-center">
                                     <button data-producto='${JSON.stringify(producto)}'
-                                        class="productos cursor-pointer bg-yellow-500 hover:bg-yellow-600 text-white w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                        </svg>
+                                        class="productos  cursor-pointer bg-gray-100 hover:bg-gray-300 border broder-gray-700 text-gray-800 px-2 py-1 rounded-md flex items-center justify-center transition-all shadow-md hover:shadow-lg">
+                                        <span class="font-semibold text-xs">
+                                            ADD     
+                                        </span>
+                            
+                                        <span class="">
+                                        <svg class="w-6 h-6 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M5 4h1.5L9 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-8.5-3h9.25L19 7h-1M8 7h-.688M13 5v4m-2-2h4"/>
+                                            </svg>
+                                        </span>
                                     </button>
                                 </td>
                     `
@@ -161,11 +171,11 @@ function renderCarrito() {
                     <p class="text-xs text-gray-500">Código: ${producto.codigo}</p>
                 </div>
                 <div id="btn-cont" class="flex items-center gap-0 ml-1">
-                    <button data-action="dec" data-id="${id}" class="decaum w-5 h-5 rounded-md bg-yellow-100 text-yellow-700 flex items-center justify-center hover:bg-yellow-200 transition-colors">
+                    <button data-action="dec" data-id="${id}" class="decaum w-5 h-5 rounded-md cursor-pointer bg-gray-200 text-gray-700 flex items-center justify-center hover:bg-gray-200 transition-colors">
                         <span>-</span>
                     </button>
                     <span class="w-5 text-center font-medium">${producto.cantidad}</span>
-                    <button data-action="aum" data-id="${id}" class="decaum w-5 h-5 rounded-md bg-yellow-500 text-white flex items-center justify-center hover:bg-yellow-600 transition-colors">
+                    <button data-action="aum" data-id="${id}" class="decaum w-5 h-5 rounded-md cursor-pointer bg-gray-400 text-white flex items-center justify-center hover:bg-gray-600 transition-colors">
                         <span>+</span>
                     </button>
                 </div>
@@ -294,7 +304,7 @@ form.addEventListener('submit', async (e) => {
         if (data.users && Object.keys(data.users).length > 0) {
             data.users.forEach(user => {
                 const li = document.createElement('li');
-                li.classList.add('clientes', 'hover:bg-amarillo/20', 'px-2', 'py-2', 'cursor-pointer');
+                li.classList = 'clientes hover:bg-gray-100 px-2 py-2 cursor-pointer bg-gray-200 rounded-md';
                 li.dataset.razon = user.razon_social;
                 li.dataset.ruc = user.ruc_ci;
                 li.innerHTML = `
@@ -325,7 +335,7 @@ function selectUser() {
     const inputRazonSocial = document.getElementById('i-nombre-razon');
     const inputRucCi = document.getElementById('i-ruc-ci');
 
-    listaUsers.addEventListener('click',  (e) => {
+    listaUsers.addEventListener('click', (e) => {
         const btn = e.target.closest('.clientes');
         if (btn) {
             const razon = btn.dataset.razon;
@@ -343,8 +353,8 @@ const formAddCliente = document.getElementById('form-add-cliente');
 
 formAddCliente.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const listaUsers = document.getElementById('listaUsuarios');    
-    const addCliente = new FormData();    
+    const listaUsers = document.getElementById('listaUsuarios');
+    const addCliente = new FormData();
     addCliente.append('razon_social', document.getElementById('razon_social').value.trim());
     addCliente.append('ruc_ci', document.getElementById('ruc_ci').value.trim())
     addCliente.append('email', document.getElementById('correo-c').value.trim());
@@ -543,7 +553,7 @@ document.getElementById('confirmar-cierre').addEventListener('click', async () =
     const saldoEsperado = data.ingreso - data.egreso;
     const diferencia = montoContado - saldoEsperado
 
-    if(montoContado == ''){
+    if (montoContado == '') {
         showToast('Debes ingresar el monto contado', 'error')
         return
     }
@@ -564,7 +574,7 @@ document.getElementById('confirmar-cierre').addEventListener('click', async () =
         });
 
         const data = await res.json();
-        if(!res.ok){
+        if (!res.ok) {
             throw data;
         }
         document.getElementById('modalCierreCaja').classList.add('hidden');
