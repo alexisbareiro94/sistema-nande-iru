@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/movimiento', [MovimientoCajaController::class, 'index'])->name('movimiento.index');
         Route::get('/api/movimiento/total', [MovimientoCajaController::class, 'total'])->name('movimiento.total');
         Route::post('/api/movimiento', [MovimientoCajaController::class, 'store'])->name('movimiento.store');
+        Route::get('/api/movimientos/charts_caja', [MovimientoCajaController::class, 'charts_caja']);
     });
 
     Route::middleware(AdminMiddleware::class)->group(function () {
