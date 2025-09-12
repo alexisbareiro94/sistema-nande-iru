@@ -1,10 +1,10 @@
 <div id="modal-ventas"
     class="hidden fixed inset-0 backdrop-blur-xs bg-black/20 flex items-center justify-center z-40 transition-opacity duration-300">
-    <div class="bg-white rounded-2xl w-full max-w-[80%] shadow-2xl overflow-hidden flex flex-col h-[90vh]">
+    <div class="bg-white border-1 border-gray-800 rounded-2xl w-full max-w-[80%] shadow-2xl overflow-hidden flex flex-col h-[90vh]">
         <!-- Header con título y botón de cierre -->
-        <div class="bg-gradient-to-r from-gray-800 to-gray-900 p-4 flex justify-between items-center">
+        <div class="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-700 p-4 flex justify-between items-center">
             <div class="flex space-x-20 items-center text-center object-center">
-                <h2 class="text-white text-2xl font-bold flex items-center gap-3">
+                <h2 class="text-gray-800 text-2xl font-bold flex items-center gap-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -13,7 +13,7 @@
                     Nueva Venta
                 </h2>
 
-                <span class="flex gap-2 font-semibold text-white">
+                <span class="flex gap-2 font-semibold text-gray-800">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="size-6">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -23,11 +23,9 @@
                 </span>
 
             </div>
-
-
             <!-- cerrar modal x -->
             <button id="cerrar-modal-ventas"
-                class="text-white cursor-pointer hover:bg-gray-700 rounded-full p-2 transition-colors">
+                class="text-gray-800 cursor-pointer hover:bg-gray-200 rounded-full p-2 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

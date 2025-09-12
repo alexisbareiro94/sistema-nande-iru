@@ -32,12 +32,12 @@
                     </div>
                 </form>
                 <button id="btn-add-marca" type="button"
-                    class="w-full mb-2 text-black bg-amarillo hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    class="w-full mb-2 text-white bg-gray-700 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                     Agregar
                 </button>
 
                 <button id="all-marcas" type="button"
-                    class="w-full text-black bg-white border border-white cursor-pointer hover:border-amarillo focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    class="w-full text-black bg-white border border-white cursor-pointer hover:border-gray-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                     Todas las marcas
                 </button>
             </div>

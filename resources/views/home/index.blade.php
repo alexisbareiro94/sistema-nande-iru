@@ -3,12 +3,11 @@
 @section('titulo', 'home')
 
 @section('contenido')
- <header class="bg-[#FFC60A] text-black shadow-md">
+ <header class="bg-gray-300 text-black shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <a href="{{ url('/') }}" class="text-xl font-bold">MiApp</a>
 
-            <nav class="space-x-4 flex">
-                <a href="" class="hover:text-[#CC0000] font-semibold">Inicio</a>
+            <nav class="space-x-4 flex">                
                 <a href="" class="hover:text-[#CC0000] font-semibold">Perfil</a>
                 <span id="" class="hover:text-[#CC0000] font-semibold cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

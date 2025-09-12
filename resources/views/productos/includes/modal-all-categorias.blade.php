@@ -13,7 +13,7 @@
                         <input id="query-c" type="text" name="query-c" placeholder="Buscar categoria..."
                                class="border border-gray-300 rounded-l-lg px-2 py-2">
                     </form>
-                    <button type="submit" id="s-query-c" class="px-2 py-1 bg-amarillo rounded-r-lg">
+                    <button type="submit" id="s-query-c" class="px-2 py-1 bg-gray-800 rounded-r-lg text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                              stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round"

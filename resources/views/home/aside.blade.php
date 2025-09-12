@@ -8,13 +8,13 @@
         <ul class="space-y-2">
             <li>
                 <a href="#"
-                    class="flex items-center p-3 rounded-lg hover:bg-blue-950 hover:text-white transition-colors">
+                    class="flex items-center p-3 rounded-lg hover:bg-blue-950 hover:text-white hover:scale-110 transition-all hover:shadow-xl">
                     <span class="font-semibold">Inicio</span>
                 </a>
             </li>
             <li>
                 <a href="#"
-                    class="flex items-center p-3 rounded-lg hover:bg-blue-950 hover:text-white transition-colors"> </i>
+                    class="flex items-center p-3 rounded-lg hover:bg-blue-950 hover:text-white hover:scale-110 transition-all hover:shadow-xl"> 
 
                     <span class="font-semibold text-sm">
                         Gestión de Clientes y Distribuidores
@@ -23,37 +23,37 @@
             </li>
             <li>
                 <a href="#"
-                    class="flex items-center p-3 rounded-lg hover:bg-blue-950 hover:text-white transition-colors"> </i>
+                    class="flex items-center p-3 rounded-lg hover:bg-blue-950 hover:text-white hover:scale-110 transition-all hover:shadow-xl"> 
                     <span class="font-semibold">Caja</span>
                 </a>
             </li>
             <li>
                 <a href="#"
-                    class="flex items-center p-3 rounded-lg hover:bg-blue-950 hover:text-white transition-colors"> </i>
+                    class="flex items-center p-3 rounded-lg hover:bg-blue-950 hover:text-white hover:scale-110 transition-all hover:shadow-xl"> 
                     <span class="font-semibold">Inventario</span>
                 </a>
             </li>
             <li>
                 <a href="#"
-                    class="flex items-center p-3 rounded-lg hover:bg-blue-950 hover:text-white transition-colors">
+                    class="flex items-center p-3 rounded-lg hover:bg-blue-950 hover:text-white hover:scale-110 transition-all hover:shadow-xl">
                     <span class="font-semibold">Gestión de Usuarios</span>
                 </a>
             </li>
             <li>
                 <a href="#"
-                    class="flex items-center p-3 rounded-lg hover:bg-blue-950 hover:text-white transition-colors">
+                    class="flex items-center p-3 rounded-lg hover:bg-blue-950 hover:text-white hover:scale-110 transition-all">
                     <span class="font-semibold">Reportes</span>
                 </a>
             </li>
             <li class="border-t border-gray-400 mt-10">
                 <a href="#"
-                    class="flex items-center p-3 mt-10 rounded-lg hover:bg-blue-950 hover:text-white transition-colors">
+                    class="flex items-center p-3 mt-10 rounded-lg hover:bg-blue-950 hover:text-white hover:scale-110 transition-all">
                     <span class="font-semibold">Perfil</span>
                 </a>
             </li>
             <li>
                 <span id="cerrar-sesion"
-                    class="flex items-center cursor-pointer p-3 rounded-lg hover:bg-blue-950 hover:text-white transition-colors">
+                    class="flex items-center cursor-pointer p-3 rounded-lg hover:bg-blue-950 hover:text-white hover:scale-110 transition-all">
                     <span class="hover:text-[#CC0000] font-semibold cursor-pointer flex gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="size-6">

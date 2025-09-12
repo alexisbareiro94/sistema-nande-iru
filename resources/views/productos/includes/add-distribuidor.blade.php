@@ -54,12 +54,12 @@
                             required />
                     </div>
                     <button id="btn-add-dist" type="button"
-                    class="cursor-pointer w-full text-black bg-amarillo hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    class="cursor-pointer w-full text-white bg-gray-700 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                     Agregar
                 </button>
                 </form>                
                 <button id="ver-dists" type="button"
-                    class="cursor-pointer mt-1 w-full text-black bg-white border border-white animation-all duration-150 hover:border-yellow-500/50 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    class="cursor-pointer mt-1 w-full text-black bg-white border border-white animation-all duration-150 hover:border-gray-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                     Todos los Distribuidores
                 </button>
             </div>

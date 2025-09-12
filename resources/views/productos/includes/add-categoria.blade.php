@@ -24,11 +24,11 @@
                     </div>
 
                     <button id="btn-add-categoria" type="button"
-                            class="mb-2 w-full cursor-pointer text-black bg-amarillo hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                            class="mb-2 w-full cursor-pointer text-white bg-gray-700 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                         Agregar
                     </button>
 
-                    <button id="all-categorias" type="button" class="w-full cursor-pointer text-black bg-white border border-white hover:border-amarillo focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    <button id="all-categorias" type="button" class="w-full cursor-pointer text-black bg-white border border-white hover:border-gray-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                         Todas las Categorias
                     </button>
                 </form>

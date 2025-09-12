@@ -13,7 +13,7 @@
                         <input id="query-m" type="text" name="query-m" placeholder="Buscar marca..."
                             class="border border-gray-300 rounded-l-lg px-4 py-2">
                     </form>
-                    <button type="submit" id="s-query-m" class="px-2 py-1 bg-amarillo rounded-r-lg">
+                    <button type="submit" id="s-query-m" class="px-2 py-1 bg-gray-800 text-white rounded-r-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round"
