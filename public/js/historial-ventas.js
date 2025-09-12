@@ -220,7 +220,7 @@ window.addEventListener('DOMContentLoaded', () => {
 document.getElementById('dv-borrar-filtros').addEventListener('click', (e)=>{
     e.target.classList.add('hidden');
     sessionStorage.removeItem('datos')
-    window.location.href = '/ventas'
+    window.location.href = '/movimientos'
 });
 
 async function buscar() {
