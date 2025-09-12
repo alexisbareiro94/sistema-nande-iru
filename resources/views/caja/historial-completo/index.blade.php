@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('ruta-anterior', 'Caja')
+@section('url', "/caja")
+@section('ruta-actual', 'Historial de Movimientos')
+
 @section('titulo', 'Historial de ventas')
 
 @section('contenido')
