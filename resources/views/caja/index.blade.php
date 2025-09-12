@@ -5,12 +5,13 @@
 @section('ruta-actual', 'Caja')
 
 @section('contenido')
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-800">Gestión de Caja</h2>
-            </div>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800">Gestión de Caja</h2>
         </div>
+    </div>
 
+    <div class="flex flex-col">
         <div class="bg-white rounded-xl shadow-sm overflow-hidden p-4">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Panel izquierdo - Estado y controles -->
@@ -134,13 +135,61 @@
                     @include('caja.includes.movimientos')
                 </div>
             </div>
-    </div> @include('caja.includes.modal-venta')
-    @include('caja.includes.modal-abrir-caja')
-    @include('caja.includes.modal-add-clientes')
-    @include('caja.venta-completada')
-    @include('caja.movimientos-manuales')
-    @include('caja.carrar-caja')
-    @include('caja.includes.cargando')
+        </div>
+        <!-- graficos -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden p-6 mt-4 h-auto">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <!-- Título -->
+                <h3 class="text-2xl font-bold text-gray-800">Estadísticas de ingresos y egresos por Dia</h3>                
+
+                <!-- Formulario de fechas -->
+                <form action="" id="dv-form-fecha"
+                    class="flex flex-col sm:flex-row items-center gap-3 bg-gray-50 rounded-lg p-4">
+                    <div class="pr-12 flex flex-col gap-1">
+                        <label for="periodoInicio" class="text-sm font-medium text-gray-700">Seleccionar Periodo</label>
+                        <select class="px-3 py-2 border border-gray-300 rounded-md items-center"
+                            name="periodoInicio" id="dv-periodo">                            
+                            <option value="semana">Semana</option>
+                            <option value="mes">Mes</option>
+                            <option value="anio">Año</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label for="dv-fecha-desde" class="text-sm font-medium text-gray-700">Desde:</label>
+                        <input
+                            class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
+                            type="date" id="dv-fecha-desde" name="dv-fecha-desde"
+                            value="{{ now()->startOfWeek()->format('Y-m-d') }}"
+                           >
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="dv-fecha-hasta" class="text-sm font-medium text-gray-700">Hasta:</label>
+                        <input
+                            class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
+                            type="date" id="dv-fecha-hasta" name="dv-fecha-hasta"
+                            value="{{ now()->endOfWeek()->format('Y-m-d') }}"
+                           >
+                    </div>
+
+                    <button type="submit"
+                        class="cursor-pointer bg-gray-600 mt-6 text-white px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors font-medium">
+                        Aplicar filtro
+                    </button>
+                </form>
+            </div>
+            <!-- Gráficos -->
+            @include('caja.graficos.graficos')
+        </div>
+
+        @include('caja.includes.modal-venta')
+        @include('caja.includes.modal-abrir-caja')
+        @include('caja.includes.modal-add-clientes')
+        @include('caja.venta-completada')
+        @include('caja.movimientos-manuales')
+        @include('caja.carrar-caja')
+        @include('caja.includes.cargando')
+    </div>
 
 @section('js')
     <script src="{{ asset('js/caja.js') }}"></script>
