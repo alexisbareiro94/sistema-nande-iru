@@ -1,4 +1,4 @@
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
       <!-- Total Productos -->
       <div
           class="bg-yellow-50 p-5 rounded-xl shadow-sm border-2 border-yellow-400 hover:shadow-md transition-shadow duration-200">
@@ -19,6 +19,24 @@
 
       <!-- Stock Mínimo -->
       <div
+          class="bg-orange-50 p-5 rounded-xl shadow-sm border-2 border-orange-400 hover:shadow-md transition-shadow duration-200">
+          <div class="flex items-center">
+              <div class="p-3 rounded-full bg-orange-200">
+                  <svg class="h-6 w-6 text-orange-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                      viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                  </svg>
+              </div>
+              <div class="ml-4">
+                  <p class="text-gray-500 text-sm font-medium">Stock Mínimo</p>
+                  <p class="text-2xl font-bold text-gray-900">{{ $stock }}</p>
+              </div>
+          </div>
+      </div>
+
+      <!-- Sin Stock -->
+      <div
           class="bg-red-50 p-5 rounded-xl shadow-sm border-2 border-red-400 hover:shadow-md transition-shadow duration-200">
           <div class="flex items-center">
               <div class="p-3 rounded-full bg-red-200">
@@ -29,12 +47,11 @@
                   </svg>
               </div>
               <div class="ml-4">
-                  <p class="text-gray-500 text-sm font-medium">Stock Mínimo</p>
-                  <p class="text-2xl font-bold text-gray-900">{{ $stock }}</p>
+                  <p class="text-gray-500 text-sm font-medium">Sin Stock</p>
+                  <p class="text-2xl font-bold text-gray-900">{{ $sinStock }}</p>
               </div>
           </div>
       </div>
-
       <!-- Servicios -->
       <div
           class="bg-green-50 p-5 rounded-xl shadow-sm border-2 border-green-400 hover:shadow-md transition-shadow duration-200">
