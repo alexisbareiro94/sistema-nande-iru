@@ -1,34 +1,35 @@
 @extends('layouts.app')
-
+@section('ruta-anterior', 'Inventario')
+@section('url', '/inventario')
+@section('ruta-actual', 'Edicion de producto')
 @section('titulo', "Editar $producto->nombre")
 
 @section('contenido')
-    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden mt-2">
-        <div class="bg-gradient-to-r from-amarillo to-yellow-500 p-6">
-            <h1 class="text-2xl font-bold text-white flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008Z" />
-                </svg>
-                Edición de Producto: {{ $producto->nombre }}
-            </h1>
-        </div>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4 p-6">
+        <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+            </svg>
 
+            Edicion de: {{ $producto->nombre }}
+        </h1>
+    </div>
+    <div class="max-w-full mx-auto bg-white rounded-2xl shadow-md overflow-hidden mt-2">
         <form id="form-add-producto-u" action="" method="POST" enctype="multipart/form-data" class="p-6 space-y-8">
             <!-- Sección de Información Básica -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input type="hidden" id="producto_id" name="producto_id" value="{{ $producto->id ?? ''}}">
+                <input type="hidden" id="producto_id" name="producto_id" value="{{ $producto->id ?? '' }}">
                 <!-- Nombre -->
                 <div class="md:col-span-2">
                     <label for="nombre" class="block text-sm font-semibold text-gray-700 mb-1.5">
                         Nombre del Producto:
                     </label>
                     <input type="text" name="nombre" id="nombre" placeholder="Escribe el nuevo nombre"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo transition-all duration-200">
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-700 focus:border-gray-700 transition-all duration-200">
                     <p class="text-xs text-gray-500 mt-1">
-                        Nombre Actual: <span class="font-semibold underline">{{ $producto->nombre ?? ''}}</span>
+                        Nombre Actual: <span class="font-semibold underline">{{ $producto->nombre ?? 'Sin Nombre' }}</span>
                     </p>
                 </div>
 
@@ -37,9 +38,9 @@
                         Código de Producto:
                     </label>
                     <input type="text" name="codigo" id="codigo" value="" placeholder="Escribe el nuevo codigo"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo">
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-700 focus:border-gray-700">
                     <p class="text-xs text-gray-500 mt-1">
-                        Código Actual: <span class="font-semibold underline">{{ $producto->codigo ?? '' }}</span>
+                        Código Actual: <span class="font-semibold underline">{{ $producto->codigo ?? 'Sin Codigo' }}</span>
                     </p>
                 </div>
 
@@ -50,7 +51,7 @@
                     </label>
                     <div class="flex">
                         <select name="categoria_id" id="categoria_id"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-l-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo appearance-none bg-white">
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-l-xl focus:ring-2 focus:ring-gray-700 focus:border-gray-700 appearance-none bg-white">
                             <option value="">Seleccionar nueva categoría</option>
                             @foreach ($categorias as $categoria)
                                 <option value="{{ $categoria->id }}">
@@ -59,12 +60,16 @@
                             @endforeach
                         </select>
 
-                        <span id="add-categoria" class="px-3 py-3 bg-amarillo rounded-r-xl cursor-pointer">
-                            +
+                        <span id="add-categoria" class="px-3 py-3 bg-gray-700 text-white rounded-r-xl cursor-pointer">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
                         </span>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">
-                        Categoría Actual: <span class="font-semibold underline">{{ $producto->categoria->nombre ?? ''}}</span>
+                        Categoría Actual: <span
+                            class="font-semibold underline">{{ $producto->categoria->nombre ?? 'Sin Categoria' }}</span>
                     </p>
                 </div>
                 <!-- marcas -->
@@ -74,7 +79,7 @@
                     </label>
                     <div class="flex">
                         <select name="marca_id" id="marca_id"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-l-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo appearance-none bg-white">
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-l-xl focus:ring-2 focus:ring-gray-700 focus:border-gray-700 appearance-none bg-white">
                             <option value="">Seleccionar nueva marca</option>
                             @foreach ($marcas as $marca)
                                 <option value="{{ $marca->id }}">
@@ -83,12 +88,15 @@
                             @endforeach
                         </select>
 
-                        <span id="add-marca" class="px-3 py-3 bg-amarillo rounded-r-xl cursor-pointer">
-                            +
+                        <span id="add-marca" class="px-3 py-3 bg-gray-700 text-white rounded-r-xl cursor-pointer">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
                         </span>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">
-                        Marca Actual: <span class="font-semibold underline">{{ $producto->marca->nombre ?? '' }}</span>
+                        Marca Actual: <span class="font-semibold underline">{{ $producto->marca->nombre ?? 'Sin Marca' }}</span>
                     </p>
                 </div>
             </div>
@@ -101,7 +109,7 @@
                     </label>
                     <div class="flex">
                         <select name="distribuidor_id" id="distribuidor_id"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-l-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo appearance-none bg-white">
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-l-xl focus:ring-2 focus:ring-gray-700 focus:border-gray-700 appearance-none bg-white">
                             <option value="">Seleccionar nuevo Distribuidor</option>
                             @foreach ($distribuidores as $distribudor)
                                 <option value="{{ $distribudor->id }}">
@@ -110,13 +118,16 @@
                             @endforeach
                         </select>
 
-                        <span id="add-distribuidor" class="px-3 py-3 bg-amarillo rounded-r-xl cursor-pointer">
-                            +
+                        <span id="add-distribuidor" class="px-3 py-3 bg-gray-700 text-white rounded-r-xl cursor-pointer">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
                         </span>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">
                         Distribuidor Actual: <span
-                            class="font-semibold underline">{{ $producto->distribuidor->nombre ?? ''}}</span>
+                            class="font-semibold underline">{{ $producto->distribuidor->nombre ?? 'Sin Distribuidor' }}</span>
                     </p>
                 </div>
 
@@ -127,15 +138,14 @@
                     </label>
                     <div class="flex gap-0.5 text-center">
                         <select name="tipo-e" id="tipo-e"
-                                class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo appearance-none bg-white">
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-700 focus:border-gray-700 appearance-none bg-white">
                             <option value="">Seleccionar nuevo Tipo de producto</option>
                             <option value="servicio">Servicio</option>
                             <option value="producto">Producto</option>
                         </select>
                     </div>
                     <p class="text-xs text-gray-500 mt-1">
-                        Distribuidor Actual: <span
-                            class="font-semibold underline">{{ $producto->tipo ?? ''}}</span>
+                        Distribuidor Actual: <span class="font-semibold underline">{{ $producto->tipo ?? '' }}</span>
                     </p>
                 </div>
             </div>
@@ -145,7 +155,7 @@
                     Descripción Detallada:
                 </label>
                 <textarea name="descripcion" id="descripcion" rows="3"
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-700 focus:border-gray-700"
                     placeholder="Describe las características principales del producto...">{{ $producto->descripcion ?? '' }}</textarea>
 
                 @if (empty($producto->descripcion))
@@ -161,7 +171,7 @@
                 <!-- Precios -->
                 <div class="space-y-6 bg-gray-50 p-5 rounded-xl">
                     <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2 border-b pb-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amarillo" fill="none"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 7c1.11 0 2.08.402 2.599 1" />
@@ -179,7 +189,7 @@
                                 <span class="text-gray-500 sm:text-sm mr-1">GS.</span>
                             </div>
                             <input type="number" name="precio_compra" id="precio_compra" value=""
-                                class="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo"
+                                class="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-700 focus:border-gray-700"
                                 placeholder="0.00">
                         </div>
                         <p class="text-xs text-gray-500 mt-1">
@@ -198,7 +208,7 @@
                                 <span class="text-gray-500 sm:text-sm">GS.</span>
                             </div>
                             <input type="number" name="precio_venta" id="precio_venta" value=""
-                                class="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo"
+                                class="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-700 focus:border-gray-700"
                                 placeholder="0.00">
                         </div>
                         <p class="text-xs text-gray-500 mt-1">
@@ -211,7 +221,7 @@
                 <!-- Stock -->
                 <div class="space-y-6 bg-gray-50 p-5 rounded-xl">
                     <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2 border-b pb-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amarillo" fill="none"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
@@ -227,7 +237,7 @@
                                 class="text-lg px-2 py-1 bg-gray-300 rounded-md">{{ number_format($producto->stock, 0, ',', '.') }}</span> --}}
                         </label>
                         <input type="number" name="stock" id="stock" value=""
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-700 focus:border-gray-700"
                             placeholder="0">
 
                         @if ($producto->tipo == 'servicio')
@@ -247,7 +257,7 @@
                             Stock Mínimo:
                         </label>
                         <input type="number" name="stock_minimo" id="stock_minimo" value=""
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amarillo focus:border-amarillo"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-700 focus:border-gray-700"
                             placeholder="4">
                         @if ($producto->tipo == 'servicio')
                             <p class="text-xs text-gray-500 mt-1">
@@ -268,7 +278,7 @@
                     Imagen del Producto
                 </label>
                 <div
-                    class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl hover:border-amarillo transition-colors duration-300">
+                    class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl hover:border-gray-700 transition-colors duration-300">
 
                     {{-- seleccionar una imagen --}}
                     <div id="div-img-original-u" @class([
@@ -283,7 +293,7 @@
                         </svg>
                         <div class="flex text-sm text-gray-600">
                             <label for="imagen"
-                                class="relative cursor-pointer bg-amarillo hover:bg-yellow-500 rounded-lg font-medium text-white py-2 px-4 transition-colors">
+                                class="relative cursor-pointer bg-gray-700 hover:bg-yellow-500 rounded-lg font-medium text-white py-2 px-4 transition-colors">
                                 <span>Seleccionar imagen</span>
                                 <input id="imagen" name="imagen" type="file" class="sr-only" accept="image/*">
                             </label>
@@ -353,7 +363,7 @@
             <!-- Botón de Envío -->
             <div class="flex justify-end pt-4 border-t">
                 <button type="button" id="boton-u"
-                    class="group bg-gradient-to-r from-amarillo to-yellow-500 hover:from-yellow-500 hover:to-amarillo text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amarillo">
+                    class="group bg-gradient-to-r from-gray-700 to-yellow-500 hover:from-yellow-500 hover:to-gray-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-700">
                     <span class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition-transform"
                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -366,6 +376,7 @@
             </div>
         </form>
     </div>
+
     @include('productos.includes.add-distribuidor')
     @include('productos.includes.add-categoria')
     @include('productos.includes.add-marca')
