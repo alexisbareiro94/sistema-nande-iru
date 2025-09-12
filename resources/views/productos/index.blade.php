@@ -2,6 +2,8 @@
 
 @section('titulo', 'Inventario')
 
+@section('ruta-actual', 'Inventario')
+
 @section('contenido')
     
         <!-- Encabezado -->

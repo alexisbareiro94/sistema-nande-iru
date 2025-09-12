@@ -1,7 +1,8 @@
 @extends('layouts.app')
-
 @section('titulo', 'Agregar Producto')
-
+@section('ruta-anterior', 'Inventario')
+@section('url', '/inventario')
+@section('ruta-actual', 'Nuevo Producto')
 @section('contenido')
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4 p-6">
         <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
