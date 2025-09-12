@@ -22,14 +22,14 @@ class ProductoController extends Controller
         $total = count($productos);
         $totalServicios = count($productos->where('tipo', 'servicio'));
         $totalProductos = count($productos->where('tipo', 'producto'));
-        $stock = count($productos->where('tipo', 'producto')->filter(function($producto){
-            return $producto->stock_minimo >= $producto->stock;
-        }));
-        
+        $stock = count(Producto::where('tipo', 'producto')->whereColumn('stock_minimo', '>=', 'stock')->where('stock','!=', 0)->get());
+        $sinStock = count(Producto::where('stock', 0)->get());        
+
         return view('productos.index', [
             'productos' => $query->orderBy('id', 'desc')->paginate(15),
             'stock' => $stock,
             'total' => $total,
+            'sinStock'=> $sinStock,
             'totalProductos' => $totalProductos,
             'totalServicios' => $totalServicios,
             'categorias' => Categoria::all(),
@@ -83,11 +83,11 @@ class ProductoController extends Controller
 
     //function para actualizar la lista dinámicamente el <select> con js
     public function all()
-    {
+    {        
         return response()->json([
             'marcas' => Marca::all(),
             'categorias' => Categoria::all(),
-            'distribuidores' => Distribuidor::all(),
+            'distribuidores' => Distribuidor::all(),            
         ]);
     }
 
@@ -198,12 +198,19 @@ class ProductoController extends Controller
 
     public function delete(string $id){
         try{
+            $query = Producto::query();
+            $productos = $query->get();
             $producto = Producto::find($id);
             $producto->delete();
 
             return response()->json([
                 'success' => true,
                 'message' => "producto borrado",
+                'total' => count($productos),
+                'totalServicios' => count($productos->where('tipo', 'servicio')),
+                'totalProductos' => count($productos->where('tipo', 'producto')),
+                'stock' => count(Producto::where('tipo', 'producto')->whereColumn('stock_minimo', '>=', 'stock')->where('stock','!=', 0)->get()),
+                'sinStock' => count(Producto::where('stock', 0)->get()),
             ]);
         }catch(\Exception $e){
             return response()->json([
