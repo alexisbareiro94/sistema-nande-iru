@@ -160,7 +160,7 @@ function renderCarrito() {
     const carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
     const carritoForm = document.getElementById('carrito-form');
     carritoForm.innerHTML = '';
-    console.log(carrito)
+ 
     Object.entries(carrito).forEach(([id, producto]) => {
         const div = document.createElement('div');
         div.classList.add('flex-1')

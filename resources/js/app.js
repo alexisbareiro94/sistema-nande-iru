@@ -7,7 +7,7 @@ async function loadChart(desde = '', hasta = '', periodo = '') {
   try {
     const res = await fetch(`http://localhost:8080/api/movimientos/charts_caja?desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&periodoInicio=${encodeURIComponent(periodo)}`);
     const data = await res.json();
-    console.log(data);
+
     const ctx = document.getElementById('myChart');
 
     if (myChart) {

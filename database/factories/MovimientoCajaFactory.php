@@ -21,7 +21,7 @@ class MovimientoCajaFactory extends Factory
             'tipo' => 'egreso',
             'concepto' => $this->faker->randomElement(['Pago proveedores', 'extraccion', 'compra']),
             'monto' => $this->faker->numberBetween(10000, 500000),
-            'created_at' => $this->faker->dateTimeBetween('2025-09-07', now()),
+            'created_at' => $this->faker->dateTimeBetween('2025-01-01', now()),
         ];
     }
 }

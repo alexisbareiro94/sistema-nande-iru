@@ -40,12 +40,12 @@ class DatabaseSeeder extends Seeder
     // \App\Models\Producto::factory(50)->create();
     
     // User::factory(11)->create();    
-    // Venta::factory(79)->create([
+    // Venta::factory(279)->create([
     //   'cliente_id' => User::all()->random()->id,
     //   'total' => 2000000,
     // ]);
 
-    MovimientoCaja::factory(12)->create();
+    MovimientoCaja::factory(112)->create();
     
   }
 }

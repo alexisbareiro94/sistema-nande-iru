@@ -70,8 +70,7 @@ class MovimientoCajaController extends Controller
     public function charts_caja(Request $request)
     {
         try {
-            $periodo = $request->query('periodoInicio') ?? 'semana';            
-            
+            $periodo = $request->query('periodoInicio') ?? 'semana';                        
             if($periodo == 'mes'){
                 $periodoInicio = now()->startOfMonth();
                 $periodoFin    = now()->endOfMonth();

@@ -26,7 +26,7 @@ class VentaFactory extends Factory
             'subtotal' => 0,
             'total' => 0,
             'estado' => 'completado',
-            'created_at' => $this->faker->dateTimeBetween('2025-09-07', now()),
+            'created_at' => $this->faker->dateTimeBetween('2025-01-01', now()),
             'updated_at' => now(),
         ];
     }
