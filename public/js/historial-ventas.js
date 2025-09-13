@@ -193,7 +193,7 @@ document.getElementById('dv-buscar').addEventListener('click', () => {
     const tipo = document.getElementById('dv-tipo').value;
 
     if(desde == '' && hasta == '' && estado == '' && formaPago == '' && tipo == ''){
-        window.location.href = '/ventas'
+        window.location.href = '/movimientos'
         return;
     }
 
@@ -230,10 +230,11 @@ async function buscar() {
     const estado = datos.estado ?? '';
     const formaPago = datos.formaPago ?? '';
     const tipo = datos.tipo ?? '';
-    const q = document.getElementById('dv-input-s').value;
+    const q = document.getElementById('dv-input-s').value;    
     let paginacion = false;
-    if(q === ''){
-        paginacion = true;                
+
+    if(q === '' && desde == "" && hasta == "" && estado == "" && formaPago == "" && tipo == ""){        
+        paginacion = true;                        
     }
     try {
         const res = await fetch(`http://localhost:8080/venta?q=${encodeURIComponent(q)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&estado=${encodeURIComponent(estado)}&formaPago=${encodeURIComponent(formaPago)}&tipo=${encodeURIComponent(tipo)}&paginacion=${encodeURIComponent(paginacion)}`, {
@@ -442,8 +443,7 @@ function recargarTablaHistorialVentas(data, paginacion) {
         `;
             bodyTabla.appendChild(tr);
         }
-    });
-    console.log(paginacion)
+    });    
     const paginate = document.getElementById('paginacion')
     if(paginacion == false){
         paginate.classList.add('hidden');

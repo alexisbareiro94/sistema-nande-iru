@@ -46,7 +46,7 @@ class VentaController extends Controller
             $orderBy = $request->query('orderBy');
             $dir = $request->query('direction');
 
-            if($paginacion === 'true'){
+            if($paginacion === 'true' && !filled($desdeC) && !filled($hastaC) && !filled($formaPago) && !filled($tipo) && !filled($search)){
                 return response()->json([
                     'success' => true,
                     'paginacion' => $paginacion,
@@ -98,14 +98,19 @@ class VentaController extends Controller
                 $query->orderBy($orderBy, $dir);
             }
             
-            $ventas = $query->with('venta.cliente')->orderByDesc('created_at')->get();            
+            $ventas = $query->with('venta.cliente')->orderByDesc('created_at')->get();  
+
+            $egresosFiltros = $ventas->filter(fn($item)=> $item->tipo === 'egreso')->sum('monto');          
+            
             $ingresosFiltros = $ventas->filter(function($item){
                 return  $item->tipo === 'ingreso';
             })->sum('monto');
+
             return response()->json([
                 'success' => true,
                 'ventas' => $ventas,
-                'ingresos_filtro' => $ingresosFiltros
+                'ingresos_filtro' => $ingresosFiltros,
+                'egresos_filtro' => $egresosFiltros,    
             ]);
         } catch (\Exception $e) {
             return response()->json([
