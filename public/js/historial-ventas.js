@@ -223,7 +223,7 @@ document.getElementById('dv-borrar-filtros').addEventListener('click', (e)=>{
     window.location.href = '/movimientos'
 });
 
-async function buscar() {
+async function buscar(orderBy = '', direction = '') {
     const ingresoFiltro = document.getElementById('ingresos-filtro');
     const egresosFiltro = document.getElementById('egresos-filtro');
     const datos = JSON.parse(sessionStorage.getItem('datos')) || {};
@@ -243,7 +243,7 @@ async function buscar() {
         paginacion = true;                        
     }
     try {
-        const res = await fetch(`http://localhost:8080/venta?q=${encodeURIComponent(q)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&estado=${encodeURIComponent(estado)}&formaPago=${encodeURIComponent(formaPago)}&tipo=${encodeURIComponent(tipo)}&paginacion=${encodeURIComponent(paginacion)}`, {
+        const res = await fetch(`http://localhost:8080/venta?q=${encodeURIComponent(q)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&estado=${encodeURIComponent(estado)}&formaPago=${encodeURIComponent(formaPago)}&tipo=${encodeURIComponent(tipo)}&paginacion=${encodeURIComponent(paginacion)}&orderBy=${encodeURIComponent(orderBy)}&direction=${encodeURIComponent(direction)}`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,

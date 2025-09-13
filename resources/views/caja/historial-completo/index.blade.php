@@ -180,9 +180,7 @@
 
         <!-- Tabla de Ventas -->
         <div class="bg-white rounded-lg shadow items-center">
-            <div class="px-6 py-4 border-b border-gray-200 flex gap-5 items-center">
-                {{-- <h3 class="text-lg font-medium text-gray-900">Historial de Ventas</h3> --}}
-
+            <div class="px-6 py-4 border-b border-gray-200 flex gap-5 items-center">            
                 <div class="relative">
                     <span class="absolute z-20 left-2 top-1 pr-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -214,7 +212,7 @@
                             <th
                                 class="flex px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Fecha
-                                @include('productos.icons.nombres')
+                                @include('caja.historial-completo.icons.fecha')
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Cliente
@@ -222,8 +220,9 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Productos/concepto
                             </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th class="flex px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Total
+                                @include('caja.historial-completo.icons.total')
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Estado
