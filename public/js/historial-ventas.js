@@ -224,8 +224,8 @@ document.getElementById('dv-borrar-filtros').addEventListener('click', (e)=>{
 });
 
 async function buscar(orderBy = '', direction = '') {
-    const ingresoFiltro = document.getElementById('ingresos-filtro');
-    const egresosFiltro = document.getElementById('egresos-filtro');
+    const ingresoFiltro = document.getElementById('ingresos-filtro');    
+    const egresosFiltro = document.getElementById('egresos-filtro');    
     const datos = JSON.parse(sessionStorage.getItem('datos')) || {};
     const desde = datos.desde ?? '';
     const hasta = datos.hasta ?? '';
@@ -274,6 +274,8 @@ function recargarTablaHistorialVentas(data, paginacion) {
     const bodyTabla = document.getElementById('dv-body-tabla');    
     const ingresoFiltro = document.getElementById('ingresos-filtro');
     const egresosFiltro = document.getElementById('egresos-filtro');
+    const montoIngreso = document.getElementById('monto-ingresos-filtro');
+    const montoEgreso = document.getElementById('monto-egresos-filtro');
     const svg = `
 
                                     <span class="cursor-help" title="Venta con descuento">
@@ -287,11 +289,11 @@ function recargarTablaHistorialVentas(data, paginacion) {
     bodyTabla.innerText = ''    
     if(data.ingresos_filtro != null || data.ingresos_filtro != undefined){
         ingresoFiltro.classList.remove('hidden');
-        ingresoFiltro.innerText = `Ingresos: Gs. ${data.ingresos_filtro.toLocaleString('es-PY')}`
+        montoIngreso.innerText = `Ingresos: Gs. ${data.ingresos_filtro.toLocaleString('es-PY')}`
     }
     if((data.egresos_filtro != null || data.egresos_filtro != undefined) && data.egresos_filtro != 0 ){
         egresosFiltro.classList.remove('hidden');
-        egresosFiltro.innerText = `Egresos: Gs. ${data.egresos_filtro.toLocaleString('es-PY')}`
+        montoEgreso.innerText = `Egresos: Gs. ${data.egresos_filtro.toLocaleString('es-PY')}`
     }
         data.ventas.forEach(venta => {
         if (venta.venta_id != null) {            
