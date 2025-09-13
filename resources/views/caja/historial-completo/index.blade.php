@@ -111,7 +111,7 @@
                 <div class="flex justify-between">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Filtros de Búsqueda</h3>
                     <span id="dv-borrar-filtros" title="Borrar filtros" class="hidden group cursor-pointer">
-                        <svg class="w-[24px] h-[24px]  group-hover:text-white group-hover:bg-gray-800 rounded-full  text-gray-800 "
+                        <svg class="w-[34px] h-[34px]  bg-red-500 shadow-lg text-white transition-all duration-200 group-hover:text-white group-hover:bg-gray-800 rounded-full"
                             aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                             fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"
@@ -159,6 +159,7 @@
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="">Todos</option>
                             <option value="venta">Venta</option>
+                            <option value="sin_descuento">Venta sin descuento</option>
                             <option value="con_descuento">Venta con descuento</option>
                             <option value="venta-ingreso">Ventas e Ingreso</option>
                             <option value="ingreso">Ingreso</option>
@@ -179,8 +180,8 @@
 
         <!-- Tabla de Ventas -->
         <div class="bg-white rounded-lg shadow items-center">
-            <div class="px-6 py-4 border-b border-gray-200 flex gap-5">
-                <h3 class="text-lg font-medium text-gray-900">Historial de Ventas</h3>
+            <div class="px-6 py-4 border-b border-gray-200 flex gap-5 items-center">
+                {{-- <h3 class="text-lg font-medium text-gray-900">Historial de Ventas</h3> --}}
 
                 <div class="relative">
                     <span class="absolute z-20 left-2 top-1 pr-2">
@@ -192,9 +193,14 @@
 
                     </span>
                     <input id="dv-input-s" class="min-w-sm border border-gray-400 pl-11 py-1 rounded-md"
-                        placeholder="Ingrese codigo de venta o cliente" type="text" name="">
-
+                        placeholder="Ingrese codigo de venta o cliente" type="text" name="">                    
                     {{-- prox feat: agergar funcion de exportar a pdf y excel con o sin filtros --}}
+                </div>
+                <div id="ingresos-filtro" class="hidden bg-green-200 px-2 py-1 rounded-lg font-semibold text-green-800">
+                    ingresos: 23510000
+                </div>
+                <div id="egresos-filtro" class="hidden bg-red-200 px-2 py-1 rounded-lg font-semibold text-red-800">
+                    egresos: 1254654
                 </div>
             </div>
 
