@@ -231,8 +231,12 @@ async function buscar() {
     const formaPago = datos.formaPago ?? '';
     const tipo = datos.tipo ?? '';
     const q = document.getElementById('dv-input-s').value;
+    let paginacion = false;
+    if(q === ''){
+        paginacion = true;                
+    }
     try {
-        const res = await fetch(`http://localhost:8080/venta?q=${encodeURIComponent(q)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&estado=${encodeURIComponent(estado)}&formaPago=${encodeURIComponent(formaPago)}&tipo=${encodeURIComponent(tipo)}`, {
+        const res = await fetch(`http://localhost:8080/venta?q=${encodeURIComponent(q)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&estado=${encodeURIComponent(estado)}&formaPago=${encodeURIComponent(formaPago)}&tipo=${encodeURIComponent(tipo)}&paginacion=${encodeURIComponent(paginacion)}`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -242,7 +246,8 @@ async function buscar() {
         if (!res.ok) {
             throw data;
         }        
-       recargarTablaHistorialVentas(data);
+        console.log(data)
+        recargarTablaHistorialVentas(data, paginacion);
 
     } catch (err) {
         console.log(err)
@@ -258,7 +263,7 @@ document.getElementById('dv-input-s').addEventListener('input', () => {
     }, 500);
 })
 
-function recargarTablaHistorialVentas(data) {
+function recargarTablaHistorialVentas(data, paginacion) {
     const bodyTabla = document.getElementById('dv-body-tabla');
     bodyTabla.innerText = ''    
     const svg = `
@@ -438,7 +443,15 @@ function recargarTablaHistorialVentas(data) {
             bodyTabla.appendChild(tr);
         }
     });
-    document.getElementById('paginacion').innerHTML = '';
+    console.log(paginacion)
+    const paginate = document.getElementById('paginacion')
+    if(paginacion == false){
+        paginate.classList.add('hidden');
+    }else{
+        if(paginate.classList.contains('hidden')){
+            paginate.classList.remove('hidden');
+        }
+    }
     abrirmodalDmDetalles();
     abrirModalDetalles();
 }
