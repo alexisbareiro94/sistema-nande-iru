@@ -36,6 +36,7 @@ class VentaController extends Controller
     {
         try {
             $query = MovimientoCaja::query();
+            $paginacion = $request->query('paginacion');
             $desdeC = $request->query('desde');
             $hastaC = $request->query('hasta');
             $estado = $request->query('estado');
@@ -44,6 +45,14 @@ class VentaController extends Controller
             $search = $request->query('q');
             $orderBy = $request->query('orderBy');
             $dir = $request->query('direction');
+
+            if($paginacion === 'true'){
+                return response()->json([
+                    'success' => true,
+                    'paginacion' => $paginacion,
+                    'ventas' => $query->with('venta.cliente')->orderByDesc('created_at')->get()->take(10),
+                ]);
+            }
 
             if (filled($desdeC)) {
                 $desde = Carbon::parse($desdeC)->startOfDay();
@@ -83,18 +92,20 @@ class VentaController extends Controller
                     $q->whereLike('codigo', "%$search%")->orWhereHas('cliente', function ($q) use ($search) {
                         $q->whereLike('razon_social', "%$search%");
                     });
-                })->with('venta.cliente');
-            } else {
-                $query->with('venta.cliente');
+                });
             }
             if (filled($orderBy) && filled($dir)) {
                 $query->orderBy($orderBy, $dir);
             }
-            $ventas = $query->orderByDesc('created_at')->get();
-
+            
+            $ventas = $query->with('venta.cliente')->orderByDesc('created_at')->get();            
+            $ingresosFiltros = $ventas->filter(function($item){
+                return  $item->tipo === 'ingreso';
+            })->sum('monto');
             return response()->json([
                 'success' => true,
                 'ventas' => $ventas,
+                'ingresos_filtro' => $ingresosFiltros
             ]);
         } catch (\Exception $e) {
             return response()->json([
