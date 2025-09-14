@@ -2,8 +2,8 @@ const modal = document.getElementById('modal-detalle-venta');
 function abrirModalDetalles() {
     const btnsdetalleVentas = document.querySelectorAll('.detalle-venta');
     btnsdetalleVentas.forEach(btn => {
-        btn.addEventListener('click', async () => {                
-            const codigo = btn.dataset.ventaid ?? btn.dataset.ventam;                     
+        btn.addEventListener('click', async () => {
+            const codigo = btn.dataset.ventaid ?? btn.dataset.ventam;
             await detalleVentas(codigo);
             modal.classList.remove('hidden');
             setTimeout(() => {
@@ -44,11 +44,11 @@ async function detalleVentas(codigo) {
         const data = await res.json();
         if (!res.ok) {
             throw data;
-        }               
-        
+        }
+
         setDataDetalleVenta(data);
-    } catch (err) { 
-        console.log(err)       
+    } catch (err) {
+        console.log(err)
         showToast(`${err.error}`, 'error')
     }
 }
@@ -87,12 +87,12 @@ function setDataDetalleVenta(data) {
     estado.classList = estadoClass;
     estado.innerText = data.venta.estado
 
-    if(data.productos != ''){        
+    if (data.productos != '') {
         if (data.venta.pagos.length === 2) {
             metodoDePago = 'mixto'
             document.getElementById('svg-mixto').classList.remove('hidden');
             setMetodosPagosMixto(data);
-            
+
         } else {
             if (!document.getElementById('svg-mixto').classList.contains('hidden')) {
                 document.getElementById('svg-mixto').classList.add('hidden');
@@ -100,11 +100,11 @@ function setDataDetalleVenta(data) {
             metodoDePago = data.venta.pagos[0].metodo;
         }
         mPago.innerText = metodoDePago;
-        
+
         if (data.venta.con_descuento) {
             document.getElementById('dv-descuento').classList.remove('hidden');
             document.getElementById('dv-subtotal').innerText = 'Gs. -' + data.venta.monto_descuento.toLocaleString('es-PY');
-            
+
         }
         if (!data.venta.con_descuento) {
             if (!document.getElementById('dv-descuento').classList.contains('hidden')) {
@@ -118,11 +118,11 @@ function setDataDetalleVenta(data) {
     //productos
     setProductos(data);
     //total gral
-    if(data.productos == ''){
+    if (data.productos == '') {
         total.innerText = 'Gs ' + data.venta.monto.toLocaleString('es-PY');
-    }else{
+    } else {
         total.innerText = 'Gs ' + data.venta.total.toLocaleString('es-PY');
-    }  
+    }
 }
 
 document.getElementById('svg-mixto').addEventListener('click', (e) => {
@@ -142,23 +142,23 @@ function setMetodosPagosMixto(data) {
 }
 
 function setCliente(data) {
-    if(data.productos != ''){
+    if (data.productos != '') {
         const razon = document.getElementById('d-v-razon');
         const rucCi = document.getElementById('d-v-ruc');
-        
+
         razon.innerText = data.venta.cliente.razon_social;
         rucCi.innerText = data.venta.cliente.ruc_ci;
-    }else{
+    } else {
         return;
     }
 }
 
 function setProductos(data) {
     console.log(data)
-    const bodyTabla = document.getElementById('d-v-bodyTable');    
-    bodyTabla.innerHTML = '';    
-    if(data.productos != ''){
-        data.productos.forEach(producto => {                  
+    const bodyTabla = document.getElementById('d-v-bodyTable');
+    bodyTabla.innerHTML = '';
+    if (data.productos != '') {
+        data.productos.forEach(producto => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
             <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -177,10 +177,10 @@ function setProductos(data) {
             Gs. ${producto.detalles[0].producto_con_descuento ? (producto.detalles[0].precio_descuento * producto.detalles[0].cantidad).toLocaleString('es-PY') : (producto.precio_venta * producto.detalles[0].cantidad).toLocaleString('es-PY')}
             </td>
             `
-            bodyTabla.appendChild(tr);        
+            bodyTabla.appendChild(tr);
         })
-    }else{
-        
+    } else {
+
     }
 }
 
@@ -192,7 +192,7 @@ document.getElementById('dv-buscar').addEventListener('click', () => {
     const formaPago = document.getElementById('dv-forma-pago').value;
     const tipo = document.getElementById('dv-tipo').value;
 
-    if(desde == '' && hasta == '' && estado == '' && formaPago == '' && tipo == ''){
+    if (desde == '' && hasta == '' && estado == '' && formaPago == '' && tipo == '') {
         window.location.href = '/movimientos'
         return;
     }
@@ -206,44 +206,50 @@ document.getElementById('dv-buscar').addEventListener('click', () => {
         formaPago: formaPago,
         tipo: tipo,
     }
-    sessionStorage.setItem('datos', JSON.stringify(datos))        
+    sessionStorage.setItem('datos', JSON.stringify(datos))
     buscar();
 });
 
 window.addEventListener('DOMContentLoaded', () => {
-    let datos = JSON.parse(sessionStorage.getItem('datos'));    
-    if(datos != null){
+    let datos = JSON.parse(sessionStorage.getItem('datos'));
+    if (datos != null) {
         document.getElementById('dv-borrar-filtros').classList.remove('hidden')
+    }
+    if(sessionStorage.getItem('datos')){
+        sessionStorage.removeItem('datos')
+        if(!document.getElementById('dv-borrar-filtros').classList.contains('hidden')){
+            document.getElementById('dv-borrar-filtros').classList.add('hidden');
+        }
     }
 })
 
-document.getElementById('dv-borrar-filtros').addEventListener('click', (e)=>{
+document.getElementById('dv-borrar-filtros').addEventListener('click', (e) => {
     e.target.classList.add('hidden');
     sessionStorage.removeItem('datos')
     window.location.href = '/movimientos'
 });
 
-async function buscar(orderBy = '', direction = '') {
-    const ingresoFiltro = document.getElementById('ingresos-filtro');    
-    const egresosFiltro = document.getElementById('egresos-filtro');    
+async function buscar(orderBy = '', direction = '', flagExcel = '', flagPdf = '') {
     const datos = JSON.parse(sessionStorage.getItem('datos')) || {};
+    const ingresoFiltro = document.getElementById('ingresos-filtro');
+    const egresosFiltro = document.getElementById('egresos-filtro');
     const desde = datos.desde ?? '';
     const hasta = datos.hasta ?? '';
     const estado = datos.estado ?? '';
     const formaPago = datos.formaPago ?? '';
     const tipo = datos.tipo ?? '';
-    const q = document.getElementById('dv-input-s').value;    
+    const q = document.getElementById('dv-input-s').value;
     let paginacion = false;
 
-    if(q === '' && desde == "" && hasta == "" && estado == "" && formaPago == "" && tipo == ""){        
-        if(!ingresoFiltro.classList.contains('hidden') || !egresosFiltro.classList.contains('hidden')){
+    if (q === '' && desde == "" && hasta == "" && estado == "" && formaPago == "" && tipo == "") {
+        if (!ingresoFiltro.classList.contains('hidden') || !egresosFiltro.classList.contains('hidden')) {
             ingresoFiltro.classList.add('hidden');
             egresosFiltro.classList.add('hidden');
         }
-        paginacion = true;                        
+        paginacion = true;
     }
     try {
-        const res = await fetch(`http://localhost:8080/venta?q=${encodeURIComponent(q)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&estado=${encodeURIComponent(estado)}&formaPago=${encodeURIComponent(formaPago)}&tipo=${encodeURIComponent(tipo)}&paginacion=${encodeURIComponent(paginacion)}&orderBy=${encodeURIComponent(orderBy)}&direction=${encodeURIComponent(direction)}`, {
+        const res = await fetch(`http://localhost:8080/venta?q=${encodeURIComponent(q)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&estado=${encodeURIComponent(estado)}&formaPago=${encodeURIComponent(formaPago)}&tipo=${encodeURIComponent(tipo)}&paginacion=${encodeURIComponent(paginacion)}&orderBy=${encodeURIComponent(orderBy)}&direction=${encodeURIComponent(direction)}&flagExcel=${encodeURIComponent(flagExcel)}&flagPdf=${encodeURIComponent(flagPdf)}`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -252,7 +258,7 @@ async function buscar(orderBy = '', direction = '') {
         const data = await res.json();
         if (!res.ok) {
             throw data;
-        }        
+        }
         console.log(data)
         recargarTablaHistorialVentas(data, paginacion);
 
@@ -271,7 +277,7 @@ document.getElementById('dv-input-s').addEventListener('input', () => {
 })
 
 function recargarTablaHistorialVentas(data, paginacion) {
-    const bodyTabla = document.getElementById('dv-body-tabla');    
+    const bodyTabla = document.getElementById('dv-body-tabla');
     const ingresoFiltro = document.getElementById('ingresos-filtro');
     const egresosFiltro = document.getElementById('egresos-filtro');
     const montoIngreso = document.getElementById('monto-ingresos-filtro');
@@ -285,18 +291,18 @@ function recargarTablaHistorialVentas(data, paginacion) {
                                                 d="m8.99 14.993 6-6m6 3.001c0 1.268-.63 2.39-1.593 3.069a3.746 3.746 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043 3.745 3.745 0 0 1-3.068 1.593c-1.268 0-2.39-.63-3.068-1.593a3.745 3.745 0 0 1-3.296-1.043 3.746 3.746 0 0 1-1.043-3.297 3.746 3.746 0 0 1-1.593-3.068c0-1.268.63-2.39 1.593-3.068a3.746 3.746 0 0 1 1.043-3.297 3.745 3.745 0 0 1 3.296-1.042 3.745 3.745 0 0 1 3.068-1.594c1.268 0 2.39.63 3.068 1.593a3.745 3.745 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.297 3.746 3.746 0 0 1 1.593 3.068ZM9.74 9.743h.008v.007H9.74v-.007Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm4.125 4.5h.008v.008h-.008v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
                                         </svg>
                                     </span>
-    `;    
-    bodyTabla.innerText = ''    
-    if(data.ingresos_filtro != null || data.ingresos_filtro != undefined){
+    `;
+    bodyTabla.innerText = ''
+    if (data.ingresos_filtro != null || data.ingresos_filtro != undefined) {
         ingresoFiltro.classList.remove('hidden');
         montoIngreso.innerText = `Ingresos: Gs. ${data.ingresos_filtro.toLocaleString('es-PY')}`
     }
-    if((data.egresos_filtro != null || data.egresos_filtro != undefined) && data.egresos_filtro != 0 ){
+    if ((data.egresos_filtro != null || data.egresos_filtro != undefined) && data.egresos_filtro != 0) {
         egresosFiltro.classList.remove('hidden');
         montoEgreso.innerText = `Egresos: Gs. ${data.egresos_filtro.toLocaleString('es-PY')}`
     }
-        data.ventas.forEach(venta => {
-        if (venta.venta_id != null) {            
+    data.ventas.forEach(venta => {
+        if (venta.venta_id != null) {
             let estadoClass = '';
             const tr = document.createElement('tr');
             tr.classList = 'hover:bg-gray-50 transition-colors';
@@ -381,7 +387,7 @@ function recargarTablaHistorialVentas(data, paginacion) {
 
         `;
             bodyTabla.appendChild(tr);
-        } else {            
+        } else {
             const tr = document.createElement('tr');
             tr.classList = 'hover:bg-gray-50 transition-colors';
             let fechaC = new Date(venta.created_at)
@@ -461,15 +467,53 @@ function recargarTablaHistorialVentas(data, paginacion) {
         `;
             bodyTabla.appendChild(tr);
         }
-    });    
+    });
     const paginate = document.getElementById('paginacion')
-    if(paginacion == false){
+    if (paginacion == false) {
         paginate.classList.add('hidden');
-    }else{
-        if(paginate.classList.contains('hidden')){
+    } else {
+        if (paginate.classList.contains('hidden')) {
             paginate.classList.remove('hidden');
         }
     }
     abrirmodalDmDetalles();
     abrirModalDetalles();
 }
+
+const trigger = document.getElementById('dropdown');
+const exportMenu = document.getElementById('export-menu');
+const iconFlecha = document.getElementById('icon-flecha');
+
+trigger.addEventListener('click', (e) => {
+    e.stopPropagation(); 
+    iconFlecha.classList.toggle('rotate-180');
+
+    if (exportMenu.classList.contains('hidden')) {
+        exportMenu.classList.remove('hidden');
+        setTimeout(() => {
+            exportMenu.classList.remove('opacity-0');
+            exportMenu.classList.add('opacity-100');
+        }, 10);
+    } else {
+        exportMenu.classList.add('hidden');
+        setTimeout(() => {
+            exportMenu.classList.remove('opacity-100');
+            exportMenu.classList.add('opacity-0');
+        }, 10);
+    }
+});
+
+document.addEventListener('click', (e) => {
+    if (!exportMenu.classList.contains('hidden') && !trigger.contains(e.target) && !exportMenu.contains(e.target)) {
+        exportMenu.classList.add('hidden');
+        exportMenu.classList.remove('opacity-100');
+        exportMenu.classList.add('opacity-0');
+        
+        iconFlecha.classList.remove('rotate-180');
+    }
+});
+
+//esto esta para crear la session en el backend
+document.getElementById('export-excel').addEventListener('click', async ()=> {
+    await buscar('', '', true);
+});

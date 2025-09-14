@@ -12,6 +12,7 @@ use App\Http\Controllers\VentaController;
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
+
 use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto};
 
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/movimientos', [VentaController::class, 'index_view'])->name('venta.index.view');
         Route::get('/venta/{codigo}', [VentaController::class, 'show']);
         Route::get('/venta', [VentaController::class, 'index']);
+        //exportaciones
+        Route::get('/export-excel', [VentaController::class, 'export_excel'])->name('venta.excel');        
 
         //movimiento
         Route::get('/api/movimiento', [MovimientoCajaController::class, 'index'])->name('movimiento.index');
@@ -80,14 +83,17 @@ Route::get('/session/{nombre}', function ($nombre) {
 });
 
 Route::get('/borrar-session', function () {
-    $ingreso = MovimientoCaja::where('tipo', 'ingreso')->selectRaw('SUM(monto) as total')->pluck('total');
-    dd($ingreso);
+    session()->forget('ventas');
 });
+
+
 
 Route::get('/debug', function () {
-    $ventasRes = Venta::orderByDesc('id')->with('cliente')->paginate(10);
-    $movimientoRes = MovimientoCaja::all();
-    $ventas = $ventasRes->union($movimientoRes);
-
-    return $ventas;
-});
+    $ventas = Venta::all()->take(1);
+    $items = $ventas->count();        
+    $desde = \Carbon\Carbon::parse($ventas[0]->created_at)->format('dMy');
+    $hasta = \Carbon\Carbon::parse($ventas[$items - 1]->created_at)->format('dMy');;    
+    $fileName = "$desde-$hasta.xls";
+    
+    return $fileName;
+}); 

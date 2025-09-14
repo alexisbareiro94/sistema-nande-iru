@@ -8,6 +8,9 @@ use App\Services\VentaService;
 use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto};
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Rap2hpoutre\FastExcel\FastExcel;
+use OpenSpout\Common\Entity\Style\Style;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class VentaController extends Controller
 {
@@ -44,7 +47,7 @@ class VentaController extends Controller
             $tipo = $request->query('tipo');
             $search = $request->query('q');
             $orderBy = $request->query('orderBy');
-            $dir = $request->query('direction');            
+            $dir = $request->query('direction');                         
 
             if($paginacion === 'true' && !filled($desdeC) && !filled($hastaC) && !filled($formaPago) && !filled($tipo) && !filled($search) && !filled($orderBy)){
                 return response()->json([
@@ -98,14 +101,19 @@ class VentaController extends Controller
                 $query->orderBy($orderBy, $dir);
             }
             
-            $ventas = $query->with('venta.cliente')->orderByDesc('created_at')->get();  
-
-            $egresosFiltros = $ventas->filter(fn($item)=> $item->tipo === 'egreso')->sum('monto');          
-            
+            $ventas = $query->with('venta.cliente')->orderByDesc('created_at')->get();      
+            $egresosFiltros = $ventas->filter(fn($item)=> $item->tipo === 'egreso')->sum('monto');                      
             $ingresosFiltros = $ventas->filter(function($item){
                 return  $item->tipo === 'ingreso';
-            })->sum('monto');
+            })->sum('monto');     
 
+            if($tipo === 'egreso'){
+                $sessionVenta = $ventas;
+            }else{
+                $sessionVenta = $ventas->pluck('venta');
+            }
+            session(['ventas' => $sessionVenta]);
+                        
             return response()->json([
                 'success' => true,
                 'ventas' => $ventas,
@@ -264,4 +272,27 @@ class VentaController extends Controller
             ], 400);
         }
     }
+
+    public function export_excel(){        
+        if(session('ventas')){
+            $ventas = session()->get('ventas');
+            session()->forget('ventas');
+        }else{
+            $ventas = MovimientoCaja::all();
+        }    
+        $items = $ventas->count();
+        $desde = Carbon::parse($ventas[0]->created_at)->format('dmy');
+        $hasta = Carbon::parse($ventas[$items - 1]->created_at)->format('dmy');        
+        $fileName = "$desde-$hasta.xlsx";
+        $headerStyle = (new Style())->setFontBold();         
+        
+        return (new FastExcel($ventas))
+                ->headerStyle($headerStyle)                
+                ->download($fileName);
+    }
+
+    public function export_pdf(){
+        
+    }
+
 }
