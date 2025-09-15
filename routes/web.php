@@ -14,6 +14,8 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
 
 use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto};
+use Rap2hpoutre\FastExcel\FastExcel;
+use Rap2hpoutre\FastExcel\SheetCollection;
 
 use Illuminate\Support\Facades\Route;
 
@@ -90,5 +92,9 @@ Route::get('/borrar-session', function () {
 
 
 Route::get('/debug', function () {
-    return view('pdf.ventas');
+    $sheets = new SheetCollection([
+    User::all(),
+    MovimientoCaja::all()
+]);
+(new FastExcel($sheets))->download('file.xlsx');
 }); 
