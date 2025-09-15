@@ -229,7 +229,7 @@ document.getElementById('dv-borrar-filtros').addEventListener('click', (e) => {
     window.location.href = '/movimientos'
 });
 
-async function buscar(orderBy = '', direction = '', flagExcel = '', flagPdf = '') {
+async function buscar(orderBy = '', direction = '') {
     const datos = JSON.parse(sessionStorage.getItem('datos')) || {};
     const ingresoFiltro = document.getElementById('ingresos-filtro');
     const egresosFiltro = document.getElementById('egresos-filtro');
@@ -249,7 +249,7 @@ async function buscar(orderBy = '', direction = '', flagExcel = '', flagPdf = ''
         paginacion = true;
     }
     try {
-        const res = await fetch(`http://localhost:8080/venta?q=${encodeURIComponent(q)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&estado=${encodeURIComponent(estado)}&formaPago=${encodeURIComponent(formaPago)}&tipo=${encodeURIComponent(tipo)}&paginacion=${encodeURIComponent(paginacion)}&orderBy=${encodeURIComponent(orderBy)}&direction=${encodeURIComponent(direction)}&flagExcel=${encodeURIComponent(flagExcel)}&flagPdf=${encodeURIComponent(flagPdf)}`, {
+        const res = await fetch(`http://localhost:8080/venta?q=${encodeURIComponent(q)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&estado=${encodeURIComponent(estado)}&formaPago=${encodeURIComponent(formaPago)}&tipo=${encodeURIComponent(tipo)}&paginacion=${encodeURIComponent(paginacion)}&orderBy=${encodeURIComponent(orderBy)}&direction=${encodeURIComponent(direction)}`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -485,7 +485,7 @@ const exportMenu = document.getElementById('export-menu');
 const iconFlecha = document.getElementById('icon-flecha');
 
 trigger.addEventListener('click', (e) => {
-    e.stopPropagation(); 
+    //e.stopPropagation(); 
     iconFlecha.classList.toggle('rotate-180');
 
     if (exportMenu.classList.contains('hidden')) {
@@ -513,7 +513,31 @@ document.addEventListener('click', (e) => {
     }
 });
 
-//esto esta para crear la session en el backend
-document.getElementById('export-excel').addEventListener('click', async ()=> {
-    await buscar('', '', true);
+
+function toastLoading(message = "Cargando...") {
+    const container = document.getElementById('loading-container');
+    
+    const spinner = `
+        <svg class="animate-spin w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>`;
+
+    const toast = document.createElement('div');
+    toast.className = `bg-red-500 font-semibold text-white px-5 py-3 rounded-lg shadow-lg flex items-center space-x-2 opacity-0 transition-opacity duration-300`;
+    toast.innerHTML = `<span>${spinner}</span><span>${message}</span>`;
+
+    container.appendChild(toast);
+
+    setTimeout(() => toast.classList.remove('opacity-0'), 10);
+    
+    setTimeout(() => {
+        toast.classList.add('opacity-0');
+        setTimeout(() => toast.remove(), 500);
+    }, 5000);
+}
+
+
+document.getElementById('export-pdf').addEventListener('click', () => {
+    toastLoading('Generando PDF. Esto puede tomar algunos minutos. No cierre esta ventana.');
 });

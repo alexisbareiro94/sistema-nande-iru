@@ -47,9 +47,9 @@ class VentaController extends Controller
             $tipo = $request->query('tipo');
             $search = $request->query('q');
             $orderBy = $request->query('orderBy');
-            $dir = $request->query('direction');                         
+            $dir = $request->query('direction');
 
-            if($paginacion === 'true' && !filled($desdeC) && !filled($hastaC) && !filled($formaPago) && !filled($tipo) && !filled($search) && !filled($orderBy)){
+            if ($paginacion === 'true' && !filled($desdeC) && !filled($hastaC) && !filled($formaPago) && !filled($tipo) && !filled($search) && !filled($orderBy)) {
                 return response()->json([
                     'success' => true,
                     'paginacion' => $paginacion,
@@ -99,26 +99,29 @@ class VentaController extends Controller
             }
             if (filled($orderBy) && filled($dir)) {
                 $query->orderBy($orderBy, $dir);
-            }
-            
-            $ventas = $query->with('venta.cliente')->orderByDesc('created_at')->get();      
-            $egresosFiltros = $ventas->filter(fn($item)=> $item->tipo === 'egreso')->sum('monto');                      
-            $ingresosFiltros = $ventas->filter(function($item){
-                return  $item->tipo === 'ingreso';
-            })->sum('monto');     
+            }            
 
-            if($tipo === 'egreso'){
+            $ventas = $query->with(['venta' => function ($query) {
+                $query->with(['cliente', 'detalleVentas', 'productos']);
+            }])->orderByDesc('created_at')->get();
+
+            $egresosFiltros = $ventas->filter(fn($item) => $item->tipo === 'egreso')->sum('monto');
+            $ingresosFiltros = $ventas->filter(function ($item) {
+                return  $item->tipo === 'ingreso';
+            })->sum('monto');
+
+            if ($tipo === 'egreso' || !filled($tipo)) {
                 $sessionVenta = $ventas;
-            }else{
-                $sessionVenta = $ventas->pluck('venta');
+            } else {
+                $sessionVenta = $ventas;
             }
             session(['ventas' => $sessionVenta]);
-                        
+
             return response()->json([
                 'success' => true,
                 'ventas' => $ventas,
                 'ingresos_filtro' => $ingresosFiltros,
-                'egresos_filtro' => $egresosFiltros,    
+                'egresos_filtro' => $egresosFiltros,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -130,16 +133,16 @@ class VentaController extends Controller
     public function show(string $codigo)
     {
         try {
-            if(!is_numeric($codigo)){
+            if (!is_numeric($codigo)) {
                 $venta = Venta::where('codigo', $codigo)->with(['detalleVentas', 'cliente', 'pagos', 'caja.user'])->first();
-                
+
                 $productos = Producto::whereHas('detalles', function ($query) use ($venta) {
                     return $query->where('venta_id', $venta->id);
                 })->with(['detalles' => function ($query) use ($venta) {
                     $query->where('venta_id', $venta->id);
                 }])->get();
             }
-            if(is_numeric($codigo)){
+            if (is_numeric($codigo)) {
                 $venta = MovimientoCaja::find($codigo)->load('caja.user');
             }
 
@@ -273,26 +276,41 @@ class VentaController extends Controller
         }
     }
 
-    public function export_excel(){        
-        if(session('ventas')){
-            $ventas = session()->get('ventas');
+    public function export_excel()
+    {
+        if (session('ventas')) {
+            $ventas = collect(session()->get('ventas'))->map(fn($item) => $item->venta);
             session()->forget('ventas');
-        }else{
+        } else {
             $ventas = MovimientoCaja::all();
-        }    
+        }
         $items = $ventas->count();
-        $desde = Carbon::parse($ventas[0]->created_at)->format('dmy');
-        $hasta = Carbon::parse($ventas[$items - 1]->created_at)->format('dmy');        
+        $desde = Carbon::parse($ventas[$items - 1]->created_at)->format('dmy');
+        $hasta = Carbon::parse($ventas[0]->created_at)->format('dmy');
         $fileName = "$desde-$hasta.xlsx";
-        $headerStyle = (new Style())->setFontBold();         
-        
+        $headerStyle = (new Style())->setFontBold();
+
         return (new FastExcel($ventas))
-                ->headerStyle($headerStyle)                
-                ->download($fileName);
+            ->headerStyle($headerStyle)
+            ->download($fileName);
     }
 
-    public function export_pdf(){
-        
+    public function export_pdf()
+    {
+        if (session('ventas')) {
+            $ventas = session()->get('ventas')->toArray();
+            session()->forget('ventas');        
+            //dd($ventas);         
+        } else {
+            $ventas = MovimientoCaja::all();
+        }
+        $items = count($ventas);
+        $desde = Carbon::parse($ventas[$items - 1]['created_at'])->format('dmy');
+        $hasta = Carbon::parse($ventas[0]['created_at'])->format('dmy');
+        $fileName = "$desde-$hasta.pdf";
+        $pdf = Pdf::loadView('pdf.ventas', [
+            'ventas' => $ventas,
+        ]);
+        return $pdf->download($fileName);
     }
-
 }

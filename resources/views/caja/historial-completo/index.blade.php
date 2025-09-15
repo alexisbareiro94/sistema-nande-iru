@@ -238,9 +238,9 @@
             <div class="relative">
                 <!-- Menu -->
                 <div id="export-menu"
-                    class="absolute hidden opacity-0 transition-all duration-150 -right-1.5 top-5 mt-2 w-48 rounded-md border bg-white shadow-lg z-50">
+                    class="absolute z-[999] hidden opacity-0 transition-all duration-150 -right-1.5 top-5 mt-2 w-48 rounded-md border bg-white shadow-lg">
                     <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                        <a href="#" tabindex="0" role="menuitem"
+                        <a id="export-pdf" href="{{ route('venta.pdf') }}" tabindex="0" role="menuitem"
                             class="px-4 py-2 text-sm font-semibold text-gray-700 bg-red-50 transition-colors duration-150 hover:bg-red-200 focus:bg-red-400 flex justify-between">
                             PDF
                             <span class="">

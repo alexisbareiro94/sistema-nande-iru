@@ -45,7 +45,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/venta/{codigo}', [VentaController::class, 'show']);
         Route::get('/venta', [VentaController::class, 'index']);
         //exportaciones
-        Route::get('/export-excel', [VentaController::class, 'export_excel'])->name('venta.excel');        
+        Route::get('/export-excel', [VentaController::class, 'export_excel'])->name('venta.excel');      
+        Route::get('/export-pdf', [VentaController::class, 'export_pdf'])->name('venta.pdf');  
 
         //movimiento
         Route::get('/api/movimiento', [MovimientoCajaController::class, 'index'])->name('movimiento.index');
@@ -89,11 +90,5 @@ Route::get('/borrar-session', function () {
 
 
 Route::get('/debug', function () {
-    $ventas = Venta::all()->take(1);
-    $items = $ventas->count();        
-    $desde = \Carbon\Carbon::parse($ventas[0]->created_at)->format('dMy');
-    $hasta = \Carbon\Carbon::parse($ventas[$items - 1]->created_at)->format('dMy');;    
-    $fileName = "$desde-$hasta.xls";
-    
-    return $fileName;
+    return view('pdf.ventas');
 }); 
