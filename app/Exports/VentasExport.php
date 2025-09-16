@@ -7,6 +7,7 @@ use illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Illuminate\Support\Facades\Cache;
 
 class VentasExport implements FromCollection, WithHeadings, WithMapping
 {
@@ -17,11 +18,9 @@ class VentasExport implements FromCollection, WithHeadings, WithMapping
 
     public function __construct()
     {   
-        if(session('ventas')){
-            $this->ventas = session('ventas');
-        }else{
-            $this->ventas = MovimientoCaja::all();
-        }
+       $this->ventas = Cache::remember('ventas', 10, function(){
+            return MovimientoCaja::all();
+        });      
     }
     public function collection()
     {           

@@ -18,6 +18,7 @@ class Caja extends Model
         'fecha_cierre',
         'saldo_esperado',
         'diferencia',
+        'egresos',
         'observaciones',
         'estado',
         'created_by',
@@ -37,5 +38,9 @@ class Caja extends Model
     public function ventas()
     {
         return $this->hasMany(Venta::class);
+    }
+
+    public function detallesVentas(){
+        return $this->hasMany(DetalleVenta::class, 'caja_id');
     }
 }

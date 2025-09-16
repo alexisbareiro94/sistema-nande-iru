@@ -552,6 +552,7 @@ document.getElementById('confirmar-cierre').addEventListener('click', async () =
     const observaciones = document.getElementById('observaciones').value;
     const saldoEsperado = data.ingreso - data.egreso;
     const diferencia = montoContado - saldoEsperado
+    const egreso = data.egreso;
 
     if (montoContado == '') {
         showToast('Debes ingresar el monto contado', 'error')
@@ -563,6 +564,7 @@ document.getElementById('confirmar-cierre').addEventListener('click', async () =
     formData.append('saldo_esperado', saldoEsperado);
     formData.append('diferencia', diferencia);
     formData.append('observaciones', observaciones);
+    formData.append('egreso', egreso);
 
     try {
         const res = await fetch('http://localhost:8080/caja', {

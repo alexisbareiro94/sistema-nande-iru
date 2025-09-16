@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\VentasExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Cache;
 
 class VentaController extends Controller
 {
@@ -110,12 +111,14 @@ class VentaController extends Controller
                 return  $item->tipo === 'ingreso';
             })->sum('monto');
 
-            if ($tipo === 'egreso' || !filled($tipo)) {
-                $sessionVenta = $ventas;
-            } else {
-                $sessionVenta = $ventas;
-            }
-            session(['ventas' => $sessionVenta]);
+            Cache::put('ventas', $ventas, 20);
+            
+            // if ($tipo === 'egreso' || !filled($tipo)) {
+            //     $sessionVenta = $ventas;
+            // } else {
+            //     $sessionVenta = $ventas;
+            // }
+            // session(['ventas' => $sessionVenta]);
 
             return response()->json([
                 'success' => true,
@@ -283,12 +286,8 @@ class VentaController extends Controller
 
     public function export_pdf()
     {
-        if (session('ventas')) {
-            $ventas = session()->get('ventas')->toArray();
-            session()->forget('ventas');                
-        } else {
-            $ventas = MovimientoCaja::all();
-        }
+        $item = Cache::get('ventas');
+        $ventas = $item->toArray();                  
         $items = count($ventas);
         $desde = Carbon::parse($ventas[$items - 1]['created_at'])->format('dmy');
         $hasta = Carbon::parse($ventas[0]['created_at'])->format('dmy');

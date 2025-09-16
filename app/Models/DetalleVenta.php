@@ -24,6 +24,7 @@ class DetalleVenta extends Model
         'created_by',
         'updated_by',
         'deleted_by',
+        'caja_id',
     ];
 
     public function venta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -34,5 +35,8 @@ class DetalleVenta extends Model
     public function producto(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Producto::class);
+    }
+    public function caja(){
+        return $this->belongsTo(Caja::class);
     }
 }
