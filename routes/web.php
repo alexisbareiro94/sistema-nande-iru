@@ -12,12 +12,10 @@ use App\Http\Controllers\VentaController;
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
+use Illuminate\Support\Facades\Route;
 
 use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto};
-use Rap2hpoutre\FastExcel\FastExcel;
-use Rap2hpoutre\FastExcel\SheetCollection;
-
-use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Cache;
 
 Route::get('/login', [AuthController::class, 'login_view'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
@@ -37,6 +35,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/abrir-caja', [CajaController::class, 'abrir'])->name('caja.abrir');
         Route::post('/caja', [CajaController::class, 'update'])->name('caja.update');
 
+        //cajas anteriores
+        Route::get('/caja/anteriores', [CajaController::class, 'anteriores'])->name('caja.anteriores');
+        Route::get('api/caja/{id}', [CajaController::class, 'show'])->name('caja.show');
+
         //users
         Route::get('/api/users', [UserController::class, 'index'])->name('user.index');
         Route::post('/api/users', [UserController::class, 'store'])->name('user.store');
@@ -47,8 +49,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/venta/{codigo}', [VentaController::class, 'show']);
         Route::get('/venta', [VentaController::class, 'index']);
         //exportaciones
-        Route::get('/export-excel', [VentaController::class, 'export_excel'])->name('venta.excel');      
-        Route::get('/export-pdf', [VentaController::class, 'export_pdf'])->name('venta.pdf');  
+        Route::get('/export-excel', [VentaController::class, 'export_excel'])->name('venta.excel');
+        Route::get('/export-pdf', [VentaController::class, 'export_pdf'])->name('venta.pdf');
 
         //movimiento
         Route::get('/api/movimiento', [MovimientoCajaController::class, 'index'])->name('movimiento.index');
@@ -92,9 +94,35 @@ Route::get('/borrar-session', function () {
 
 
 Route::get('/debug', function () {
-    $sheets = new SheetCollection([
-    User::all(),
-    MovimientoCaja::all()
-]);
-(new FastExcel($sheets))->download('file.xlsx');
-}); 
+    $caja = Caja::find(1);
+    $mayoresVentas = Venta::where('caja_id', $caja->id)->orderBy('total', 'desc')->get()->take(3);
+    $montoMayoresVentas = $mayoresVentas->sum('total');
+    $transacciones = Venta::where('caja_id', $caja->id)->count();
+    $clientes = Venta::where('caja_id', $caja->id)->get()->unique('cliente_id')->count();
+    $efectivo = Venta::where('caja_id', $caja->id)->where('forma_pago', 'efectivo')->sum('total');
+    $transferencia = Venta::where('caja_id', $caja->id)->where('forma_pago', 'transferencia')->sum('total');
+
+    $total = $efectivo + $transferencia;
+    $efecPorcentaje = round(((100 * $efectivo) / $total), 1);
+    $transfProcentaje = round(((100 * $transferencia) / $total), 1);
+
+      $ventas = DetalleVenta::where('caja_id', $caja->id)
+                ->with('producto:id,nombre')
+                ->get()
+                ->groupBy('producto_id')
+                ->map(function ($items) {
+                    return [
+                        'cantidad' => $items->sum('cantidad'),
+                        'producto' => $items->first()->producto->nombre,
+                        'total'    => $items->sum('total'),
+                    ];
+                })
+                ->sortByDesc('total')   
+                ->take(3)    ;
+                
+
+                dd($ventas->values()->toArray());
+    $ventasOrdenadas = collect($ventas)->sortDesc()->toArray();   
+    dd($ventasOrdenadas);
+   
+});

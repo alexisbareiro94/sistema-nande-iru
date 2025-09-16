@@ -9,6 +9,10 @@ if (!function_exists('format_time')) {
     }
 }
 
+function moneda($monto){
+    return number_format($monto, 0, ',', '.');
+}
+
 function generate_code()
 {
     $string = 'abcdefghijklmnopqrstxywzv123456789';

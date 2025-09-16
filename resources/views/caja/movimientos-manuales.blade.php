@@ -45,13 +45,13 @@
             <div class="mb-4">
                 <label for="concepto-mm" class="block font-semibold text-gray-900 text-sm mb-2">Concepto</label>
                 <input type="text" id="concepto-mm" name="concepto-mm" placeholder="Ingrese el concepto"
-                    class="w-full px-4 py-2 rounded-lg bg-gray-200 text-black border border-gray-700 focus:border-amarillo focus:ring focus:ring-amarillo/30 outline-none">
+                    class="w-full px-4 py-2 rounded-lg bg-gray-200 text-black border border-gray-700 focus:border-gray-800 focus:ring focus:ring-gray-800/30 outline-none">
             </div>
 
             <div class="mb-4">
                 <label for="monto-mm" class="block text-gray-900 font-semibold text-sm mb-2">Monto</label>
                 <input type="number" id="monto-mm" name="monto-mm" step="0.01" placeholder="100.000"
-                    class="w-full px-4 py-2 rounded-lg bg-gray-200 text-black border border-gray-700 focus:border-amarillo focus:ring focus:ring-amarillo/30 outline-none">
+                    class="w-full px-4 py-2 rounded-lg bg-gray-200 text-black border border-gray-700 focus:border-gray-800 focus:ring focus:ring-gray-800/30 outline-none">
             </div>
 
             <div class="flex justify-end gap-3">
@@ -60,7 +60,7 @@
                     Cancelar
                 </button>
                 <button type="submit" id="confirmar-movimiento"
-                    class="cursor-pointer px-4 py-2 rounded-lg bg-amarillo text-gray-100 font-bold hover:bg-amber-400">
+                    class="cursor-pointer px-4 py-2 rounded-lg bg-gray-800 text-gray-100 font-bold hover:bg-gray-700">
                     Confirmar
                 </button>
             </div>

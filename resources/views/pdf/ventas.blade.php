@@ -149,9 +149,9 @@
             <tbody>
                 @foreach ($ventas as $venta)
                 <tr>
-                    <td>{{ $venta['venta']['nro_ticket'] }}</td>
-                    <td>{{ format_time($venta['venta']['created_at']) }}</td>
-                    <td>{{ $venta['venta']['cliente']['razon_social'] }}</td>
+                    <td>{{ $venta['venta']['nro_ticket'] ?? '' }}</td>
+                    <td>{{ format_time($venta['venta']['created_at'] ?? now()) ?? ''}}</td>
+                    <td>{{ $venta['venta']['cliente']['razon_social'] ?? '' }}</td> 
                     <td>
                         @foreach ($venta['venta']['productos'] as $index => $producto)
                         <div class="product-item">

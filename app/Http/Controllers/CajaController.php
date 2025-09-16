@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AbrirCajaRequest;
 use App\Http\Requests\UpdateCajaRequest;
-use App\Models\{Caja, MovimientoCaja};
+use App\Models\{Caja, MovimientoCaja, Venta, DetalleVenta, Producto};
 use App\Services\CajaService;
-use GuzzleHttp\Psr7\Request;
 
 class CajaController extends Controller
 {
@@ -72,22 +71,12 @@ class CajaController extends Controller
                     'error' => 'La caja ya esta cerrada',
                 ], 400);
             }
-            $ingreso = MovimientoCaja::where('tipo', 'ingreso')->whereHas('caja', function ($query) {
-                $query->where('estado', 'abierto');
-            })->selectRaw('SUM(monto) as total')->first()->total;
-
-            $egreso = MovimientoCaja::where('tipo', 'egreso')->whereHas('caja', function ($query) {
-                $query->where('estado', 'abierto');
-            })->selectRaw('SUM(monto) as total')->first()->total;
-            if ($egreso === null) {
-                $egreso = 0;
-            }
-            $total = $ingreso - $egreso;            
             $caja->update([
                 'monto_cierre' => $data['monto_cierre'], // monto contado
-                'saldo_esperado' => $total,
+                'saldo_esperado' => $data['saldo_esperado'],
                 'diferencia' => $data['diferencia'],
                 'observaciones' => $data['observaciones'],
+                'egresos' => $data['egreso'],
                 'fecha_cierre' => now(),
                 'estado' => 'cerrado',
                 'updated_by' => auth()->user()->id,
@@ -105,5 +94,61 @@ class CajaController extends Controller
                 'error' => $e->getMessage(),
             ]);
         }
+    }
+    public function show(string $id)
+    {
+        try {
+            $caja = Caja::find($id);            
+            $transacciones = Venta::where('caja_id', $caja->id)->count();
+            $clientes = Venta::where('caja_id', $caja->id)->get()->unique('cliente_id')->count();
+            $efectivo = Venta::where('caja_id', $caja->id)->where('forma_pago', 'efectivo')->sum('total');
+            $transferencia = Venta::where('caja_id', $caja->id)->where('forma_pago', 'transferencia')->sum('total');
+
+            $ventas = DetalleVenta::where('caja_id', $caja->id)
+                ->with('producto:id,nombre')
+                ->get()
+                ->groupBy('producto_id')
+                ->map(function ($items) {
+                    return [
+                        'cantidad' => $items->sum('cantidad'),
+                        'producto' => $items->first()->producto->nombre,
+                        'total'    => $items->sum('total'),
+                    ];
+                })
+                ->sortByDesc('total')   
+                ->take(3); //by: chatGPT, yo lo había hecho con dos foreachs (uno dentro de otro) y arrays, llegue al mismo resultado, pero este es mas bonito :D
+
+            $total = $efectivo + $transferencia;
+            $efecPorcentaje = (100 * $efectivo) / $total;
+            $transfProcentaje = (100 * $transferencia) / $total;
+
+            $datos = [
+                'caja' => $caja->load('user'),
+                'ventas' => $ventas->values()->toArray(),
+                'transacciones' => $transacciones,
+                'clientes' => $clientes,
+                'efectivo' => $efectivo,
+                'efecPorcentaje' => $efecPorcentaje,
+                'transferencia' => $transferencia,
+                'transfProcentaje' => $transfProcentaje,
+            ];
+
+            return response()->json([
+                'success' => true,
+                'datos' => $datos,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function anteriores()
+    {
+        return view('caja.anteriores.index', [
+            'cajas' => Caja::all(),
+        ]);
     }
 }

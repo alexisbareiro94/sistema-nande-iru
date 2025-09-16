@@ -2,7 +2,7 @@
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-lg font-semibold text-gray-800">Últimos movimientos</h2>
         <a href="{{ route('venta.index.view') }}"
-            class="cursor-pointer text-gray-600 hover:text-gray-800 transition-colors text-sm font-medium">
+            class="cursor-pointer text-gray-600 hover:text-gray-800 hover:underline transition-colors text-sm font-medium">
             Ver todo el historial →
         </a>
     </div>

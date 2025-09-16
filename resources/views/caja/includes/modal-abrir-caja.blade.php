@@ -19,7 +19,7 @@
             <div class="mb-4">
                 <label for="monto_inicial" class="block text-gray-900 text-sm mb-2">Monto Inicial</label>
                 <input  type="number" id="monto_inicial" name="monto_inicial" step="0.01"
-                class="w-full px-4 py-2 rounded-lg bg-gray-200 text-black border border-gray-700 focus:border-amarillo focus:ring focus:ring-amarillo/30 outline-none">
+                class="w-full px-4 py-2 rounded-lg bg-gray-200 text-black border border-gray-700 focus:border-gray-800 focus:ring focus:ring-gray-800/30 outline-none">
             </div>
             
             <!-- Botones -->
@@ -27,7 +27,7 @@
                 <button type="button" id="cancelarModal" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 font-bold hover:bg-gray-300">
                     Cancelar
                 </button>
-                <button type="submit"  id="confirmarModal" class="px-4 py-2 rounded-lg bg-amarillo text-gray-100 font-bold hover:bg-amber-400">
+                <button type="submit"  id="confirmarModal" class="px-4 py-2 rounded-lg bg-gray-800 text-gray-100 font-bold hover:bg-gray-700">
                     Confirmar
                 </button>
             </div>

@@ -141,8 +141,6 @@ btnCerrarCategoria.addEventListener("click", () => {
     contAddCategoria.classList.add('hidden');
 });
 
-
-//notificacion solo para agregar categorias
 function showToast(message, type = 'success') {
     const container = document.getElementById('toast-container');
     const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';

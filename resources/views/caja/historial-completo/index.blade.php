@@ -12,18 +12,7 @@
         <div>
             <h2 class="text-2xl font-bold text-gray-800">Historial de Movimientos</h2>
             <p class="text-gray-600 text-sm">Administra tu inventario de productos y servicios</p>
-        </div>
-        <a href="{{ route('producto.add') }}"
-            class="flex items-center gap-2 cursor-pointer text-lg bg-gray-800 hover:bg-gray-900 text-gray-200 px-4 py-2 font-semibold rounded-lg shadow transition text-center whitespace-nowrap">
-            <span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-
-            </span>
-            Nueva Venta
-        </a>
+        </div>        
     </div>
     <!-- Estadísticas -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">

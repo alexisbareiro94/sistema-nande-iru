@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('monto_cierre')->nullable(); // monto contado
             $table->integer('saldo_esperado')->nullable(); // calculado por sistema
             $table->integer('diferencia')->nullable();
+            $table->integer('egresos')->nullable();
             $table->text('observaciones')->nullable();
             $table->dateTime('fecha_apertura');
             $table->dateTime('fecha_cierre')->nullable(); // cuando se cerró

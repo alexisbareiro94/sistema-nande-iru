@@ -29,6 +29,7 @@ class UpdateCajaRequest extends FormRequest
             'diferencia' => 'required|numeric',
             'observaciones' => 'nullable|string',
             'saldo_esperado' => 'required',
+            'egreso' => 'required',
         ];
     }
 

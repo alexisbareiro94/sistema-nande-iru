@@ -45,6 +45,7 @@ class VentaFactory extends Factory
                 $precio = $producto->precio_venta;                
                 $venta->detalleVentas()->create([
                     'producto_id' => $producto->id,
+                    'caja_id' => 1,
                     'cantidad' => $cantidad,
                     'precio_unitario' => $producto->precio_venta,
                     'subtotal' => $cantidad * $precio,

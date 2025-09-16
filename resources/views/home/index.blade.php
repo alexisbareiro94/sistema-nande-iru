@@ -5,7 +5,7 @@
 @section('contenido')
  <header class="bg-gray-300 text-black shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="{{ url('/') }}" class="text-xl font-bold">MiApp</a>
+            <a href="{{ url('/') }}" class="text-xl font-bold"></a>
 
             <nav class="space-x-4 flex">                
                 <a href="" class="hover:text-[#CC0000] font-semibold">Perfil</a>
