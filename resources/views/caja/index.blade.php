@@ -197,6 +197,6 @@
 @section('js')
     <script src="{{ asset('js/caja.js') }}"></script>
     <script src="{{ asset('js/procesar-caja.js') }}"></script>
-    <script src="{{ asset('js/movimiento.js') }}"></script>
+    <script src="{{ asset('js/movimiento.js') }}"></script>        
 @endsection
 @endsection

@@ -121,8 +121,11 @@ Route::get('/debug', function () {
                 ->take(3)    ;
                 
 
-                dd($ventas->values()->toArray());
+                //dd($ventas->values()->toArray());
     $ventasOrdenadas = collect($ventas)->sortDesc()->toArray();   
-    dd($ventasOrdenadas);
+    $ventaElo = Venta::where('caja_id', $caja->id)->orderByDesc('total');
+
+            $mayorVenta = $ventaElo->first()->total;
+            dd($mayorVenta);
    
 });

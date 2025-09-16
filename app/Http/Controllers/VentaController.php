@@ -215,6 +215,7 @@ class VentaController extends Controller
                 DetalleVenta::create([
                     'venta_id' => $venta->id,
                     'producto_id' => $id,
+                    'caja_id' => $cajaId,
                     'cantidad' => $producto->cantidad,
                     'precio_unitario' => $producto->precio,
                     'producto_con_descuento' => $producto->descuento,

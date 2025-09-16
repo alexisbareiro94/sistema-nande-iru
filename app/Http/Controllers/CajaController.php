@@ -57,7 +57,7 @@ class CajaController extends Controller
         }
     }
 
-    public function update(UpdateCajaRequest $request)
+    public function update(UpdateCajaRequest $request) //cuando se cierra la caja
     {
         $data = $request->validated();
         //return response()->json([$data, now()]);
@@ -100,6 +100,8 @@ class CajaController extends Controller
         try {
             $caja = Caja::find($id);            
             $transacciones = Venta::where('caja_id', $caja->id)->count();
+            $mayorVenta = Venta::where('caja_id', $caja->id)->orderByDesc('total')->first()->total;            
+            $promedioVenta = $caja->monto_cierre / $transacciones;
             $clientes = Venta::where('caja_id', $caja->id)->get()->unique('cliente_id')->count();
             $efectivo = Venta::where('caja_id', $caja->id)->where('forma_pago', 'efectivo')->sum('total');
             $transferencia = Venta::where('caja_id', $caja->id)->where('forma_pago', 'transferencia')->sum('total');
@@ -128,9 +130,11 @@ class CajaController extends Controller
                 'transacciones' => $transacciones,
                 'clientes' => $clientes,
                 'efectivo' => $efectivo,
-                'efecPorcentaje' => $efecPorcentaje,
+                'efecPorcentaje' => round($efecPorcentaje, 0),
                 'transferencia' => $transferencia,
-                'transfProcentaje' => $transfProcentaje,
+                'transfProcentaje' => round($transfProcentaje, 0),
+                'mayorVenta' => $mayorVenta,
+                'promedio' => round($promedioVenta, 0),
             ];
 
             return response()->json([

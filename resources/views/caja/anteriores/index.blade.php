@@ -101,37 +101,34 @@
                     </div>
 
                     <!-- Footer del Card -->
+                    @if (session('caja')['id'] != $caja->id)
+                        
                     <div class="bg-gray-50 px-4 py-3 flex justify-end space-x-2">
                         <button data-cajaid="{{ $caja->id }}" class="detalle-caja cursor-pointer text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
                             Ver
                         </button>
                         <button class="text-gray-600 cursor-pointer hover:text-gray-800 text-sm font-medium flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            PDF
-                        </button>
-                    </div>
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        PDF
+                    </button>
+                </div>
+                @endif
                 </div>
             @endforeach
         </div>
     </div>
-    @include('caja.anteriores.modal-detalle')
-    <!-- Paginación (si la tienes) -->
-    @if (isset($cajas) && $cajas instanceof \Illuminate\Pagination\LengthAwarePaginator)
-        <div class="mt-6">
-            {{ $cajas->links() }}
-        </div>
-    @endif
+    @include('caja.anteriores.modal-detalle')    
     @section('js')
         <script src="{{ asset('js/historial-caja.js') }}"></script>
     @endsection

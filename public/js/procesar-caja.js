@@ -231,6 +231,7 @@ async function confirmarVenta(formaPago) {
 }
 
 async function limpiarUI() {
+    //await loadChart();
     const ruc = document.getElementById('i-ruc-ci');
     const razon = document.getElementById('i-nombre-razon');
     sessionStorage.clear();

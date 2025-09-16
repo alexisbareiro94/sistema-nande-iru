@@ -99,7 +99,7 @@
                                     <span id="dc-efectivo" class="font-medium">Gs. 850,000 (68%)</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="dc-ef-por" class="bg-green-500 h-2 rounded-full w-[68%]"></div>
+                                    <div id="dc-ef-por" class="bg-green-500 h-2 rounded-full"></div>
                                 </div>
                             </div>                            
                             <div>
@@ -108,7 +108,7 @@
                                     <span id="dc-transferencia" class="font-medium">Gs. 75,000 (32%)</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="dc-tr-por" class="bg-blue-500 h-2 rounded-full w-[32%]" ></div>
+                                    <div id="dc-tr-por" class="bg-blue-500 h-2 rounded-full" ></div>
                                 </div>
                             </div>
                         </div>
@@ -120,11 +120,11 @@
                         <div class="space-y-4">
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-600">Ticket Promedio</span>
-                                <span class="font-bold text-gray-900">Gs. 27,778</span>
+                                <span id="dc-promedio" class="font-bold text-gray-900">Gs. 27,778</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-gray-600">Ventas por Hora</span>
-                                <span class="font-bold text-gray-900">4.5</span>
+                                <span class="text-gray-600">Mayor Venta</span>
+                                <span id="dc-mayor-venta" class="font-bold text-gray-900">4.5</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-600">Clientes Únicos</span>
@@ -144,7 +144,7 @@
                                     <th class="px-4 py-2 text-left text-gray-600 font-medium">Producto</th>
                                     <th class="px-4 py-2 text-left text-gray-600 font-medium">Cantidad</th>
                                     <th class="px-4 py-2 text-left text-gray-600 font-medium">Importe</th>
-                                    <th class="px-4 py-2 text-left text-gray-600 font-medium">% Ventas</th>
+                                    {{-- <th class="px-4 py-2 text-left text-gray-600 font-medium">% Ventas</th> --}}
                                 </tr>
                             </thead>
                             <tbody id="dc-tabla-body" class="divide-y divide-gray-200">
@@ -225,7 +225,3 @@
         </div>
     </div>
 </div>
-
-<script>
-  
-</script>
