@@ -58,3 +58,8 @@ document.getElementById('dv-form-fecha').addEventListener('submit', async (e) =>
   const periodo = document.getElementById('dv-periodo').value;
   await loadChart(desde, hasta, periodo);
 });
+
+
+document.getElementById('confirmar-movimiento').addEventListener('click', () => {
+  loadChart('', '');
+})
