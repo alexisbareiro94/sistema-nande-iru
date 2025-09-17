@@ -20,16 +20,17 @@ document.getElementById("i-s-inventario").addEventListener('input', (e) => {
     }, 300);
 });
 
-function searchInventario(query, filtro) {
-    fetch(`http://localhost:8080/api/productos?q=${encodeURIComponent(query)}&filtro=${encodeURIComponent(filtro)}`, {
+async function searchInventario(query, filtro, filter) {
+    await fetch(`http://localhost:8080/api/productos?q=${encodeURIComponent(query)}&filtro=${encodeURIComponent(filtro)}&filter=${encodeURIComponent(filter)}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': csrfToken,
         },
     })
-        .then(res => res.json())
+        .then(async res => await res.json())
         .then(data => {
+            console.log(data);        
             const bodytableInv = document.getElementById('body-table-inv');
             bodytableInv.innerHTML = '';
 
@@ -222,7 +223,7 @@ async function recargarTablaInv() {
                 } else if (producto.stock_minimo >= producto.stock && producto.stock >= 1) {
                     stockClass = 'text-orange-600 font-bold bg-orange-100';
                     stockContent = producto.stock;
-                    stockTag = `<span class="ml-2 text-xs text-red-700">stock min.</span>`;
+                    stockTag = `<span class="ml-2 text-xs text-orange-600">stock min.</span>`;
                 } else {
                     stockClass = '';
                     stockContent = producto.stock;
@@ -307,3 +308,34 @@ async function getProduct(productoId) {
         showToast(`${err.message || 'Error al obtener productos'}`, 'error');
     }
 }
+
+const totalProductos = document.getElementById('total-productos');
+const stockMinimo = document.getElementById('stock-minimo');
+const sinStock = document.getElementById('sin-stock');
+const servicios = document.getElementById('servicios');
+const productos = document.getElementById('productos');
+let filter;
+
+sinStock.addEventListener('click', async () => {    
+    filter = 'sin_stock'
+    await searchInventario('', '', filter);
+})
+
+stockMinimo.addEventListener('click', async ()=>{
+    filter = 'stock_min',
+    await searchInventario('', '', filter);
+});
+
+totalProductos.addEventListener('click', async () => {
+    filter = 'total_productos';
+    await searchInventario('', '', filter);
+})
+
+servicios.addEventListener('click', async ()=>{
+    filter = 'servicios';
+    await searchInventario('', '', filter);
+});
+productos.addEventListener('click', async ()=>{
+    filter = 'productos';
+    await searchInventario('', '', filter);
+});

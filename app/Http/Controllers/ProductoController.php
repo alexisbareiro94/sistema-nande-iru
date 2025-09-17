@@ -44,7 +44,8 @@ class ProductoController extends Controller
         $filtro = $request->query('filtro');
         $orderBy = $request->query('orderBy');
         $direction = $request->query('dir');
-
+        $filter = $request->query('filter');
+        
         $query = Producto::query();    
 
         if ($filtro == "tipo") {
@@ -67,7 +68,22 @@ class ProductoController extends Controller
             $query->orderBy($orderBy, $direction);
         }
 
-        if (empty($filtro)) {
+        if(filled($filter)){
+            if($filter == 'sin_stock'){
+                $query->where('stock', 0);
+            }elseif($filter == 'stock_min'){
+                $query->whereColumn('stock_minimo','>=','stock')->where('stock', '!=', 0);
+            }elseif($filter == 'total_productos'){
+                $query;
+            }elseif($filter == 'servicios'){
+                $query->where('tipo', 'servicio');
+            }else{
+                $query->where('tipo', 'producto');
+            }
+        }
+
+
+        if (!filled($filtro) && !filled($filter)) {
             $query->whereLike("nombre", "%$search%")
                 ->orWhereLike("codigo", "%$search%");
         }

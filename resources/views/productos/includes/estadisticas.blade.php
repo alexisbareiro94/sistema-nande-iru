@@ -1,7 +1,7 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
       <!-- Total Productos -->
-      <div
-          class="bg-yellow-50 p-5 rounded-xl shadow-sm border-2 border-yellow-400 hover:shadow-md transition-shadow duration-200">
+      <div id="total-productos"
+          class="cursor-pointer bg-yellow-50 p-5 rounded-xl shadow-sm border-2 border-yellow-400 hover:shadow-md transition-shadow duration-200">
           <div class="flex items-center">
               <div class="p-3 rounded-full bg-yellow-200">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24"
@@ -18,8 +18,8 @@
       </div>
 
       <!-- Stock Mínimo -->
-      <div
-          class="bg-orange-50 p-5 rounded-xl shadow-sm border-2 border-orange-400 hover:shadow-md transition-shadow duration-200">
+      <div id="stock-minimo"
+          class="cursor-pointer bg-orange-50 p-5 rounded-xl shadow-sm border-2 border-orange-400 hover:shadow-md transition-shadow duration-200">
           <div class="flex items-center">
               <div class="p-3 rounded-full bg-orange-200">
                   <svg class="h-6 w-6 text-orange-600" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -36,8 +36,8 @@
       </div>
 
       <!-- Sin Stock -->
-      <div
-          class="bg-red-50 p-5 rounded-xl shadow-sm border-2 border-red-400 hover:shadow-md transition-shadow duration-200">
+      <div id="sin-stock"
+          class="cursor-pointer bg-red-50 p-5 rounded-xl shadow-sm border-2 border-red-400 hover:shadow-md transition-shadow duration-200">
           <div class="flex items-center">
               <div class="p-3 rounded-full bg-red-200">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none"
@@ -53,8 +53,8 @@
           </div>
       </div>
       <!-- Servicios -->
-      <div
-          class="bg-green-50 p-5 rounded-xl shadow-sm border-2 border-green-400 hover:shadow-md transition-shadow duration-200">
+      <div id="servicios"
+          class="cursor-pointer bg-green-50 p-5 rounded-xl shadow-sm border-2 border-green-400 hover:shadow-md transition-shadow duration-200">
           <div class="flex items-center">
               <div class="p-3 rounded-full bg-green-200">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none"
@@ -71,8 +71,8 @@
       </div>
 
       <!-- Productos -->
-      <div
-          class="bg-blue-50 p-5 rounded-xl shadow-sm border-2 border-blue-400 hover:shadow-md transition-shadow duration-200">
+      <div id="productos"
+          class="cursor-pointer bg-blue-50 p-5 rounded-xl shadow-sm border-2 border-blue-400 hover:shadow-md transition-shadow duration-200">
           <div class="flex items-center">
               <div class="p-3 rounded-full bg-blue-200">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none"
