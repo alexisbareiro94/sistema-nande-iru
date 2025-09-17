@@ -1,8 +1,8 @@
 import './bootstrap';
 import Chart from 'chart.js/auto';
 
-let myChart = null;
 
+let myChart = null;
 async function loadChart(desde = '', hasta = '', periodo = '') {
   try {
     const res = await fetch(`http://localhost:8080/api/movimientos/charts_caja?desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&periodoInicio=${encodeURIComponent(periodo)}`);
@@ -60,6 +60,13 @@ document.getElementById('dv-form-fecha').addEventListener('submit', async (e) =>
 });
 
 
-document.getElementById('confirmar-movimiento').addEventListener('click', () => {
-  loadChart('', '');
+document.getElementById('confirmar-movimiento').addEventListener('click', async () => {
+  await loadChart('', '');
+})
+
+document.getElementById('confirmar-venta').addEventListener('click', () => {
+  
+  setTimeout(async () => {
+    await loadChart('', '');
+  }, 500);
 })
