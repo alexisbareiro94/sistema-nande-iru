@@ -89,6 +89,10 @@ class VentaController extends Controller
                     $query->whereHas('venta', function ($q) {
                         $q->where('con_descuento', true);
                     });
+                } elseif($tipo === 'sin_descuento'){
+                    $query->where('tipo', 'ingreso')->whereHas('venta', function($q){
+                        $q->where('con_descuento', false);
+                    });
                 }
             }
             if (filled($search)) {
