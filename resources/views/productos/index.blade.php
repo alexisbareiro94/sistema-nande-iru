@@ -172,6 +172,6 @@
         </div>
 
         <!-- Modal Eliminar -->
-        @include('productos.includes.modal-delete')
-    
+        @include('productos.includes.modal-delete')        
+
 @endsection

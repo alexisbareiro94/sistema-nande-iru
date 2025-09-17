@@ -70,6 +70,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/all-products', [ProductoController::class, 'allProducts'])->name('productos.all.products');
         Route::delete('/api/delete/{id}/producto', [ProductoController::class, 'delete'])->name('producto.delete');
         Route::get('/api/producto/{id}', [ProductoController::class, 'show'])->name('producto.show');
+        Route::post('/api/import-products', [ProductoController::class, 'import_excel']);
 
         Route::post('/agregar-categoria', [CategoriaController::class, 'store'])->name('categoria.store');
         Route::get('/api/categorias', [CategoriaController::class, 'index'])->name('categorias.index');

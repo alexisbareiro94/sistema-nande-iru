@@ -94,7 +94,7 @@ boton.addEventListener("click", (e) => {
 });
 
 //mostar preview de la imagen
-imagen.addEventListener('change', (e) => { //evento del input de la imagen
+imagen.addEventListener('change', (e) => { //evento del input de la imagen    
     const file = e.target.files[0];
     const contImgOriginal = document.getElementById("div-img-original"); //div contenedor de la imagen que se va a enviar
     const preview = document.getElementById("imagen-preview"); //input para el preview de la imagen
@@ -548,3 +548,57 @@ cerrarq.addEventListener('click', () => {
             });
         }).catch(err => console.error("error al cargar los datos", err))
 }, 300);
+
+
+document.getElementById('btn-abrir-import').addEventListener('click', ()=>{
+    document.getElementById('import-productos').classList.remove('hidden');
+});
+
+
+
+document.getElementById('import-doc').addEventListener('change', (e) => {
+    const file = e.target.files[0];    
+    const contFile = document.getElementById('import-cont');
+    const preview = document.getElementById('preview-file');
+    const previewCont = document.getElementById('preview-cont-file');    
+
+    if (file) {        
+        previewCont.classList.remove('hidden');
+        preview.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+        contFile.classList.add('hidden');
+    } else {
+        preview.textContent = '';
+    }
+});
+
+document.getElementById('remove-file').addEventListener('click', () => {
+    const input = document.getElementById('import-doc');
+    input.value = ""; // limpiar input file
+
+    document.getElementById('preview-file').textContent = '';
+    document.getElementById('preview-cont-file').classList.add('hidden');
+    document.getElementById('import-cont').classList.remove('hidden');
+});
+
+document.getElementById('import-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const file = document.getElementById('import-doc').files[0];        
+    const formData = new FormData();
+    formData.append('productos', file);    
+    try{
+        const res = await fetch('http://localhost:8080/api/import-products', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: formData,
+        });
+        const data = await res.json();
+        if(!res.ok){
+            throw data;
+        }        
+        showToast('Productos Importados');
+    }catch(err){
+        showToast(`${err.error}`, 'error');
+    }
+});
