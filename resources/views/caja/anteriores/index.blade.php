@@ -101,36 +101,39 @@
                     </div>
 
                     <!-- Footer del Card -->
-                    @if (session('caja')['id'] != $caja->id)
-                        
-                    <div class="bg-gray-50 px-4 py-3 flex justify-end space-x-2">
-                        <button data-cajaid="{{ $caja->id }}" class="detalle-caja cursor-pointer text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            Ver
-                        </button>
-                        <button class="text-gray-600 cursor-pointer hover:text-gray-800 text-sm font-medium flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        PDF
-                    </button>
-                </div>
-                @endif
+
+                    @if (session('caja') && session('caja')['id'] == $caja->id)
+                    @else
+                        <div class="bg-gray-50 px-4 py-3 flex justify-end space-x-2">
+                            <button data-cajaid="{{ $caja->id }}"
+                                class="detalle-caja cursor-pointer text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                Ver
+                            </button>
+                            <button class="bt-pdf flex items-center cursor-pointer">
+                                <svg class="w-4.5 h-4.5 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                    width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M5 17v-5h1.5a1.5 1.5 0 1 1 0 3H5m12 2v-5h2m-2 3h2M5 10V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1v6M5 19v1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1M10 3v4a1 1 0 0 1-1 1H5m6 4v5h1.375A1.627 1.627 0 0 0 14 15.375v-1.75A1.627 1.627 0 0 0 12.375 12H11Z" />
+                                </svg>
+
+                                PDF
+                            </button>
+                        </div>
+                    @endif
                 </div>
             @endforeach
         </div>
     </div>
-    @include('caja.anteriores.modal-detalle')    
-    @section('js')
-        <script src="{{ asset('js/historial-caja.js') }}"></script>
-    @endsection
+    @include('caja.anteriores.modal-detalle')
+@section('js')
+    <script src="{{ asset('js/historial-caja.js') }}"></script>
 @endsection
-
+@endsection
