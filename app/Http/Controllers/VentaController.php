@@ -286,16 +286,39 @@ class VentaController extends Controller
     }
 
     public function export_pdf()
-    {
-        $item = Cache::get('ventas');
-        $ventas = $item->toArray();                  
-        $items = count($ventas);
-        $desde = Carbon::parse($ventas[$items - 1]['created_at'])->format('dmy');
-        $hasta = Carbon::parse($ventas[0]['created_at'])->format('dmy');
-        $fileName = "$desde-$hasta.pdf";
-        $pdf = Pdf::loadView('pdf.ventas', [
-            'ventas' => $ventas,
-        ]);
-        return $pdf->download($fileName);
+    {   $item = Cache::get('ventas');         
+        if(filled($item)){
+            $mov = $item->contains(function($value){            
+                return $value->venta == null;
+            });        
+        }
+        if(!filled($item) || $mov){
+            $item = Cache::remember('ventas', 20, fn()=> MovimientoCaja::with('caja.user:id,name')->get());       
+            Cache::forget('ventas');      
+            $ingresos = $item->sum('monto');
+            $egresos = $item->where('tipo', 'egreso')->sum('monto');
+            $ventas = $item->toArray();                                      
+            $items = count($ventas);
+            $desde = Carbon::parse($ventas[$items - 1]['created_at'])->format('dmy');
+            $hasta = Carbon::parse($ventas[0]['created_at'])->format('dmy');
+            $fileName = "$desde-$hasta.pdf";
+            $pdf = Pdf::loadView('pdf.ventasE', [
+                'ventas' => $ventas,
+                'ingresos' => $ingresos,
+                'egresos' => $egresos,
+            ]);
+            return $pdf->download($fileName);
+        }else{
+            $ventas = $item->toArray();                  
+            $items = count($ventas);            
+            $desde = Carbon::parse($ventas[$items - 1]['created_at'])->format('dmy');
+            $hasta = Carbon::parse($ventas[0]['created_at'])->format('dmy');
+            $fileName = "$desde-$hasta.pdf";
+            Cache::forget('ventas');
+            $pdf = Pdf::loadView('pdf.ventas', [
+                'ventas' => $ventas,
+            ]);
+            return $pdf->download($fileName);
+        }     
     }
 }
