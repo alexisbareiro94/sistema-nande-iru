@@ -39,6 +39,7 @@ return new class extends Migration
             $table->string('imagen')->nullable()->unique();
             $table->integer('ventas')->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
