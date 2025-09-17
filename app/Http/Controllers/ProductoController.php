@@ -45,10 +45,9 @@ class ProductoController extends Controller
         $filtro = $request->query('filtro');
         $orderBy = $request->query('orderBy');
         $direction = $request->query('dir');
-        $filter = $request->query('filter');
-
+        $filter = $request->query('filter');        
         $query = Producto::query();
-
+        
         if ($filtro == "tipo") {
             $query->whereLike("tipo", "%$search%");
         }
@@ -83,12 +82,10 @@ class ProductoController extends Controller
             }
         }
 
-
-        if (!filled($filtro) && !filled($filter)) {
+        if (!filled($filtro) && filled($search)) {            
             $query->whereLike("nombre", "%$search%")
                 ->orWhereLike("codigo", "%$search%");
         }
-
         $productos = $query->with(['marca', 'distribuidor'])
             ->get();
 
@@ -112,7 +109,7 @@ class ProductoController extends Controller
     { {
             return response()->json([
                 'success' => true,
-                'productos' => Producto::with(['marca', 'distribuidor', 'categoria'])->get(),
+                'productos' => Producto::with(['marca', 'distribuidor', 'categoria'])->orderByDesc('created_at')->get(),
             ]);
         }
     }
@@ -216,6 +213,7 @@ class ProductoController extends Controller
 
     public function delete(string $id)
     {
+        //return response()->json($id);
         try {
             $query = Producto::query();
             $productos = $query->get();
