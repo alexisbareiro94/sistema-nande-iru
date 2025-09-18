@@ -54,7 +54,7 @@ class MovimientoCajaController extends Controller
         $data['caja_id'] = Caja::where('estado', 'abierto')->pluck('id')->first();
         try {
             MovimientoCaja::create($data);
-
+            crear_caja();
             return response()->json([
                 'success' => true,
                 'message' => 'Movimiento registrado correctamente',
