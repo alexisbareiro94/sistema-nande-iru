@@ -7,7 +7,7 @@ async function orderBy(column, direction) {
             },
         });
 
-        const data = await res.json();        
+        const data = await res.json();
         if (!res.ok) {
             throw data;
         }
@@ -23,55 +23,55 @@ function formatearPrecio(numero) {
 
 
 async function recargarTableInvForOrder(data) {
-   const bodytableInv = document.getElementById('body-table-inv');
-bodytableInv.innerHTML = '';
+    const bodytableInv = document.getElementById('body-table-inv');
+    bodytableInv.innerHTML = '';
 
-data.productos.forEach(producto => {
-    const row = document.createElement('tr');
-    row.className = "hover:bg-gray-50 transition-colors";
+    data.productos.forEach(producto => {
+        const row = document.createElement('tr');
+        row.className = "hover:bg-gray-50 transition-colors";
 
-    // Marca
-    const marcaNombre = producto.marca?.nombre ?? '';
+        // Marca
+        const marcaNombre = producto.marca?.nombre ?? '';
 
-    // Precio formateado
-    const precioFormateado = new Intl.NumberFormat('es-PY', {
-        minimumFractionDigits: 0
-    }).format(producto.precio_venta);
+        // Precio formateado
+        const precioFormateado = new Intl.NumberFormat('es-PY', {
+            minimumFractionDigits: 0
+        }).format(producto.precio_venta);
 
-    // Stock y tipo
-    let stockClass = '';
-    let stockContent = '';
-    let stockTag = '';
+        // Stock y tipo
+        let stockClass = '';
+        let stockContent = '';
+        let stockTag = '';
 
-    if (producto.tipo === 'servicio') {
-        stockClass = 'text-gray-400 italic';
-        stockContent = 'Servicio';
-    } else {
-        if (producto.stock === 0) {
-            stockClass = 'font-bold bg-red-200 text-red-700';
-            stockContent = producto.stock;
-            stockTag = `<span class="ml-2 text-xs text-red-700">sin stock</span>`;
-        } else if (producto.stock_minimo >= producto.stock && producto.stock >= 1) {
-            stockClass = 'text-orange-600 font-bold bg-orange-100';
-            stockContent = producto.stock;
-            stockTag = `<span class="ml-2 text-xs text-red-700">stock min.</span>`;
+        if (producto.tipo === 'servicio') {
+            stockClass = 'text-gray-400 italic';
+            stockContent = 'Servicio';
         } else {
-            stockClass = '';
-            stockContent = producto.stock;
+            if (producto.stock === 0) {
+                stockClass = 'font-bold bg-red-200 text-red-700';
+                stockContent = producto.stock;
+                stockTag = `<span class="ml-2 text-xs text-red-700">sin stock</span>`;
+            } else if (producto.stock_minimo >= producto.stock && producto.stock >= 1) {
+                stockClass = 'text-orange-600 font-bold bg-orange-100';
+                stockContent = producto.stock;
+                stockTag = `<span class="ml-2 text-xs text-red-700">stock min.</span>`;
+            } else {
+                stockClass = '';
+                stockContent = producto.stock;
+            }
         }
-    }
 
-    // Distribuidor
-    const distribuidorNombre = producto.tipo === 'servicio'
-        ? 'Servicio'
-        : (producto.distribuidor?.nombre ?? '');
+        // Distribuidor
+        const distribuidorNombre = producto.tipo === 'servicio'
+            ? 'Servicio'
+            : (producto.distribuidor?.nombre ?? '');
 
-    // Clase para distribuidor
-    const distribuidorClass = producto.tipo === 'servicio'
-        ? 'text-gray-400 italic'
-        : '';
+        // Clase para distribuidor
+        const distribuidorClass = producto.tipo === 'servicio'
+            ? 'text-gray-400 italic'
+            : '';
 
-    row.innerHTML = `
+        row.innerHTML = `
         <td class="pl-3 py-3 text-sm">
             <p class="font-semibold">${producto.nombre}</p>
             <p class="text-gray-500 text-xs">${marcaNombre}</p>
@@ -111,8 +111,8 @@ data.productos.forEach(producto => {
         </td>
     `;
 
-    bodytableInv.appendChild(row);
-});
+        bodytableInv.appendChild(row);
+    });
 
 }
 

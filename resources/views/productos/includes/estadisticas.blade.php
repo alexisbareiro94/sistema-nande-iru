@@ -12,7 +12,7 @@
               </div>
               <div class="ml-4">
                   <p class="text-gray-500 text-sm font-medium">Total Productos</p>
-                  <p class="text-2xl font-bold text-gray-900">{{ $total }}</p>
+                  <p id="total-productos-i" class="text-2xl font-bold text-gray-900">{{ $total }}</p>
               </div>
           </div>
       </div>
@@ -30,7 +30,7 @@
               </div>
               <div class="ml-4">
                   <p class="text-gray-500 text-sm font-medium">Stock Mínimo</p>
-                  <p class="text-2xl font-bold text-gray-900">{{ $stock }}</p>
+                  <p id="stock-minimo-i" class="text-2xl font-bold text-gray-900">{{ $stock }}</p>
               </div>
           </div>
       </div>
@@ -48,7 +48,7 @@
               </div>
               <div class="ml-4">
                   <p class="text-gray-500 text-sm font-medium">Sin Stock</p>
-                  <p class="text-2xl font-bold text-gray-900">{{ $sinStock }}</p>
+                  <p id="sin-stock-i" class="text-2xl font-bold text-gray-900">{{ $sinStock }}</p>
               </div>
           </div>
       </div>
@@ -65,7 +65,7 @@
               </div>
               <div class="ml-4">
                   <p class="text-gray-500 text-sm font-medium">Servicios</p>
-                  <p class="text-2xl font-bold text-gray-900">{{ $totalServicios }}</p>
+                  <p id="servicios-i" class="text-2xl font-bold text-gray-900">{{ $totalServicios }}</p>
               </div>
           </div>
       </div>
@@ -83,7 +83,7 @@
               </div>
               <div class="ml-4">
                   <p class="text-gray-500 text-sm font-medium">Productos</p>
-                  <p class="text-2xl font-bold text-gray-900">{{ $totalProductos }}</p>
+                  <p id="productos-i" class="text-2xl font-bold text-gray-900">{{ $totalProductos }}</p>
               </div>
           </div>
       </div>

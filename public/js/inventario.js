@@ -16,11 +16,11 @@ document.getElementById("i-s-inventario").addEventListener('input', (e) => {
                 searchInventario(query = "", filtro = "");
             });
         }
-        searchInventario(query, filtro);
+        searchInventario(query, filtro, '');
     }, 300);
 });
 
-async function searchInventario(query, filtro, filter) {
+async function searchInventario(query, filtro, filter = '') {
     await fetch(`http://localhost:8080/api/productos?q=${encodeURIComponent(query)}&filtro=${encodeURIComponent(filtro)}&filter=${encodeURIComponent(filter)}`, {
         method: 'GET',
         headers: {
@@ -30,7 +30,7 @@ async function searchInventario(query, filtro, filter) {
     })
         .then(async res => await res.json())
         .then(data => {
-            console.log(data);        
+            console.log(data);
             const bodytableInv = document.getElementById('body-table-inv');
             bodytableInv.innerHTML = '';
 
@@ -142,7 +142,7 @@ function deleteP() {
             const btn = e.target.closest('.delete-producto');
             const productoId = btn.dataset.producto;
             const product = await getProduct(productoId);
-
+            console.log(product)
             document.getElementById('product-h3').innerHTML = `
                 ¿Estás seguro de eliminar, <strong>${product.producto.nombre}</strong>?
             `;
@@ -151,7 +151,7 @@ function deleteP() {
             const confirmarBtn = document.getElementById("confirmar-d");
             confirmarBtn.replaceWith(confirmarBtn.cloneNode(true));
             const newConfirmarBtn = document.getElementById("confirmar-d");
-
+            console.log(productoId)
             newConfirmarBtn.addEventListener('click', async () => {
                 try {
                     const res = await fetch(`http://localhost:8080/api/delete/${productoId}/producto`, {
@@ -160,11 +160,12 @@ function deleteP() {
                             'X-CSRF-TOKEN': csrfToken
                         },
                     });
-
-                    if (!res.ok) {
-                        const errData = await res.json();
-                        throw errData;
+                    const data = await res.json();
+                    if (!res.ok) {                        
+                        throw data;
                     }
+
+                    recargarEstadisticas(data);
                     await recargarTablaInv();
                     deleteCont.classList.add('hidden');
                     showToast('Producto Eliminado', 'success');
@@ -180,7 +181,6 @@ function deleteP() {
 deleteP();
 
 async function recargarTablaInv() {
-
     const bodytableInv = document.getElementById('body-table-inv');
     bodytableInv.innerHTML = '';
 
@@ -191,10 +191,7 @@ async function recargarTablaInv() {
         if (!res.ok) {
             throw data;
         }
-
-
-
-
+                
         data.productos.forEach(producto => {
             const row = document.createElement('tr');
             row.className = "hover:bg-gray-50 transition-colors";
@@ -228,12 +225,12 @@ async function recargarTablaInv() {
                     stockClass = '';
                     stockContent = producto.stock;
                 }
-            }            
+            }
             const distribuidorNombre = producto.tipo === 'servicio'
                 ? 'Servicio'
                 : (producto.distribuidor?.nombre ?? '');
 
-        
+
             const distribuidorClass = producto.tipo === 'servicio'
                 ? 'text-gray-400 italic'
                 : '';
@@ -282,8 +279,7 @@ async function recargarTablaInv() {
         });
 
         // Re-inicializar eventos si es necesario
-        deleteP();
-
+        deleteP();        
     } catch (err) {
         console.error(err);
         showToast(`${err.message || 'Error al obtener productos'}`, 'error');
@@ -316,14 +312,14 @@ const servicios = document.getElementById('servicios');
 const productos = document.getElementById('productos');
 let filter;
 
-sinStock.addEventListener('click', async () => {    
+sinStock.addEventListener('click', async () => {
     filter = 'sin_stock'
     await searchInventario('', '', filter);
 })
 
-stockMinimo.addEventListener('click', async ()=>{
+stockMinimo.addEventListener('click', async () => {
     filter = 'stock_min',
-    await searchInventario('', '', filter);
+        await searchInventario('', '', filter);
 });
 
 totalProductos.addEventListener('click', async () => {
@@ -331,11 +327,27 @@ totalProductos.addEventListener('click', async () => {
     await searchInventario('', '', filter);
 })
 
-servicios.addEventListener('click', async ()=>{
+servicios.addEventListener('click', async () => {
     filter = 'servicios';
     await searchInventario('', '', filter);
 });
-productos.addEventListener('click', async ()=>{
+productos.addEventListener('click', async () => {
     filter = 'productos';
     await searchInventario('', '', filter);
 });
+
+
+function recargarEstadisticas(data){
+    console.log(data)
+    const totalProductos = document.getElementById('total-productos-i');
+    const stockMinimo = document.getElementById('stock-minimo-i');
+    const sinStock = document.getElementById('sin-stock-i');
+    const servicios = document.getElementById('servicios-i');
+    const productos = document.getElementById('productos-i');
+
+    totalProductos.innerText = `${data.total - 1}`;
+    stockMinimo.innerText = `${data.stock}`;
+    sinStock.innerText = `${data.sinStock}`;
+    servicios.innerText = `${data.totalServicios}`
+    productos.innerText = `${data.totalProductos}`
+}
