@@ -32,8 +32,8 @@ class ReporteController extends Controller
 
             $labels = $pagos->keys();
             $mixto = $pagos['mixto'] ?? 0;
-            $transferencia = $pagos['transferencia'];
-            $efectivo = $pagos['efectivo'];
+            $transferencia = $pagos['transferencia'] ?? 0;
+            $efectivo = $pagos['efectivo'] ?? 0;
 
             return response()->json([
                 'success' => true,
