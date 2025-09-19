@@ -1,6 +1,6 @@
 import './bootstrap';
+import './reportes';
 import Chart from 'chart.js/auto';
-
 
 let myChart = null;
 async function loadChart(desde = '', hasta = '', periodo = '') {

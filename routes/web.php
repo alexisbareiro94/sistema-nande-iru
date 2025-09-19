@@ -9,13 +9,14 @@ use App\Http\Controllers\MovimientoCajaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VentaController;
+use App\Http\Controllers\ReporteController;
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
 use Illuminate\Support\Facades\Route;
 
 use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto};
-use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 Route::get('/login', [AuthController::class, 'login_view'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
@@ -23,9 +24,7 @@ Route::get('/register', [AuthController::class, 'register_view'])->name('registe
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', function () {
-        return view('home.index');
-    })->name('home');
+    Route::get('/', [AuthController::class, 'index'])->name('home');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -80,6 +79,10 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/agregar-marca', [MarcaController::class, 'store'])->name('marca.store');
         Route::get('/api/marcas', [MarcaController::class, 'index'])->name('marca.all');
+
+        Route::get('/reportes', [ReporteController::class, 'index'])->name('reporte.index');
+        Route::get('/api/pagos', [ReporteController::class, 'tipos_pagos']);
+        Route::get('/api/ventas/{periodo}', [ReporteController::class, 'ventas_chart']);
     });
 });
 
@@ -95,38 +98,25 @@ Route::get('/borrar-session', function () {
 
 
 Route::get('/debug', function () {
-    $caja = Caja::find(1);
-    $mayoresVentas = Venta::where('caja_id', $caja->id)->orderBy('total', 'desc')->get()->take(3);
-    $montoMayoresVentas = $mayoresVentas->sum('total');
-    $transacciones = Venta::where('caja_id', $caja->id)->count();
-    $clientes = Venta::where('caja_id', $caja->id)->get()->unique('cliente_id')->count();
-    $efectivo = Venta::where('caja_id', $caja->id)->where('forma_pago', 'efectivo')->sum('total');
-    $transferencia = Venta::where('caja_id', $caja->id)->where('forma_pago', 'transferencia')->sum('total');
+    $inicio = now()->startOfDay()->subDay(7);
+    $hoy = now()->endOfDay();
+ $ventas = Venta::whereBetween('created_at', [$inicio, $hoy])
+            ->orderBy('created_at')
+            ->get()
+            ->groupBy(function ($venta) {
+                return Carbon::parse($venta->created_at)->format('Y-m-d');
+            })
+            ->map(function ($venta) {
+                return [
+                    'total' => $venta->sum('total')
+                ];
+            });
 
-    $total = $efectivo + $transferencia;
-    $efecPorcentaje = round(((100 * $efectivo) / $total), 1);
-    $transfProcentaje = round(((100 * $transferencia) / $total), 1);
+            $labels = $ventas->keys();
 
-      $ventas = DetalleVenta::where('caja_id', $caja->id)
-                ->with('producto:id,nombre')
-                ->get()
-                ->groupBy('producto_id')
-                ->map(function ($items) {
-                    return [
-                        'cantidad' => $items->sum('cantidad'),
-                        'producto' => $items->first()->producto->nombre,
-                        'total'    => $items->sum('total'),
-                    ];
-                })
-                ->sortByDesc('total')   
-                ->take(3)    ;
-                
-
-                //dd($ventas->values()->toArray());
-    $ventasOrdenadas = collect($ventas)->sortDesc()->toArray();   
-    $ventaElo = Venta::where('caja_id', $caja->id)->orderByDesc('total');
-
-            $mayorVenta = $ventaElo->first()->total;
-            dd($mayorVenta);
-   
+            return response()->json([
+                'success' => true,
+                'labels' => $labels,
+                'ventas' => $ventas,
+            ]);
 });

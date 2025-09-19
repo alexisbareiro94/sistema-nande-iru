@@ -88,7 +88,7 @@
             </a>
 
             <!-- Reportes -->
-            <a href="#"
+            <a id="reportes-index" href="{{ route('reporte.index') }}"
                 class="group bg-gradient-to-b from-white to-gray-50 border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:shadow-red-100/50 min-h-[180px] flex flex-col items-center p-6">
                 <div class="bg-red-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

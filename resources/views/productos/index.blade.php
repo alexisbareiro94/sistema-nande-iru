@@ -4,8 +4,7 @@
 
 @section('ruta-actual', 'Inventario')
 
-@section('contenido')
-    
+@section('contenido')    
         <!-- Encabezado -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4 p-6">
             <div>
