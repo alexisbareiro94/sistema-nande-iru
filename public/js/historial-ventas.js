@@ -153,15 +153,17 @@ function setCliente(data) {
     }
 }
 
-function setProductos(data) {
-    console.log(data)
+function setProductos(data) {    
     const bodyTabla = document.getElementById('d-v-bodyTable');
+    console.log(data)    
     bodyTabla.innerHTML = '';
     if (data.productos != '') {
         data.productos.forEach(producto => {
+            const tipoClass = producto.tipo === 'servicio' ? 'bg-green-200 text-green-700 border broder-green-700' : 'bg-blue-200 text-blue-700 border broder-blue-700';   
             const tr = document.createElement('tr');
             tr.innerHTML = `
             <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+            <span class="rounded-full px-1 py-1 text-xs ${tipoClass}" > ${producto.tipo.substring(0, 3)}</span>
             ${producto.nombre}
             </td>
             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
