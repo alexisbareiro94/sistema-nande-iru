@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AbrirCajaRequest;
 use App\Http\Requests\UpdateCajaRequest;
-use App\Models\{Caja, MovimientoCaja, Venta, DetalleVenta, Producto};
+use App\Models\{Caja, MovimientoCaja, Venta, DetalleVenta, Producto, Pago};
 use App\Services\CajaService;
 
 class CajaController extends Controller
@@ -106,12 +106,12 @@ class CajaController extends Controller
                 ->get()
                 ->unique("cliente_id")
                 ->count();
-            $efectivo = Venta::where("caja_id", $caja->id)
-                ->where("forma_pago", "efectivo")
-                ->sum("total");
-            $transferencia = Venta::where("caja_id", $caja->id)
-                ->where("forma_pago", "transferencia")
-                ->sum("total");
+            $efectivo = Pago::where("caja_id", $caja->id)
+                ->where("metodo", "efectivo")
+                ->sum("monto");
+            $transferencia = Pago::where("caja_id", $caja->id)
+                ->where("metodo", "transferencia")
+                ->sum("monto");
 
             $ventas = DetalleVenta::where("caja_id", $caja->id)
                 ->with("producto:id,nombre")
