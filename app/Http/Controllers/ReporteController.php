@@ -31,7 +31,7 @@ class ReporteController extends Controller
 
 
             $labels = $pagos->keys();
-            $mixto = $pagos['mixto'];
+            $mixto = $pagos['mixto'] ?? 0;
             $transferencia = $pagos['transferencia'];
             $efectivo = $pagos['efectivo'];
 
