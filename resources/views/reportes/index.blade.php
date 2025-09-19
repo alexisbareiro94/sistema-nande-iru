@@ -43,21 +43,26 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                     <!-- Ventas totales -->
                     <div class="bg-white rounded-lg shadow p-6">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-blue-100 text-primary">
-                                <i class="fas fa-shopping-cart text-xl"></i>
+                        @if (session('caja'))
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-full bg-blue-100 text-primary">
+                                    <i class="fas fa-shopping-cart text-xl"></i>
+                                </div>
+                                <div class="mx-4">
+                                    <h4 class="text-gray-500 text-sm">Ventas hoy</h4>
+                                    <div class="text-2xl font-bold">Gs.
+                                        {{ number_format($data['ventas_hoy']['saldo'], 0, ',', '.') }}</div>
+                                </div>
                             </div>
-                            <div class="mx-4">
-                                <h4 class="text-gray-500 text-sm">Ventas hoy</h4>
-                                <div class="text-2xl font-bold">Gs.
-                                    {{ number_format($data['ventas_hoy']['saldo'], 0, ',', '.') }}</div>
+                            <div class="mt-4 text-green-500 text-sm flex items-center">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                                <span>{{ $data['ventas_hoy']['tag'] }}{{ $data['ventas_hoy']['porcentaje'] }}% respecto almespasado</span>
                             </div>
+                        @else
+                        <div class="text-center h-full">                            
+                            <span> Sin Caja abierta</span>
                         </div>
-                        <div class="mt-4 text-green-500 text-sm flex items-center">
-                            <i class="fas fa-arrow-up mr-1"></i>
-                            <span>{{ $data['ventas_hoy']['tag'] }}{{ $data['ventas_hoy']['porcentaje'] }}% respecto al mes
-                                pasado</span>
-                        </div>
+                        @endif
                     </div>
 
                     <!-- Clientes nuevos -->
@@ -102,16 +107,19 @@
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-semibold text-gray-700">Evolución de Ventas</h3>
                             <div class="flex space-x-2 bg-gray-300 px-1 py-0.5 rounded-lg">
-                                <button id="7d" data-periodo="7" class="periodo-btn cursor-pointer text-xs px-3 py-1  transition-all duration-300 ease-in-out bg-gray-50 font-semibold rounded-md shadow-lg">7D</button>
-                                <button id="30d" data-periodo="30" class="periodo-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out bg-gray-300 font-semibold rounded-md">30D</button>
-                                <button id="90d" data-periodo="90" class="periodo-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out bg-gray-300 font-semibold rounded-md">90D</button>
+                                <button id="7d" data-periodo="7"
+                                    class="periodo-btn cursor-pointer text-xs px-3 py-1  transition-all duration-300 ease-in-out bg-gray-50 font-semibold rounded-md shadow-lg">7D</button>
+                                <button id="30d" data-periodo="30"
+                                    class="periodo-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out bg-gray-300 font-semibold rounded-md">30D</button>
+                                <button id="90d" data-periodo="90"
+                                    class="periodo-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out bg-gray-300 font-semibold rounded-md">90D</button>
                             </div>
                         </div>
-                        <div class="h-100">                            
+                        <div class="h-100">
                             <div class="h-full flex items-end space-x-2">
                                 <canvas id="ventasChart">
                                     <div class="flex gap-4">
-                                        <canvas id="ingresos"></canvas>                                        
+                                        <canvas id="ingresos"></canvas>
                                     </div>
                                 </canvas>
                             </div>
@@ -120,7 +128,18 @@
 
                     <!-- Formas de pago -->
                     <div class="bg-white rounded-lg shadow p-6">
-                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Formas de Pago</h3>
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Formas de Pago</h3>
+                            <div class="flex space-x-2 bg-gray-300 px-1 py-0.5 rounded-lg mb-4">
+                                <button id="7dp" data-pago="7"
+                                    class="pago-btn cursor-pointer text-xs px-3 py-1  transition-all duration-300 ease-in-out bg-gray-50 font-semibold rounded-md shadow-lg">7D</button>
+                                <button id="30dp" data-pago="30"
+                                    class="pago-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out bg-gray-300 font-semibold rounded-md">30D</button>
+                                <button id="90dp" data-pago="90"
+                                    class="pago-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out bg-gray-300 font-semibold rounded-md">90D</button>
+                            </div>
+                        </div>
+
                         <canvas id="pagosChart">
                             <div class="flex gap-4">
                                 <canvas id="transferencias"></canvas>

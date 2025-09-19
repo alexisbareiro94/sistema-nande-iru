@@ -22,8 +22,7 @@ class VentaService
         }
         if (!User::where('ruc_ci', $ruc)->first()) {
             $errores['user'] = ['El usuario no existe'];
-        }
-        
+        }        
         return collect($errores);
     }
 }

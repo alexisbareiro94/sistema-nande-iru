@@ -81,7 +81,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/marcas', [MarcaController::class, 'index'])->name('marca.all');
 
         Route::get('/reportes', [ReporteController::class, 'index'])->name('reporte.index');
-        Route::get('/api/pagos', [ReporteController::class, 'tipos_pagos']);
+        Route::get('/api/pagos/{periodo}', [ReporteController::class, 'tipos_pagos']);
         Route::get('/api/ventas/{periodo}', [ReporteController::class, 'ventas_chart']);
     });
 });
@@ -98,25 +98,13 @@ Route::get('/borrar-session', function () {
 
 
 Route::get('/debug', function () {
-    $inicio = now()->startOfDay()->subDay(7);
+    $inicio = now()->startOfDay()->subDay(90);
     $hoy = now()->endOfDay();
- $ventas = Venta::whereBetween('created_at', [$inicio, $hoy])
-            ->orderBy('created_at')
-            ->get()
-            ->groupBy(function ($venta) {
-                return Carbon::parse($venta->created_at)->format('Y-m-d');
-            })
-            ->map(function ($venta) {
-                return [
-                    'total' => $venta->sum('total')
-                ];
-            });
 
-            $labels = $ventas->keys();
+    $pagos =  Venta::whereBetween('created_at', [$inicio, $hoy])     
+        ->get()
+        ->groupBy('forma_pago')
+        ->map(fn($pago) => $pago->count());
 
-            return response()->json([
-                'success' => true,
-                'labels' => $labels,
-                'ventas' => $ventas,
-            ]);
+        dd($pagos);
 });

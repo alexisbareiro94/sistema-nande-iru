@@ -89,8 +89,8 @@ class VentaController extends Controller
                     $query->whereHas('venta', function ($q) {
                         $q->where('con_descuento', true);
                     });
-                } elseif($tipo === 'sin_descuento'){
-                    $query->where('tipo', 'ingreso')->whereHas('venta', function($q){
+                } elseif ($tipo === 'sin_descuento') {
+                    $query->where('tipo', 'ingreso')->whereHas('venta', function ($q) {
                         $q->where('con_descuento', false);
                     });
                 }
@@ -104,25 +104,16 @@ class VentaController extends Controller
             }
             if (filled($orderBy) && filled($dir)) {
                 $query->orderBy($orderBy, $dir);
-            }            
+            }
 
             $ventas = $query->with(['venta' => function ($query) {
                 $query->with(['cliente', 'detalleVentas', 'productos']);
             }])->orderByDesc('created_at')->get();
 
             $egresosFiltros = $ventas->filter(fn($item) => $item->tipo === 'egreso')->sum('monto');
-            $ingresosFiltros = $ventas->filter(function ($item) {
-                return  $item->tipo === 'ingreso';
-            })->sum('monto');
+            $ingresosFiltros = $ventas->filter(fn($item) => $item->tipo === 'ingreso')->sum('monto');
 
             Cache::put('ventas', $ventas, 20);
-            
-            // if ($tipo === 'egreso' || !filled($tipo)) {
-            //     $sessionVenta = $ventas;
-            // } else {
-            //     $sessionVenta = $ventas;
-            // }
-            // session(['ventas' => $sessionVenta]);
 
             return response()->json([
                 'success' => true,
@@ -168,7 +159,7 @@ class VentaController extends Controller
 
     public function store(StoreVentaRequest $request)
     {
-        $data = $request->validated();  //aca se valida que llegue el carrito y demas datos        
+        $data = $request->validated();  //aca se valida que llegue el carrito y demas datos
         $errores = $this->ventaService->validate_data($data); //aca valido los datos del carrito y el usuario
 
         if ($errores->count() > 0) {
@@ -187,9 +178,7 @@ class VentaController extends Controller
         $cajaId = Caja::where('estado', 'abierto')->pluck('id')->first();
         $metodoPago = $formaPago->keys();
         session(['key' => $metodoPago[0]]);
-        $tieneDescuento = $carrito->contains(function ($item) {
-            return $item->descuento === true;
-        });
+        $tieneDescuento = $carrito->contains(fn($item) => $item->descuento === true);
 
         DB::beginTransaction();
         try {
@@ -205,7 +194,7 @@ class VentaController extends Controller
                 'total' => $totalCarrito['total'],
                 'estado' => 'completado',
             ]);
-
+                        
             MovimientoCaja::create([
                 'caja_id' => $cajaId,
                 'tipo' => 'ingreso',
@@ -269,6 +258,7 @@ class VentaController extends Controller
             $caja['saldo'] += $venta->total;
             session()->put(['caja' => $caja]);
             DB::commit();
+            crear_caja();
             return response()->json([
                 'success' => true,
                 'message' => 'Venta realizada con exito',
@@ -290,18 +280,17 @@ class VentaController extends Controller
     }
 
     public function export_pdf()
-    {   $item = Cache::get('ventas');         
-        if(filled($item)){
-            $mov = $item->contains(function($value){            
-                return $value->venta == null;
-            });        
+    {
+        $item = Cache::get('ventas');
+        if (filled($item)) {
+            $mov = $item->contains(fn($value) => $value->venta == null);
         }
-        if(!filled($item) || $mov){
-            $item = Cache::remember('ventas', 20, fn()=> MovimientoCaja::with('caja.user:id,name')->get());       
-            Cache::forget('ventas');      
+        if (!filled($item) || $mov) {
+            $item = Cache::remember('ventas', 20, fn() => MovimientoCaja::with('caja.user:id,name')->get());
+            Cache::forget('ventas');
             $ingresos = $item->sum('monto');
             $egresos = $item->where('tipo', 'egreso')->sum('monto');
-            $ventas = $item->toArray();                                      
+            $ventas = $item->toArray();
             $items = count($ventas);
             $desde = Carbon::parse($ventas[$items - 1]['created_at'])->format('dmy');
             $hasta = Carbon::parse($ventas[0]['created_at'])->format('dmy');
@@ -312,9 +301,9 @@ class VentaController extends Controller
                 'egresos' => $egresos,
             ]);
             return $pdf->download($fileName);
-        }else{
-            $ventas = $item->toArray();                  
-            $items = count($ventas);            
+        } else {
+            $ventas = $item->toArray();
+            $items = count($ventas);
             $desde = Carbon::parse($ventas[$items - 1]['created_at'])->format('dmy');
             $hasta = Carbon::parse($ventas[0]['created_at'])->format('dmy');
             $fileName = "$desde-$hasta.pdf";
@@ -323,6 +312,6 @@ class VentaController extends Controller
                 'ventas' => $ventas,
             ]);
             return $pdf->download($fileName);
-        }     
+        }
     }
 }

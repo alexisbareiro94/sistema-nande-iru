@@ -40,8 +40,11 @@ class VentaFactory extends Factory
             $subtotal = 0;
             $cantidadTotal = 0;
 
+            $cantidad = 0;
             foreach ($productos as $producto) {
                 $cantidad = rand(1, 3);
+                $producto->ventas += $cantidad;
+                $producto->save();
                 $precio = $producto->precio_venta;                
                 $venta->detalleVentas()->create([
                     'producto_id' => $producto->id,
@@ -50,7 +53,7 @@ class VentaFactory extends Factory
                     'precio_unitario' => $producto->precio_venta,
                     'subtotal' => $cantidad * $precio,
                     'total' => $cantidad * $precio,
-                    'created_at' => $venta->created_at ?? now(),
+                    'created_at' => $venta->created_at ?? now(),                    
                 ]);
 
                 $subtotal += $cantidad * $precio;
@@ -70,7 +73,7 @@ class VentaFactory extends Factory
                 'cantidad_productos' => $cantidadTotal,
                 'subtotal' => round($subtotal),
                 'total' => round($total),
-                'monto_descuento' => round($monto_descuento),
+                'monto_descuento' => round($monto_descuento),                
             ]);
             
             $venta->movimiento()->create([

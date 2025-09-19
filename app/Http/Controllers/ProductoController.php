@@ -21,51 +21,46 @@ class ProductoController extends Controller
         $query = Producto::query();
         $productos = $query->get();
         $total = count($productos);
-        $totalServicios = count($productos->where("tipo", "servicio"));
-        $totalProductos = count($productos->where("tipo", "producto"));
-        $stock = count(
-            Producto::where("tipo", "producto")
-                ->whereColumn("stock_minimo", ">=", "stock")
-                ->where("stock", "!=", 0)
-                ->get(),
-        );
-        $sinStock = count(Producto::where("stock", 0)->get());
+        $totalServicios = count($productos->where('tipo', 'servicio'));
+        $totalProductos = count($productos->where('tipo', 'producto'));
+        $stock = count(Producto::where('tipo', 'producto')->whereColumn('stock_minimo', '>=', 'stock')->where('stock', '!=', 0)->get());
+        $sinStock = count(Producto::where('stock', 0)->get());
 
-        return view("productos.index", [
-            "productos" => $query->orderBy("id", "desc")->paginate(15),
-            "stock" => $stock,
-            "total" => $total,
-            "sinStock" => $sinStock,
-            "totalProductos" => $totalProductos,
-            "totalServicios" => $totalServicios,
-            "categorias" => Categoria::all(),
-            "marcas" => Marca::all(),
-            "distribuidores" => Distribuidor::all(),
+        return view('productos.index', [
+            'productos' => $query->orderBy('id', 'desc')->paginate(15),
+            'stock' => $stock,
+            'total' => $total,
+            'sinStock' => $sinStock,
+            'totalProductos' => $totalProductos,
+            'totalServicios' => $totalServicios,
+            'categorias' => Categoria::all(),
+            'marcas' => Marca::all(),
+            'distribuidores' => Distribuidor::all(),
         ]);
     }
     //function para hacer un buscador dinámico con js
     public function search(Request $request)
     {
-        $search = $request->query("q");
-        $filtro = $request->query("filtro");
-        $orderBy = $request->query("orderBy");
-        $direction = $request->query("dir");
-        $filter = $request->query("filter");
+        $search = $request->query('q');
+        $filtro = $request->query('filtro');
+        $orderBy = $request->query('orderBy');
+        $direction = $request->query('dir');
+        $filter = $request->query('filter');        
         $query = Producto::query();
-
+        
         if ($filtro == "tipo") {
             $query->whereLike("tipo", "%$search%");
         }
 
         if ($filtro == "categoria") {
-            $query->whereHas("categoria", function ($q) use ($search) {
-                $q->whereLike("nombre", "%$search%");
+            $query->whereHas('categoria', function ($q) use ($search) {
+                $q->whereLike('nombre', "%$search%");
             });
         }
 
         if ($filtro == "marca") {
-            $query->whereHas("marca", function ($q) use ($search) {
-                $q->whereLike("nombre", "%$search%");
+            $query->whereHas('marca', function ($q) use ($search) {
+                $q->whereLike('nombre', "%$search%");
             });
         }
 
@@ -74,31 +69,29 @@ class ProductoController extends Controller
         }
 
         if (filled($filter)) {
-            if ($filter == "sin_stock") {
-                $query->where("stock", 0);
-            } elseif ($filter == "stock_min") {
-                $query
-                    ->whereColumn("stock_minimo", ">=", "stock")
-                    ->where("stock", "!=", 0);
-            } elseif ($filter == "total_productos") {
+            if ($filter == 'sin_stock') {
+                $query->where('stock', 0);
+            } elseif ($filter == 'stock_min') {
+                $query->whereColumn('stock_minimo', '>=', 'stock')->where('stock', '!=', 0);
+            } elseif ($filter == 'total_productos') {
                 $query;
-            } elseif ($filter == "servicios") {
-                $query->where("tipo", "servicio");
+            } elseif ($filter == 'servicios') {
+                $query->where('tipo', 'servicio');
             } else {
-                $query->where("tipo", "producto");
+                $query->where('tipo', 'producto');
             }
         }
 
-        if (!filled($filtro) && filled($search)) {
-            $query
-                ->whereLike("nombre", "%$search%")
+        if (!filled($filtro) && filled($search)) {            
+            $query->whereLike("nombre", "%$search%")
                 ->orWhereLike("codigo", "%$search%");
         }
-        $productos = $query->with(["marca", "distribuidor"])->get();
+        $productos = $query->with(['marca', 'distribuidor'])
+            ->get();
 
         return response()->json([
-            "success" => true,
-            "productos" => $productos,
+            'success' => true,
+            'productos' => $productos,
         ]);
     }
 
@@ -106,99 +99,82 @@ class ProductoController extends Controller
     public function all()
     {
         return response()->json([
-            "marcas" => Marca::all(),
-            "categorias" => Categoria::all(),
-            "distribuidores" => Distribuidor::all(),
+            'marcas' => Marca::all(),
+            'categorias' => Categoria::all(),
+            'distribuidores' => Distribuidor::all(),
         ]);
     }
 
     public function allProducts()
-    {
-        return response()->json([
-            "success" => true,
-            "productos" => Producto::with([
-                "marca",
-                "distribuidor",
-                "categoria",
-            ])
-                ->orderByDesc("created_at")
-                ->get(),
-        ]);
+    { {
+            return response()->json([
+                'success' => true,
+                'productos' => Producto::with(['marca', 'distribuidor', 'categoria'])->orderByDesc('created_at')->get(),
+            ]);
+        }
     }
 
     public function add_producto_view()
     {
-        return view("productos.add-producto", [
-            "marcas" => Marca::all(),
-            "categorias" => Categoria::all(),
-            "distribuidores" => Distribuidor::all(),
+        return view('productos.add-producto', [
+            'marcas' => Marca::all(),
+            'categorias' => Categoria::all(),
+            'distribuidores' => Distribuidor::all(),
         ]);
     }
 
     public function store(StoreProductRequest $request)
     {
         $data = $request->validated();
-        if ($request->hasFile("imagen")) {
-            $fileName =
-                time() .
-                "." .
-                $request->file("imagen")->getClientOriginalExtension();
-            $request->file("imagen")->move(public_path("images"), $fileName);
+        if ($request->hasFile('imagen')) {
+            $fileName = time() . '.' . $request->file('imagen')->getClientOriginalExtension();
+            $request->file('imagen')->move(public_path('images'), $fileName);
 
-            $data["imagen"] = $fileName;
+            $data['imagen'] = $fileName;
         }
-        $request->marca_id ?? ($data["marca_id"] = 1);
-        $request->categoria_id ?? ($data["categoria_id"] = 1);
-        $request->distribuidor_id ?? ($data["distribuidor_id"] = 1);
+        $request->marca_id ?? $data['marca_id'] = 1;
+        $request->categoria_id ?? $data['categoria_id'] = 1;
+        $request->distribuidor_id ?? $data['distribuidor_id'] = 1;
 
         try {
             if ($request->codigo_auto) {
-                $data["codigo"] = $this->productService->create_code(
-                    $data["categoria_id"],
-                    $data["nombre"],
-                    $data["marca_id"],
-                );
+                $data['codigo'] = $this->productService->create_code($data['categoria_id'], $data['nombre'], $data['marca_id']);
             }
             $producto = Producto::create($data);
 
             return response()->json([
-                "success" => true,
-                "message" => "Producto agregado correctamente.",
-                "producto" => $producto,
+                'success' => true,
+                'message' => 'Producto agregado correctamente.',
+                'producto' => $producto,
             ]);
         } catch (\Exception $e) {
-            return response()->json(
-                [
-                    "success" => false,
-                    "error" => $e->getMessage(),
-                ],
-                400,
-            );
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 400);
         }
     }
     public function show(string $id)
     {
         try {
             return response()->json([
-                "success" => true,
-                "producto" => Producto::select("id", "nombre")
-                    ->where("id", $id)
-                    ->first(),
+                'success' => true,
+                'producto' => Producto::select('id', 'nombre')->where('id', $id)->first(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                "success" => false,
-                "errors" => $e->getMessage(),
+                'success' => false,
+                'errors' => $e->getMessage(),
             ]);
         }
     }
     public function update_view(string $id)
     {
-        return view("productos.edit", [
-            "producto" => Producto::find($id),
-            "marcas" => Marca::all(),
-            "categorias" => Categoria::all(),
-            "distribuidores" => Distribuidor::all(),
+        return view('productos.edit', [
+            'producto' => Producto::find($id),
+            'marcas' => Marca::all(),
+            'categorias' => Categoria::all(),
+            'distribuidores' => Distribuidor::all(),
         ]);
     }
 
@@ -207,83 +183,55 @@ class ProductoController extends Controller
         $data = $request->validated();
         try {
             $producto = Producto::find($id);
-            if ($request->hasFile("imagen")) {
-                if (
-                    file_exists(public_path("images/$producto->imagen")) &&
-                    $producto->imagen
-                ) {
+            if ($request->hasFile('imagen')) {
+                if (file_exists(public_path("images/$producto->imagen")) && $producto->imagen) {
                     unlink(public_path("images/$producto->imagen"));
                 }
-                $fileName =
-                    time() .
-                    "." .
-                    $request->file("imagen")->getClientOriginalExtension();
-                $request
-                    ->file("imagen")
-                    ->move(public_path("images"), $fileName);
-                $data["imagen"] = $fileName;
+                $fileName = time() . '.' . $request->file('imagen')->getClientOriginalExtension();
+                $request->file('imagen')->move(public_path('images'), $fileName);
+                $data['imagen'] = $fileName;
             }
             if ($request->eliminar_imagen == "true" && $producto->imagen) {
                 if (file_exists(public_path("images/$producto->imagen"))) {
                     unlink(public_path("images/$producto->imagen"));
                 }
-                $data["imagen"] = null;
+                $data['imagen'] = null;
             }
             $producto->update($data);
 
             return response()->json([
-                "success" => true,
-                "message" => "Producto Actualizado",
+                'success' => true,
+                'message' => 'Producto Actualizado',
             ]);
         } catch (\Exception $e) {
-            return response()->json(
-                [
-                    "success" => false,
-                    "errors" => $e->getMessage(),
-                ],
-                400,
-            );
+            return response()->json([
+                'success' => false,
+                'errors' => $e->getMessage(),
+            ], 400);
         }
     }
 
     public function delete(string $id)
-    {
+    {        
         try {
             $query = Producto::query();
             $productos = $query->get();
             $producto = Producto::find($id);
             $producto->delete();
             $producto->save();
-
-            $total = count($productos) - 1;
-            $totalServicios = count($productos->where("tipo", "servicio"));
-            $totalProductos = count($productos->where("tipo", "producto"));
-            $stock = count(
-                Producto::where("tipo", "producto")
-                    ->whereColumn("stock_minimo", ">=", "stock")
-                    ->where("stock", "!=", 0)
-                    ->get(),
-            );
-            $sinStock = count(Producto::where("stock", 0)->get());
-
-            if ($producto->tipo == "servicio") {
-                $totalServicios--;
-            } else {
-                $totalProductos--;
-            }
             return response()->json([
-                "success" => true,
-                "message" => "producto borrado",
-                "total" => $total,
-                "totalServicios" => $totalServicios,
-                "totalProductos" => $totalProductos,
-                "stock" => $stock,
-                "sinStock" => $sinStock,
+                'success' => true,
+                'message' => "producto borrado",
+                'total' => count($productos),
+                'totalServicios' => count($productos->where('tipo', 'servicio')),
+                'totalProductos' => count($productos->where('tipo', 'producto')),
+                'stock' => count(Producto::where('tipo', 'producto')->whereColumn('stock_minimo', '>=', 'stock')->where('stock', '!=', 0)->get()),
+                'sinStock' => count(Producto::where('stock', 0)->get()),
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                "success" => false,
-                "errors" => $e->getMessage(),
+                'success' => false,
+                'errors' => $e->getMessage(),
             ]);
         }
     }
@@ -292,23 +240,20 @@ class ProductoController extends Controller
     {
         try {
             $request->validate([
-                "productos" => "required|mimes:xlsx,xls,csv",
-            ]);
-            $file = $request->file("productos");
-            Excel::import(new ProductosImport(), $file);
+                'productos' => 'required|mimes:xlsx,xls,csv'
+            ]);            
+            $file = $request->file('productos');            
+            Excel::import(new ProductosImport, $file);
 
             return response()->json([
-                "success" => true,
-                "message" => "Productos importados",
+                'success' => true,
+                'message' => 'Productos importados'
             ]);
         } catch (\Exception $e) {
-            return response()->json(
-                [
-                    "success" => false,
-                    "error" => $e->getMessage(),
-                ],
-                500,
-            );
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 }
