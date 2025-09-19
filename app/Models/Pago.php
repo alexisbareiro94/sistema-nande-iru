@@ -16,10 +16,15 @@ class Pago extends Model
         'metodo',    
         'monto',
         'estado',
+        'caja_id',
     ];
 
     public function venta(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Venta::class);
     }    
+
+    public function caja(){
+        return $this->belongsTo(Caja::class);
+    }
 }

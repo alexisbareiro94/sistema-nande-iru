@@ -239,6 +239,7 @@ class VentaController extends Controller
                     foreach ($monto as $metodo => $pago) {
                         Pago::create([
                             'venta_id' => $venta->id,
+                            'caja_id' => $cajaId,
                             'metodo' => $metodo,
                             'monto' => $pago,
                             'estado' => 'completado',
@@ -247,6 +248,7 @@ class VentaController extends Controller
                 } else {
                     Pago::create([
                         'venta_id' => $venta->id,
+                        'caja_id' => $cajaId,
                         'metodo' => $forma,
                         'monto' => $monto,
                         'estado' => 'completado',

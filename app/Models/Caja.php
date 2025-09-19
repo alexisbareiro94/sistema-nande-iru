@@ -43,4 +43,8 @@ class Caja extends Model
     public function detallesVentas(){
         return $this->hasMany(DetalleVenta::class, 'caja_id');
     }
+
+    public function pagos(){
+        return $this->hasMany(Pago::class, 'caja_id');
+    }
 }
