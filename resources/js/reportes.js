@@ -2,10 +2,9 @@ import Chart from 'chart.js/auto';
 import { showToast } from './toast';
 
 let PagosChart = null;
-async function pagosChart() {
+async function pagosChart(periodo = 7) {    
     try {
-
-        const res = await fetch('http://localhost:8080/api/pagos');
+        const res = await fetch(`http://localhost:8080/api/pagos/${periodo}`);
         const data = await res.json();
 
         if (!res.ok) {
@@ -44,6 +43,7 @@ async function pagosChart() {
             }
         });
     } catch (err) {
+        console.log(err)
         showToast(`${err.error}`, 'error');
     }
 
@@ -54,12 +54,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+
+const pagoBtns = document.querySelectorAll('.pago-btn');
+
+pagoBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        pagoBtns.forEach(b => {
+            b.classList.remove('bg-gray-50', 'shadow-lg');
+            b.classList.add('bg-gray-300');
+        });        
+        pagosChart(btn.dataset.pago)
+        setTimeout(() => {
+            btn.classList.remove('bg-gray-300');
+            btn.classList.add('bg-gray-50', 'shadow-lg');
+        }, 150)
+
+        const periodo = btn.dataset.periodo;
+        console.log(`Periodo seleccionado: ${periodo}`);
+    });
+});
+
+
 let ventaChart = null;
-async function ventasChart(periodo = 7) {
-    const input = document.getElementById('periodo');
-    const periodoPick = input ? parseInt(input.value) : periodo;
+async function ventasChart(periodo = 7) {    
     try {
-        const res = await fetch(`http://localhost:8080/api/ventas/${periodoPick}`)
+        const res = await fetch(`http://localhost:8080/api/ventas/${periodo}`)
         const data = await res.json();
         if (!res.ok) {
             throw data;
@@ -112,19 +131,15 @@ async function ventasChart(periodo = 7) {
                     }
                 }
             }
-
         });
-
-
-
     } catch (err) {
+        console.log(err)
         showToast(`${err.error}`, 'error')
     }
 }
 ventasChart();
 
-const btns = document.querySelectorAll('.periodo-btn');
-
+const btns = document.querySelectorAll('.periodo-btn'); 
 btns.forEach(btn => {
     btn.addEventListener('click', () => {
         btns.forEach(b => {

@@ -19,12 +19,16 @@ class ReporteController extends Controller
         ]);
     }
 
-    public function tipos_pagos()
+    public function tipos_pagos(string $periodo)
     {
+        $inicio = now()->startOfDay()->subDay($periodo);
+        $hoy = now()->endOfDay();
         try {
-            $pagos = Venta::all()
+            $pagos =  Venta::whereBetween('created_at', [$inicio, $hoy])                
+                ->get()
                 ->groupBy('forma_pago')
                 ->map(fn($pago) => $pago->count());
+
 
             $labels = $pagos->keys();
             $mixto = $pagos['mixto'];
