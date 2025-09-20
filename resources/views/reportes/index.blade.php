@@ -3,43 +3,20 @@
 @section('ruta-actual', 'Reportes')
 
 @section('contenido')
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4 p-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2 gap-4 p-6">
         <div>
             <h2 class="text-2xl font-bold text-gray-800">Reportes</h2>
             <p class="text-gray-600 text-sm">Administra tu inventario de productos y servicios</p>
         </div>
+
+        <div
+            class="flex items-center gap-2  text-lg bg-gray-800 text-gray-200 px-4 py-2 font-semibold rounded-lg">            
+            {{ \Carbon\Carbon::parse(now())->format('d / m / Y') }}
+        </div>
     </div>
     <div class="flex">
-        <!-- Main Content -->
         <div class="flex-1 flex flex-col">
-
-            <!-- Main Content Area -->
             <main class="flex-1 p-4">
-                <!-- Filtros -->
-                <div class="bg-white rounded-lg shadow p-4 mb-6">
-                    <div class="flex flex-wrap items-center justify-between">
-                        <h2 class="text-lg font-semibold text-gray-700">Filtros</h2>
-                        <div class="flex flex-wrap gap-2">
-                            <select class="border rounded-lg px-3 py-2 text-sm">
-                                <option>Últimos 7 días</option>
-                                <option>Últimos 30 días</option>
-                                <option>Este mes</option>
-                                <option>Mes anterior</option>
-                            </select>
-                            <select class="border rounded-lg px-3 py-2 text-sm">
-                                <option>Todos los usuarios</option>
-                                <option>Cajero 1</option>
-                                <option>Cajero 2</option>
-                            </select>
-                            <button
-                                class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg text-sm flex items-center">
-                                <i class="fas fa-filter mr-1"></i> Aplicar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- KPIs -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                     <!-- Ventas totales -->
                     <div class="bg-white rounded-lg shadow p-6">
@@ -49,19 +26,19 @@
                                     <i class="fas fa-shopping-cart text-xl"></i>
                                 </div>
                                 <div class="mx-4">
-                                    <h4 class="text-gray-500 text-sm">Ventas hoy</h4>
+                                    <h4 class="text-gray-500 text-sm">Ventas de Este Mes</h4>
                                     <div class="text-2xl font-bold">Gs.
                                         {{ number_format($data['ventas_hoy']['saldo'], 0, ',', '.') }}</div>
                                 </div>
                             </div>
                             <div class="mt-4 text-green-500 text-sm flex items-center">
                                 <i class="fas fa-arrow-up mr-1"></i>
-                                <span>{{ $data['ventas_hoy']['tag'] }}{{ $data['ventas_hoy']['porcentaje'] }}% respecto almespasado</span>
+                                <span>{{ $data['ventas_hoy']['tag'] }}{{ $data['ventas_hoy']['porcentaje'] }}% respecto hasta mismo dia del mes pasado</span>
                             </div>
                         @else
-                        <div class="text-center h-full">                            
-                            <span> Sin Caja abierta</span>
-                        </div>
+                            <div class="text-center py-8">
+                                <span class="text-gray-500 font-medium">No hay ninguna caja abierta</span>
+                            </div>
                         @endif
                     </div>
 
@@ -106,13 +83,13 @@
                     <div class="lg:col-span-2 bg-white rounded-lg shadow p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-semibold text-gray-700">Evolución de Ventas</h3>
-                            <div class="flex space-x-2 bg-gray-300 px-1 py-0.5 rounded-lg">
+                            <div class="flex space-x-2 bg-gray-300  rounded-lg">
                                 <button id="7d" data-periodo="7"
-                                    class="periodo-btn cursor-pointer text-xs px-3 py-1  transition-all duration-300 ease-in-out bg-gray-50 font-semibold rounded-md shadow-lg">7D</button>
+                                    class="periodo-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-50 font-semibold rounded-md shadow-lg">7D</button>
                                 <button id="30d" data-periodo="30"
-                                    class="periodo-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out bg-gray-300 font-semibold rounded-md">30D</button>
+                                    class="periodo-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-300 font-semibold rounded-md">30D</button>
                                 <button id="90d" data-periodo="90"
-                                    class="periodo-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out bg-gray-300 font-semibold rounded-md">90D</button>
+                                    class="periodo-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-300 font-semibold rounded-md">90D</button>
                             </div>
                         </div>
                         <div class="h-100">
@@ -127,26 +104,101 @@
                     </div>
 
                     <!-- Formas de pago -->
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Formas de Pago</h3>
-                            <div class="flex space-x-2 bg-gray-300 px-1 py-0.5 rounded-lg mb-4">
-                                <button id="7dp" data-pago="7"
-                                    class="pago-btn cursor-pointer text-xs px-3 py-1  transition-all duration-300 ease-in-out bg-gray-50 font-semibold rounded-md shadow-lg">7D</button>
-                                <button id="30dp" data-pago="30"
-                                    class="pago-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out bg-gray-300 font-semibold rounded-md">30D</button>
-                                <button id="90dp" data-pago="90"
-                                    class="pago-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out bg-gray-300 font-semibold rounded-md">90D</button>
+                    <div class="bg-white rounded-lg shadow p-6 flex-col">
+                        <div class="h-40  mx-auto items-center mb-12">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-md font-semibold text-gray-700 mb-2">Formas de Pago</h3>
+                                <div class="flex space-x-2 bg-gray-300  rounded-lg">
+                                    <button id="7dp" data-pago="7"
+                                        class="pago-btn cursor-pointer text-xs px-3 py-1  transition-all duration-300 ease-in-out border border-gray-300 bg-gray-50 font-semibold rounded-md shadow-lg">7D</button>
+                                    <button id="30dp" data-pago="30"
+                                        class="pago-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-300 font-semibold rounded-md">30D</button>
+                                    <button id="90dp" data-pago="90"
+                                        class="pago-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-300 font-semibold rounded-md">90D</button>
+                                </div>
                             </div>
+                            <canvas id="pagosChart" class=""></canvas>
                         </div>
 
-                        <canvas id="pagosChart">
-                            <div class="flex gap-4">
-                                <canvas id="transferencias"></canvas>
-                                <canvas id="efectivo"></canvas>
-                                <canvas id="mixto"></canvas>
+                        <div class="h-40  mx-auto items-center mb-7">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-md font-semibold text-gray-700 mb-4">Tipo de Venta</h3>
+                                <div class="flex space-x-2 bg-gray-300  rounded-lg">
+                                    <button id="7dp" data-tipo="7"
+                                        class="tipo-btn cursor-pointer text-xs px-3 py-1  transition-all duration-300 ease-in-out border border-gray-300 bg-gray-50 font-semibold rounded-md shadow-lg">7D</button>
+                                    <button id="30dp" data-tipo="30"
+                                        class="tipo-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-300 font-semibold rounded-md">30D</button>
+                                    <button id="90dp" data-tipo="90"
+                                        class="tipo-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-300 font-semibold rounded-md">90D</button>
+                                </div>
                             </div>
-                        </canvas>
+                            <canvas id="tipoVentaChart" class=""></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6 min-h-20 my-6">
+
+                    <!-- Selector de periodo -->
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-md font-semibold text-gray-700 mb-4">Reportes de Utilidad por Rango de Fechas</h3>
+                        <div class="flex justify-center flex-1 gap-4">
+                            <div class="flex space-x-2 bg-gray-300 rounded-lg">
+                                <button id="7dp" data-utilidad="dia"
+                                    class="utilidad-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-50 font-semibold rounded-md shadow-lg">Diario</button>
+                                <button id="30dp" data-utilidad="semana"
+                                    class="utilidad-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-300 font-semibold rounded-md">Semana</button>
+                                <button id="90dp" data-utilidad="mes"
+                                    class="utilidad-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-300 font-semibold rounded-md">Mensual</button>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <div class="flex space-x-2 bg-gray-300 rounded-lg">
+                                    <button 
+                                        class="option-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-50 font-semibold rounded-md shadow-lg">NO</button>
+                                    <button  data-option="hoy"
+                                        class="option-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-300 font-semibold rounded-md">SI</button>
+                                </div>
+                                <span class="text-xs text-gray-600 italic text-center">Compararlo con hasta el mismo dia </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Contenedor de métricas -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <!-- Ganancia Actual -->
+                        <div id="" class="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+                            <p class="text-sm text-gray-500">Ganancia Actual</p>
+                            <p id="ganancia-actual" class="text-2xl font-bold text-blue-700">Gs.
+                                {{ number_format($data['utilidad']['actual']['ganancia'], 0, ',', '.') }}</p>
+                            <p id="rango-actual" class="text-xs text-gray-500 mt-1">Rango: Hoy
+                                ({{ Carbon\Carbon::parse($data['utilidad']['actual']['fecha_apertura'])->format('d-m') }})
+                            </p>
+                        </div>
+                        
+                        <!-- Comparación con periodo anterior -->
+                        <div id="cont-diff" @class([
+                                'bg-gradient-to-r p-4 rounded-lg border', 
+                                'from-red-50 to-red-100 border-red-200' => $data['utilidad']['tag'] === '-',
+                                'from-green-50 to-green-100 border-green-200' => $data['utilidad']['tag'] === '+',
+                            ])>
+                            <p class="text-sm text-gray-500">vs Periodo Anterior</p>
+                            <div class="flex items-center mt-1">
+                                <span id="variacion-porcentaje" class="text-2xl font-bold {{ $data['utilidad']['tag'] == '+' ? 'text-green-700' : 'text-red-700' }}">
+                                    {{ $data['utilidad']['tag'] }}{{ $data['utilidad']['porcentaje'] }}%</span>
+                                <span class="ml-2 text-sm text-gray-600" id="variacion-valor">
+                                    (Gs. {{ number_format($data['utilidad']['diferencia'], 0, ',', '.') }})
+                                </span>
+                            </div>
+                            <p id="rango-anterior" class="text-xs text-gray-500 mt-1">Rango Anterior: Ayer
+                                ({{ Carbon\Carbon::parse($data['utilidad']['pasado']['fecha_apertura'])->format('d-m') }})
+                            </p>
+                        </div>
+
+                        <div
+                            class="max-h-40 bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200 flex flex-col justify-center items-center">
+                            <p>Tendencias</p>
+                            <canvas id="miniChart" class="w-full h-32"></canvas> <!-- 128px -->
+
+                        </div>
                     </div>
                 </div>
 
@@ -315,5 +367,77 @@
     </div>
 
 
+    <script>
+        //     const btns = document.querySelectorAll('.periodo-utilidad-btn');
+        //     const gananciaActualEl = document.getElementById('ganancia-actual');
+        //     const rangoActualEl = document.getElementById('rango-actual');
+        //     const variacionPorcentajeEl = document.getElementById('variacion-porcentaje');
+        //     const variacionValorEl = document.getElementById('variacion-valor');
+        //     const rangoAnteriorEl = document.getElementById('rango-anterior');
+        //     const mensajeEl = document.getElementById('mensaje-utilidad');
 
+        //     // Datos simulados (reemplazar con llamadas a API)
+        //     const datosSimulados = {
+        //         dia: {
+        //             actual: 1250.50,
+        //             anterior: 980.00,
+        //             rangoActual: "Hoy (10 Abr)",
+        //             rangoAnterior: "Ayer (9 Abr)"
+        //         },
+        //         semana: {
+        //             actual: 8420.00,
+        //             anterior: 7600.00,
+        //             rangoActual: "Semana actual (8-14 Abr)",
+        //             rangoAnterior: "Semana pasada (1-7 Abr)"
+        //         },
+        //         mes: {
+        //             actual: 32000.00,
+        //             anterior: 35000.00,
+        //             rangoActual: "Abril 2025",
+        //             rangoAnterior: "Marzo 2025"
+        //         }
+        //     };
+
+        //     btns.forEach(btn => {
+        //         btn.addEventListener('click', () => {
+        //             // Reset estilo
+        //             btns.forEach(b => b.classList.remove('bg-blue-500', 'text-white'));
+        //             btn.classList.add('bg-blue-500', 'text-white');
+
+        //             const periodo = btn.dataset.periodo;
+        //             const data = datosSimulados[periodo];
+
+        //             if (data) {
+        //                 // Actualizar valores
+        //                 gananciaActualEl.textContent = `$${data.actual.toLocaleString()}`;
+        //                 rangoActualEl.textContent = data.rangoActual;
+
+        //                 const diff = data.actual - data.anterior;
+        //                 const porcentaje = ((diff / data.anterior) * 100).toFixed(1);
+
+        //                 variacionValorEl.textContent = `(${diff >= 0 ? '+' : ''}$${diff.toLocaleString()})`;
+        //                 variacionPorcentajeEl.textContent = `${diff >= 0 ? '+' : ''}${porcentaje}%`;
+
+        //                 // Colores según variación
+        //                 if (diff >= 0) {
+        //                     variacionPorcentajeEl.classList.remove('text-red-700');
+        //                     variacionPorcentajeEl.classList.add('text-green-700');
+        //                 } else {
+        //                     variacionPorcentajeEl.classList.remove('text-green-700');
+        //                     variacionPorcentajeEl.classList.add('text-red-700');
+        //                 }
+
+        //                 rangoAnteriorEl.textContent = data.rangoAnterior;
+        //                 mensajeEl.classList.add('hidden');
+        //             } else {
+        //                 mensajeEl.textContent = "Cargando datos...";
+        //                 mensajeEl.classList.remove('hidden');
+        //             }
+        //         });
+        //     });
+
+        //     // Activar por defecto "Semanal"
+        //     document.querySelector('[data-periodo="semana"]').click();
+        // 
+    </script>
 @endsection

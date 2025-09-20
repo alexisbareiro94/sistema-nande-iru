@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{MovimientoCaja, Venta, Producto, Pago};
+use App\Models\{MovimientoCaja, Venta, Producto, Pago, DetalleVenta};
 use App\Services\ReporteService;
 use Carbon\Carbon;
 
@@ -13,7 +13,7 @@ class ReporteController extends Controller
 
     public function index()
     {
-        $datos = $this->reporteService->data_index();
+        $datos = $this->reporteService->data_index();                  
         return view('reportes.index', [
             'data' => $datos
         ]);
@@ -24,7 +24,7 @@ class ReporteController extends Controller
         $inicio = now()->startOfDay()->subDay($periodo);
         $hoy = now()->endOfDay();
         try {
-            $pagos =  Venta::whereBetween('created_at', [$inicio, $hoy])                
+            $pagos =  Venta::whereBetween('created_at', [$inicio, $hoy])
                 ->get()
                 ->groupBy('forma_pago')
                 ->map(fn($pago) => $pago->count());
@@ -82,4 +82,68 @@ class ReporteController extends Controller
             ]);
         }
     }
+
+    public function tipo_venta(string $periodo)
+    {
+        $inicio = now()->startOfDay()->subDay($periodo);
+        $hoy = now()->endOfDay();
+
+        try {
+            $conteo = [
+                'producto' => 0,
+                'servicio' => 0,
+            ];
+
+            $ventas = Venta::whereBetween('created_at', [$inicio, $hoy])
+                ->with('productos')
+                ->get();
+
+            foreach ($ventas as $venta) {
+                foreach ($venta->productos as $producto) {
+                    if ($producto->tipo === 'producto') {
+                        $conteo['producto']++;
+                    } elseif ($producto->tipo === 'servicio') {
+                        $conteo['servicio']++;
+                    }
+                }
+            }
+            $labels = array_keys($conteo);
+
+            return response()->json([
+                'labels' => $labels,
+                'conteo' => $conteo,
+            ]);
+
+            return response();
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+    /**
+     * @params
+     *  opcion = seria para comparar con la semana completa anterior o igualar al dia de hoy 
+     */
+    public function tendencia(string $periodo, ?string $opcion = null){          
+        try{
+            $data = $this->reporteService->utilidad($periodo, $opcion);            
+            $data['actual']['fecha_apertura'] = Carbon::parse($data['actual']['fecha_apertura'])->format('d-m');
+            $data['actual']['fecha_cierre'] = Carbon::parse($data['actual']['fecha_cierre'])->format('d-m');
+
+            $data['pasado']['fecha_apertura'] = Carbon::parse($data['pasado']['fecha_apertura'])->format('d-m');
+            $data['pasado']['fecha_cierre'] = Carbon::parse($data['pasado']['fecha_cierre'])->format('d-m');
+            
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }    
 }
