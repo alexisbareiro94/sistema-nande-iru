@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreMovimientoRequest;
 use Illuminate\Http\Request;
 use App\Models\{MovimientoCaja, Caja};
+use Carbon\Carbon;
 
 class MovimientoCajaController extends Controller
 {
@@ -85,8 +86,8 @@ class MovimientoCajaController extends Controller
                 $formatoGroup  = "TO_CHAR(created_at, 'DD-MM-YY')";
             }
 
-            $desde = $request->query('desde') ?: $periodoInicio;
-            $hasta = $request->query('hasta') ?: $periodoFin;
+            $desde = Carbon::parse($request->query('desde'))->startOfDay() ?: $periodoInicio;
+            $hasta = Carbon::parse($request->query('hasta'))->endOfDay() ?: $periodoFin;
             
             $movimientos = MovimientoCaja::selectRaw("
                     $formatoGroup as periodo,
