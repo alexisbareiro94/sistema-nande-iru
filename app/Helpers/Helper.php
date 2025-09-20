@@ -31,7 +31,7 @@ function generate_code()
 
 function crear_caja()
 {    
-    if(session('caja')){
+    if(Caja::where('estado', 'abierto')->exists() && !session('caja')){
         session("caja", []);
         $item = Caja::where("estado", "abierto")
         ->with("user:id,name,role")
@@ -39,8 +39,10 @@ function crear_caja()
         ->toArray();
         $movimientos = MovimientoCaja::where('caja_id', $item['id'])->where('tipo', 'ingreso')->get()->sum('monto');
         $egreso = MovimientoCaja::where('caja_id', $item['id'])->where('tipo', 'egreso')->get()->sum('monto');
+        $egreso;
         $saldo = $movimientos - $egreso;
         $item["saldo"] = $saldo;
+        //dd('s');
         session()->put(["caja" => $item]);
     }
 }
