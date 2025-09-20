@@ -83,6 +83,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/reportes', [ReporteController::class, 'index'])->name('reporte.index');
         Route::get('/api/pagos/{periodo}', [ReporteController::class, 'tipos_pagos']);
         Route::get('/api/ventas/{periodo}', [ReporteController::class, 'ventas_chart']);
+        Route::get('/api/tipo_venta/{periodo}', [ReporteController::class, 'tipo_venta']);
+        Route::get('/api/utilidad/{periodo}/{option?}', [ReporteController::class, 'tendencia']);
     });
 });
 
@@ -98,13 +100,5 @@ Route::get('/borrar-session', function () {
 
 
 Route::get('/debug', function () {
-    $inicio = now()->startOfDay()->subDay(90);
-    $hoy = now()->endOfDay();
-
-    $pagos =  Venta::whereBetween('created_at', [$inicio, $hoy])     
-        ->get()
-        ->groupBy('forma_pago')
-        ->map(fn($pago) => $pago->count());
-
-        dd($pagos);
+   dd(now()->endOfMonth()); 
 });
