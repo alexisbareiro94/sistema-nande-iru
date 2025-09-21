@@ -86,8 +86,11 @@ class MovimientoCajaController extends Controller
                 $formatoGroup  = "TO_CHAR(created_at, 'DD-MM-YY')";
             }
 
-            $desde = Carbon::parse($request->query('desde'))->startOfDay() ?: $periodoInicio;
-            $hasta = Carbon::parse($request->query('hasta'))->endOfDay() ?: $periodoFin;
+            $queryDesde = $request->query('desde') == null ? null : Carbon::parse($request->query('desde'))->startOfDay();
+            $queryHasta = $request->query('hasta') == null ? null : Carbon::parse($request->query('hasta'))->endOfDay();
+            
+            $desde = $queryDesde ?: $periodoInicio;
+            $hasta = $queryHasta ?: $periodoFin;            
             
             $movimientos = MovimientoCaja::selectRaw("
                     $formatoGroup as periodo,
@@ -98,7 +101,7 @@ class MovimientoCajaController extends Controller
                 ->groupBy('periodo')
                 ->orderByRaw("MIN(created_at)")
                 ->get();
-            
+            //dd($movimientos, $desde,$hasta);
             return response()->json([
                 'labels'   => $movimientos->pluck('periodo'),
                 'ingresos' => $movimientos->pluck('ingresos'),
