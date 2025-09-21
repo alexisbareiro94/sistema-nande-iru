@@ -85,6 +85,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/ventas/{periodo}', [ReporteController::class, 'ventas_chart']);
         Route::get('/api/tipo_venta/{periodo}', [ReporteController::class, 'tipo_venta']);
         Route::get('/api/utilidad/{periodo}/{option?}', [ReporteController::class, 'tendencia']);
+        Route::get('/api/tendencias', [ReporteController::class, 'gananacias']);
     });
 });
 
@@ -100,5 +101,51 @@ Route::get('/borrar-session', function () {
 
 
 Route::get('/debug', function () {
-   dd(now()->endOfMonth()); 
+    $hoy = now()->endOfDay();
+    $desde = now()->startOfDay()->subDay(7);
+
+    $datos = [];
+
+    $ventas = DetalleVenta::whereBetween('created_at', [$desde, $hoy])
+        ->with('producto')
+        ->orderBy('created_at')
+        ->get()
+        ->groupBy(function ($query) {
+            return Carbon::parse($query->created_at)->format('Y-m-d');
+        });
+
+    $egresos = MovimientoCaja::whereBetween('created_at', [$desde, $hoy])
+        ->where('tipo', 'egreso')
+        ->orderBy('created_at')
+        ->get()
+        ->groupBy(function ($query) {
+            return Carbon::parse($query->created_at)->format('Y-m-d');
+        })
+        ->map(function ($egreso) {
+            return $egreso->sum('monto');
+        });        
+
+    $index = 0;    
+    foreach ($ventas as $fecha => $detalles) {        
+        $total = $detalles->sum('total');
+        $datos[$index] = [
+            'fecha' => $fecha,
+            'ganancia' => 0,
+            'total_fecha' => $total,
+            'descuento' => 0,
+            'egresos' => 0,
+            'ganacia_egresos' => 0,
+        ];
+        foreach ($detalles as $detalle) {
+            $datos[$index]['descuento'] += ($detalle->producto->precio_compra * $detalle->cantidad);            
+        }
+        $datos[$index]['ganancia'] = $datos[$index]['total_fecha'] - $datos[$index]['descuento'];
+        if(!empty($egresos[$fecha])){
+            $datos[$index]['egresos'] = $egresos[$fecha];
+            $datos[$index]['ganacia_egresos'] = $datos[$index]['ganancia'] - $datos[$index]['egresos'];
+        }
+        $index++;
+    }
+
+    dd($datos);
 });
