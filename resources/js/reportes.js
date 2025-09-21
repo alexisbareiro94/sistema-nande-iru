@@ -233,7 +233,7 @@ tipoBtns.forEach(btn => {
 });
 
 
-//-------------------------grafico de utilidades----------------------------
+//-------------------------parte de las ganancias----------------------------
 const utiBtns = document.querySelectorAll('.utilidad-btn');
 
 utiBtns.forEach(btn => {
@@ -244,9 +244,9 @@ utiBtns.forEach(btn => {
         });
         const option = JSON.parse(sessionStorage.getItem('option'));
         console.log(option)
-        if(option != null){
+        if (option != null) {
             await gananacias(btn.dataset.utilidad, option);
-        }else{
+        } else {
             await gananacias(btn.dataset.utilidad);
         }
         setTimeout(() => {
@@ -324,29 +324,56 @@ async function gananacias(periodo, option = '') {
 }
 
 
+//---------------grafico de tendencias-----------------------
 
-new Chart(document.getElementById('miniChart'), {
-    type: 'line',
-    data: {
-        labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'],
-        datasets: [{
-            label: 'Ganancia Diaria',
-            data: [1200, 1500, 900, 1700, 2000],
-            borderColor: '#6366f1',
-            tension: 0.3,
-            fill: true,
-            backgroundColor: 'rgba(99, 102, 241, 0.1)'
-        }]
-    },
-    options: {
-        plugins: { legend: { display: false } },
-        maintainAspectRatio: false,
-        scales: {
-            x: { display: true },   // <--- mostrar eje x
-            y: { display: true }    // <--- mostrar eje y
-        },
-        elements: {
-            point: { radius: 4 }     // <--- mostrar puntos
+async function tendenciasChart() {
+    try {
+        const res = await fetch('http://localhost:8080/api/tendencias');
+        const data = await res.json();
+        if (!res.ok) {
+            throw data;
         }
+
+        console.log(data)
+
+
+
+        new Chart(document.getElementById('miniChart'), {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Ganancia Diaria',
+                    data: [data.datos[0]['ganancia'], data.datos[1]['ganancia'], data.datos[2]['ganancia'], data.datos[3]['ganancia'], data.datos[4]['ganancia'], data.datos[5]['ganancia'],data.datos[6]['ganancia'],data.datos[7]['ganancia']],
+                    borderColor: '#6366f1',
+                    tension: 0.3,
+                    fill: true,
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)'
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        ticks: {
+                            // fuerza la rotación vertical
+                            // minRotation: 90,
+                            // maxRotation: 90,
+                        }
+                    },
+                    y: {
+                        display: true
+                    }
+                },
+                elements: {
+                    point: { radius: 4 }
+                }
+            }
+        });
+    } catch (err) {
+        console.log(err)
     }
-});
+}
+
+tendenciasChart();
