@@ -13,7 +13,7 @@ class ReporteController extends Controller
 
     public function index()
     {
-        $datos = $this->reporteService->data_index();                  
+        $datos = $this->reporteService->data_index();
         return view('reportes.index', [
             'data' => $datos
         ]);
@@ -126,24 +126,42 @@ class ReporteController extends Controller
      * @params
      *  opcion = seria para comparar con la semana completa anterior o igualar al dia de hoy 
      */
-    public function tendencia(string $periodo, ?string $opcion = null){          
-        try{
-            $data = $this->reporteService->utilidad($periodo, $opcion);            
+    public function tendencia(string $periodo, ?string $opcion = null)  
+    {
+        try {
+            $data = $this->reporteService->utilidad($periodo, $opcion);
             $data['actual']['fecha_apertura'] = Carbon::parse($data['actual']['fecha_apertura'])->format('d-m');
             $data['actual']['fecha_cierre'] = Carbon::parse($data['actual']['fecha_cierre'])->format('d-m');
 
             $data['pasado']['fecha_apertura'] = Carbon::parse($data['pasado']['fecha_apertura'])->format('d-m');
             $data['pasado']['fecha_cierre'] = Carbon::parse($data['pasado']['fecha_cierre'])->format('d-m');
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $data,
             ]);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
             ]);
         }
-    }    
+    }
+
+    public function gananacias()
+    {
+        try {
+            $data = $this->reporteService->gananacias_data();
+
+            return response()->json([
+                'labels' => $data['labels'],
+                'datos' => $data['datos'],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
 }
