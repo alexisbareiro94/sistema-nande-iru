@@ -16,7 +16,7 @@ async function pagosChart(periodo = 7) {
         if (PagosChart) {
             PagosChart.destroy();
         }
-
+        console.log(data)
         PagosChart = new Chart(donut, {
             type: 'doughnut',
             data: {
@@ -29,6 +29,15 @@ async function pagosChart(periodo = 7) {
                             'rgba(8, 209, 49, 0.6)',
                             'rgba(35, 39, 235, 0.6)',
                             'rgba(255, 234, 0, 0.6)'
+                        ],
+                    },
+                    {
+                        label: 'Ingresos',
+                        data: [data.ingresos.efectivo, data.ingresos.transferencia, data.ingresos.mixto],
+                        backgroundColor: [
+                            'rgba(8, 209, 49, 0.4)',
+                            'rgba(35, 39, 235, 0.4)',
+                            'rgba(255, 234, 0, 0.4)'
                         ],
                     }
                 ]
@@ -72,7 +81,7 @@ pagoBtns.forEach(btn => {
     });
 });
 
-// ----------------------------------------grafico de ventas ---------------------------------------------------
+// ----------------------------------------grafico de Evolución de Ventas---------------------------------------------------
 let ventaChart = null;
 async function ventasChart(periodo = 7) {
     try {
@@ -184,7 +193,7 @@ async function tipoVenta(periodo = 7) {
                     },
                     {
                         label: 'Ingresos',
-                        data: [1500000, 1385000],
+                        data: [data.conteo.ingresos.producto, data.conteo.ingresos.servicio],
                         backgroundColor: [
                             'rgba(35, 39, 235, 0.3)',   // más transparente para diferenciar
                             'rgba(8, 209, 49, 0.3)',
@@ -333,18 +342,14 @@ async function tendenciasChart() {
         if (!res.ok) {
             throw data;
         }
-
-        console.log(data)
-
-
-
+        
         new Chart(document.getElementById('miniChart'), {
             type: 'line',
             data: {
                 labels: data.labels,
                 datasets: [{
                     label: 'Ganancia Diaria',
-                    data: [data.datos[0]['ganancia'], data.datos[1]['ganancia'], data.datos[2]['ganancia'], data.datos[3]['ganancia'], data.datos[4]['ganancia'], data.datos[5]['ganancia'],data.datos[6]['ganancia'],data.datos[7]['ganancia']],
+                    data: [data.datos[0]['ganancia'], data.datos[1]['ganancia'], data.datos[2]['ganancia'], data.datos[3]['ganancia'], data.datos[4]['ganancia'], data.datos[5]['ganancia'], data.datos[6]['ganancia'], data.datos[7]['ganancia']],
                     borderColor: '#6366f1',
                     tension: 0.3,
                     fill: true,

@@ -21,14 +21,19 @@ class ReporteController extends Controller
 
     public function tipos_pagos(string $periodo)
     {
-        $inicio = now()->startOfDay()->subDay($periodo);
-        $hoy = now()->endOfDay();
         try {
+            $inicio = now()->startOfDay()->subDay($periodo);
+            $hoy = now()->endOfDay();
             $pagos =  Venta::whereBetween('created_at', [$inicio, $hoy])
                 ->get()
                 ->groupBy('forma_pago')
                 ->map(fn($pago) => $pago->count());
-
+            $ingresos = Venta::whereBetween('created_at', [$inicio, $hoy])
+                ->with('productos')
+                ->get()
+                ->groupBy('forma_pago')
+                ->map(fn($venta) => $venta->sum('total'))
+                ->toArray();
 
             $labels = $pagos->keys();
             $mixto = $pagos['mixto'] ?? 0;
@@ -41,6 +46,7 @@ class ReporteController extends Controller
                 'mixto' => $mixto,
                 'transferencia' => $transferencia,
                 'efectivo' => $efectivo,
+                'ingresos' => $ingresos,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -52,10 +58,10 @@ class ReporteController extends Controller
 
     public function ventas_chart(string $periodo)
     {
-        $inicio = now()->startOfDay()->subDay($periodo);
-        $hoy = now()->endOfDay();
-
         try {
+            $inicio = now()->startOfDay()->subDay($periodo);
+            $hoy = now()->endOfDay();
+
             $ventas = Venta::whereBetween('created_at', [$inicio, $hoy])
                 ->orderBy('created_at')
                 ->get()
@@ -83,27 +89,35 @@ class ReporteController extends Controller
         }
     }
 
-    public function tipo_venta(string $periodo)
+    /**
+     * @param
+     * periodo= 7, 30 o 90, representa el rango que se va a medir
+     */
+    public function tipo_venta(?string $periodo = '7')
     {
-        $inicio = now()->startOfDay()->subDay($periodo);
-        $hoy = now()->endOfDay();
-
         try {
+            $inicio = now()->startOfDay()->subDay($periodo);
+            $hoy = now()->endOfDay();
             $conteo = [
                 'producto' => 0,
                 'servicio' => 0,
+                'ingresos' => [
+                    'producto' => 0,
+                    'servicio' => 0,
+                ],
             ];
 
             $ventas = Venta::whereBetween('created_at', [$inicio, $hoy])
                 ->with('productos')
                 ->get();
-
             foreach ($ventas as $venta) {
                 foreach ($venta->productos as $producto) {
                     if ($producto->tipo === 'producto') {
                         $conteo['producto']++;
+                        $conteo['ingresos']['producto'] += $venta->total;
                     } elseif ($producto->tipo === 'servicio') {
                         $conteo['servicio']++;
+                        $conteo['ingresos']['servicio'] += $venta->total;
                     }
                 }
             }
@@ -124,9 +138,9 @@ class ReporteController extends Controller
     }
     /**
      * @params
-     *  opcion = seria para comparar con la semana completa anterior o igualar al dia de hoy 
+     *  opcion = seria para comparar con la semana o mes completa anterior (== null) o igualar al dia de hoy (== hoy)
      */
-    public function tendencia(string $periodo, ?string $opcion = null)  
+    public function tendencia(string $periodo, ?string $opcion = null)
     {
         try {
             $data = $this->reporteService->utilidad($periodo, $opcion);
