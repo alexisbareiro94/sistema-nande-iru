@@ -171,12 +171,12 @@ class ReporteService
                 'ganacia_egresos' => 0,
             ];
             foreach ($detalles as $detalle) {
-                $datos[$index]['descuento'] += ($detalle->producto->precio_compra * $detalle->cantidad);
+                $datos[$index]['descuento'] += ($detalle->producto->precio_compra * $detalle->cantidad) ?? 0;
             }
-            $datos[$index]['ganancia'] = $datos[$index]['total_fecha'] - $datos[$index]['descuento'];
+            $datos[$index]['ganancia'] = ($datos[$index]['total_fecha'] - $datos[$index]['descuento']) ?? 0;
             if (!empty($egresos[$fecha])) {
-                $datos[$index]['egresos'] = $egresos[$fecha];
-                $datos[$index]['ganacia_egresos'] = $datos[$index]['ganancia'] - $datos[$index]['egresos'];
+                $datos[$index]['egresos'] = ($egresos[$fecha]) ?? 0;
+                $datos[$index]['ganacia_egresos'] = ($datos[$index]['ganancia'] - $datos[$index]['egresos']) ?? 0;
             }
             $index++;
         }
