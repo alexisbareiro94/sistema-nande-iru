@@ -135,7 +135,7 @@ class ReporteService
         return $datos;
     }
 
-    public function gananacias_data()
+    public function gananacias_data() :array
     {
         $hoy = now()->endOfDay();
         $desde = now()->startOfDay()->subDay(7);
@@ -157,9 +157,7 @@ class ReporteService
             ->groupBy(function ($query) {
                 return Carbon::parse($query->created_at)->format('Y-m-d');
             })
-            ->map(function ($egreso) {
-                return $egreso->sum('monto');
-            });
+            ->map(fn($egreso)=> $egreso->sum('monto'));
 
         $index = 0;
         foreach ($ventas as $fecha => $detalles) {

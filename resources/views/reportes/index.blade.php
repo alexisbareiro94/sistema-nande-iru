@@ -151,14 +151,21 @@
                                     class="utilidad-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-300 font-semibold rounded-md">Mensual</button>
                             </div>
 
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 cursor-pointer" title="Comparar hasta el mismo dia (hoy)">
                                 <div class="flex space-x-2 bg-gray-300 rounded-lg">
                                     <button 
                                         class="option-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-50 font-semibold rounded-md shadow-lg">NO</button>
                                     <button  data-option="hoy"
                                         class="option-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-300 font-semibold rounded-md">SI</button>
                                 </div>
-                                <span class="text-xs text-gray-600 italic text-center">Compararlo con hasta el mismo dia </span>
+                            </div>
+                            <div class="flex gap-2 cursor-pointer" title="Restar Egreso">
+                                <div class="flex space-x-2 bg-gray-300 rounded-lg">
+                                    <button 
+                                        class="egreso-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-50 font-semibold rounded-md shadow-lg">NO</button>
+                                    <button  data-egreso="hoy"
+                                        class="egreso-btn cursor-pointer text-xs px-3 py-1 transition-all duration-300 ease-in-out border border-gray-300 bg-gray-300 font-semibold rounded-md">SI</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -183,12 +190,12 @@
                             <p class="text-sm text-gray-500">vs Periodo Anterior</p>
                             <div class="flex items-center mt-1">
                                 <span id="variacion-porcentaje" class="text-2xl font-bold {{ $data['utilidad']['tag'] == '+' ? 'text-green-700' : 'text-red-700' }}">
-                                    {{ $data['utilidad']['tag'] }}{{ $data['utilidad']['porcentaje'] }}%</span>
+                                    {{ $data['utilidad']['tag'] }} {{ $data['utilidad']['porcentaje'] }}%</span>
                                 <span class="ml-2 text-sm text-gray-600" id="variacion-valor">
                                     (Gs. {{ number_format($data['utilidad']['diferencia'], 0, ',', '.') }})
                                 </span>
                             </div>
-                            <p id="rango-anterior" class="text-xs text-gray-500 mt-1">Rango Anterior: Ayer
+                            <p id="rango-anterior" class="text-xs text-gray-500 mt-1">Rango: Ayer
                                 ({{ Carbon\Carbon::parse($data['utilidad']['pasado']['fecha_apertura'])->format('d-m') }})
                             </p>
                         </div>
@@ -365,79 +372,4 @@
             </main>
         </div>
     </div>
-
-
-    <script>
-        //     const btns = document.querySelectorAll('.periodo-utilidad-btn');
-        //     const gananciaActualEl = document.getElementById('ganancia-actual');
-        //     const rangoActualEl = document.getElementById('rango-actual');
-        //     const variacionPorcentajeEl = document.getElementById('variacion-porcentaje');
-        //     const variacionValorEl = document.getElementById('variacion-valor');
-        //     const rangoAnteriorEl = document.getElementById('rango-anterior');
-        //     const mensajeEl = document.getElementById('mensaje-utilidad');
-
-        //     // Datos simulados (reemplazar con llamadas a API)
-        //     const datosSimulados = {
-        //         dia: {
-        //             actual: 1250.50,
-        //             anterior: 980.00,
-        //             rangoActual: "Hoy (10 Abr)",
-        //             rangoAnterior: "Ayer (9 Abr)"
-        //         },
-        //         semana: {
-        //             actual: 8420.00,
-        //             anterior: 7600.00,
-        //             rangoActual: "Semana actual (8-14 Abr)",
-        //             rangoAnterior: "Semana pasada (1-7 Abr)"
-        //         },
-        //         mes: {
-        //             actual: 32000.00,
-        //             anterior: 35000.00,
-        //             rangoActual: "Abril 2025",
-        //             rangoAnterior: "Marzo 2025"
-        //         }
-        //     };
-
-        //     btns.forEach(btn => {
-        //         btn.addEventListener('click', () => {
-        //             // Reset estilo
-        //             btns.forEach(b => b.classList.remove('bg-blue-500', 'text-white'));
-        //             btn.classList.add('bg-blue-500', 'text-white');
-
-        //             const periodo = btn.dataset.periodo;
-        //             const data = datosSimulados[periodo];
-
-        //             if (data) {
-        //                 // Actualizar valores
-        //                 gananciaActualEl.textContent = `$${data.actual.toLocaleString()}`;
-        //                 rangoActualEl.textContent = data.rangoActual;
-
-        //                 const diff = data.actual - data.anterior;
-        //                 const porcentaje = ((diff / data.anterior) * 100).toFixed(1);
-
-        //                 variacionValorEl.textContent = `(${diff >= 0 ? '+' : ''}$${diff.toLocaleString()})`;
-        //                 variacionPorcentajeEl.textContent = `${diff >= 0 ? '+' : ''}${porcentaje}%`;
-
-        //                 // Colores según variación
-        //                 if (diff >= 0) {
-        //                     variacionPorcentajeEl.classList.remove('text-red-700');
-        //                     variacionPorcentajeEl.classList.add('text-green-700');
-        //                 } else {
-        //                     variacionPorcentajeEl.classList.remove('text-green-700');
-        //                     variacionPorcentajeEl.classList.add('text-red-700');
-        //                 }
-
-        //                 rangoAnteriorEl.textContent = data.rangoAnterior;
-        //                 mensajeEl.classList.add('hidden');
-        //             } else {
-        //                 mensajeEl.textContent = "Cargando datos...";
-        //                 mensajeEl.classList.remove('hidden');
-        //             }
-        //         });
-        //     });
-
-        //     // Activar por defecto "Semanal"
-        //     document.querySelector('[data-periodo="semana"]').click();
-        // 
-    </script>
 @endsection

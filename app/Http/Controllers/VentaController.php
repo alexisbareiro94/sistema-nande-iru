@@ -26,7 +26,6 @@ class VentaController extends Controller
         $ingresosHoy = $query->where('created_at', '>=', now()->format('Y-m-d'))->get()->sum('total');
         $ventas = MovimientoCaja::orderByDesc('created_at')->with('venta')->paginate(10);
 
-
         return view('caja.historial-completo.index', [
             'clientes' => $clientes,
             'totalVentas' => $totalVentas,
