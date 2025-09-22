@@ -77,11 +77,10 @@ class ReporteService
         $aperturaPasado = $periodo == 'dia' ? now()->startOfDay()->subDay() : ($periodo == 'semana' ? now()->startOfWeek()->subWeek() : now()->startOfMonth()->subMonth());
         $cierrePasado = match ($periodo) {
             'dia' => now()->endOfDay()->subDay(),
-            'semana' => $option === 'hoy' ? now()->subWeek() : now()->endOfWeek()->subWeek(),
-            'mes' => $option === 'hoy' ? now()->subMonth() : now()->endOfMonth()->subMonth(),
+            'semana' => $option === 'hoy' ? now()->endOfDay()->subWeek() : now()->endOfWeek()->subWeek(),
+            'mes' => $option === 'hoy' ? now()->endOfDay()->subMonth() : now()->endOfMonth()->subMonth(),
             default => now(),
-        };
-
+        };        
         $datos = [
             'actual' => [
                 'total_venta' => 0,
@@ -121,10 +120,10 @@ class ReporteService
         $datos['pasado']['ganancia'] = $datos['pasado']['total_venta'] - $datos['pasado']['descuento'];
 
         $porcentaje = 0;
-        if ($datos['actual']['ganancia'] > $datos['pasado']['ganancia']) {
+        if ($datos['actual']['ganancia'] > $datos['pasado']['ganancia']) {            
             $porcentaje = round((($datos['actual']['ganancia'] - $datos['pasado']['ganancia']) / $datos['actual']['ganancia']) * 100);
             $datos['tag'] = '+';
-        } else {
+        } else {            
             $porcentaje = round((($datos['pasado']['ganancia'] - $datos['actual']['ganancia']) / $datos['pasado']['ganancia']) * 100);
             $datos['tag'] = '-';
         }
