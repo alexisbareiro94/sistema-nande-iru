@@ -341,14 +341,14 @@ async function tendenciasChart() {
         if (!res.ok) {
             throw data;
         }
-        console.log(data.datos[7] == undefined ? '123' : 'dasd')
+        const ganancias = data.datos.map(item => item?.ganancia ?? 0);
         new Chart(document.getElementById('miniChart'), {
             type: 'line',
             data: {
                 labels: data.labels,
                 datasets: [{
                     label: 'Ganancia Diaria',
-                    data: [data.datos[0]['ganancia'], data.datos[1]['ganancia'], data.datos[2]['ganancia'], data.datos[3]['ganancia'], data.datos[4]['ganancia'], data.datos[5]['ganancia'], data.datos[6]['ganancia'], data.datos[7] == undefined ? '' : data.datos[7]['ganancia']],
+                    data: ganancias,
                     borderColor: '#6366f1',
                     tension: 0.3,
                     fill: true,

@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\{Producto, User, Venta, MovimientoCaja, DetalleVenta};
+use App\Models\DetalleVenta;
+use App\Models\MovimientoCaja;
+use App\Models\Producto;
+use App\Models\User;
+use App\Models\Venta;
 use Carbon\Carbon;
 
 class ReporteService
 {
-    //datos para los tres primeros items de reportes (ventas hoy, clientes nuevos, prod mas vendido y mas vendidos )
+    // datos para los tres primeros items de reportes (ventas hoy, clientes nuevos, prod mas vendido y mas vendidos )
     public function data_index(): array
     {
         $productos = Producto::orderByDesc('ventas')->get()->take(4);
@@ -18,14 +22,14 @@ class ReporteService
 
         $inicioMesPasado = Carbon::now()->startOfMonth()->subMonth();
         $finMesPasado = Carbon::now()->endOfDay()->subMonth();
-        $ventasMesPasado = Venta::whereBetween('created_at', [$inicioMesPasado, $finMesPasado])->get()->sum('total');
+        $ventasMesPasado = max(1, Venta::whereBetween('created_at', [$inicioMesPasado, $finMesPasado])->get()->sum('total'));
 
         $inicioMes = Carbon::now()->startOfMonth();
         $fechaActual = Carbon::now()->endOfMonth();
-        $ventasEsteMes = Venta::whereBetween('created_at', [$inicioMes, $fechaActual])->get()->sum('total');
+        $ventasEsteMes = max(1, Venta::whereBetween('created_at', [$inicioMes, $fechaActual])->get()->sum('total'));
 
-        $usersMesPasado = User::where('role', 'cliente')->whereBetween('created_at', [$inicioMesPasado, $finMesPasado])->get()->count();
-        $usersEsteMes = User::where('role', 'cliente')->whereBetween('created_at', [$inicioMes, $fechaActual])->get()->count();
+        $usersMesPasado = max(1, User::where('role', 'cliente')->whereBetween('created_at', [$inicioMesPasado, $finMesPasado])->get()->count());
+        $usersEsteMes = max(1,User::where('role', 'cliente')->whereBetween('created_at', [$inicioMes, $fechaActual])->get()->count());
 
         $tagUsers = $usersEsteMes > $usersMesPasado ? '+' : '-';
         $porcentajeUsers = '';
@@ -59,7 +63,7 @@ class ReporteService
                 'producto' => $productoMasVendido,
                 'cantidad' => $productoMasVendido->ventas,
             ],
-            'productos_vendidos' =>  $productos,
+            'productos_vendidos' => $productos,
             'utilidad' => $this->utilidad(),
         ];
     }
@@ -80,7 +84,7 @@ class ReporteService
             'semana' => $option === 'hoy' ? now()->endOfDay()->subWeek() : now()->endOfWeek()->subWeek(),
             'mes' => $option === 'hoy' ? now()->endOfDay()->subMonth() : now()->endOfMonth()->subMonth(),
             default => now(),
-        };        
+        };
         $datos = [
             'actual' => [
                 'total_venta' => 0,
@@ -116,14 +120,14 @@ class ReporteService
         foreach ($ventasPasada as $venta) {
             $datos['pasado']['descuento'] += (($venta->producto->precio_compra ?? 0) * $venta->cantidad);
         }
-        $datos['actual']['ganancia'] = $datos['actual']['total_venta'] - $datos['actual']['descuento'];
-        $datos['pasado']['ganancia'] = $datos['pasado']['total_venta'] - $datos['pasado']['descuento'];
+        $datos['actual']['ganancia'] = max(1, $datos['actual']['total_venta'] - $datos['actual']['descuento']);
+        $datos['pasado']['ganancia'] = max(1, $datos['pasado']['total_venta'] - $datos['pasado']['descuento']);
 
         $porcentaje = 0;
-        if ($datos['actual']['ganancia'] > $datos['pasado']['ganancia']) {            
+        if ($datos['actual']['ganancia'] > $datos['pasado']['ganancia']) {
             $porcentaje = round((($datos['actual']['ganancia'] - $datos['pasado']['ganancia']) / $datos['actual']['ganancia']) * 100);
             $datos['tag'] = '+';
-        } else {            
+        } else {
             $porcentaje = round((($datos['pasado']['ganancia'] - $datos['actual']['ganancia']) / $datos['pasado']['ganancia']) * 100);
             $datos['tag'] = '-';
         }
@@ -134,7 +138,7 @@ class ReporteService
         return $datos;
     }
 
-    public function gananacias_data() :array
+    public function gananacias_data(): array
     {
         $hoy = now()->endOfDay();
         $desde = now()->startOfDay()->subDay(7);
@@ -156,7 +160,7 @@ class ReporteService
             ->groupBy(function ($query) {
                 return Carbon::parse($query->created_at)->format('Y-m-d');
             })
-            ->map(fn($egreso)=> $egreso->sum('monto'));
+            ->map(fn($egreso) => $egreso->sum('monto'));
 
         $index = 0;
         foreach ($ventas as $fecha => $detalles) {
@@ -173,7 +177,7 @@ class ReporteService
                 $datos[$index]['descuento'] += ($detalle->producto->precio_compra * $detalle->cantidad) ?? 0;
             }
             $datos[$index]['ganancia'] = ($datos[$index]['total_fecha'] - $datos[$index]['descuento']) ?? 0;
-            if (!empty($egresos[$fecha])) {
+            if (! empty($egresos[$fecha])) {
                 $datos[$index]['egresos'] = ($egresos[$fecha]) ?? 0;
                 $datos[$index]['ganacia_egresos'] = ($datos[$index]['ganancia'] - $datos[$index]['egresos']) ?? 0;
             }
@@ -187,5 +191,9 @@ class ReporteService
             'labels' => $labels,
             'datos' => $datos,
         ];
+    }
+
+    public function egresos(){
+        
     }
 }

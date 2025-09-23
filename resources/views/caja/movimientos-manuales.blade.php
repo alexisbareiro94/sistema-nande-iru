@@ -1,5 +1,5 @@
 <div id="modal-movimiento-caja" class="hidden fixed inset-0 bg-black/20 flex items-center justify-center z-50 ">
-    <div class="bg-gray-100 rounded-2xl shadow-xl w-full max-w-md p-6 border border-gray-700 relative">
+    <div class="bg-gray-100 rounded-2xl shadow-xl w-full max-w-[500px] p-6 border border-gray-700 relative">
 
         <button id="closeModalM"
             class="absolute cursor-pointer top-3 right-3 text-gray-900 hover:text-gray-600 text-2xl">&times;</button>
@@ -19,8 +19,8 @@
             <span class="text-gray-800 font-semibold ml-2">{{ auth()->user()->name }}</span>
         </div>
 
-        <form id="movimiento-form" action="#">    
-            <div class="mb-4 flex items-center">
+        <form id="movimiento-form" action="#">
+            <div class="mb-2 flex items-center">
                 <span class="text-gray-700 mr-4 font-semibold">Tipo de movimiento:</span>
 
                 <div class="flex bg-gray-100 rounded-lg p-1">
@@ -39,6 +39,26 @@
                             Ingreso
                         </div>
                     </label>
+
+                    <label class="flex-1 cursor-pointer">
+                        <input type="radio" name="tipo-movimiento" value="salario" class="hidden peer" />
+                        <div
+                            class="px-4 py-2 text-xs font-medium rounded-md peer-checked:bg-yellow-400 peer-checked:shadow-sm transition-all text-gray-600 peer-checked:text-white">
+                            Pago de salario
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div id="salario-cont" class="mb-4 hidden">                
+                <div>
+                    <span class="text-gray-700 mr-4 font-semibold">Seleccionar Personal:</span>
+                    <select class="px-2 py-1 border border-gray-700 rounded-md" name="personal" id="personales">
+                        <option value="" disabled selected>Seleccionar Personal</option>
+                        @foreach ($personales as $personal)                        
+                        <option class="personal" value="{{ $personal->id }}">{{ $personal->name }}</option>                        
+                        @endforeach
+                    </select>
                 </div>
             </div>
 
@@ -75,5 +95,7 @@
         btn.addEventListener('click', () => {
             document.getElementById('modal-movimiento-caja').classList.add('hidden');
         });
-    }, {once: true})
+    }, {
+        once: true
+    })
 </script>

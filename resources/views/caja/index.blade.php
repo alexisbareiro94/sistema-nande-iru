@@ -91,7 +91,7 @@
                         <div class="relative">
                             <button {{ !session('caja') ? 'disabled' : '' }} id="btn-movimiento"
                                 class="cursor-pointer w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 rounded-lg
-                            transition-all duration-200 hover:shadow-md disabled:cursor-not-allowed">
+                                transition-all duration-200 hover:shadow-md disabled:cursor-not-allowed">
                                 <div class="flex flex-col items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -104,7 +104,7 @@
 
                             @if (!session('caja'))
                                 <div
-                                    class="absolute inset-0 bg-gray-100/70 rounded-lg flex items-center justify-center backdrop-blur-[2px]">
+                                    class="absolute  inset-0 bg-gray-100/70 rounded-lg flex items-center justify-center backdrop-blur-[2px]">
                                     <span class="text-gray-500 text-sm font-medium">Caja cerrada</span>
                                 </div>
                             @endif

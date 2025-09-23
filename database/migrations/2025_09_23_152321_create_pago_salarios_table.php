@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pagos', function (Blueprint $table) {
+        Schema::create('pago_salarios', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('venta_id')->constrained('ventas');
-            $table->enum('metodo', ['efectivo', 'transferencia', 'mixto']);            
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('movimiento_id')->constrained('movimiento_cajas');
+            $table->boolean('adelanto');
             $table->integer('monto');
-            $table->enum('estado', ['pendiente', 'completado', 'cancelado'])->default('pendiente');
+            $table->integer('restante');
+            $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pagos');
+        Schema::dropIfExists('pago_salarios');
     }
 };

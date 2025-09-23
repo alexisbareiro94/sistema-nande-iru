@@ -34,7 +34,7 @@ class VentaFactory extends Factory
     public function configure()
     {
         return $this->afterCreating(function (Venta $venta) {        
-            $productos = Producto::inRandomOrder()->take(rand(1, 5))->get();
+            $productos = Producto::inRandomOrder()->take(rand(1, 2))->get();
             $cliente = User::where('role', 'cliente')->inRandomOrder()->first();
 
             $subtotal = 0;
@@ -42,7 +42,7 @@ class VentaFactory extends Factory
 
             $cantidad = 0;
             foreach ($productos as $producto) {
-                $cantidad = rand(1, 3);
+                $cantidad = rand(1, 2);
                 $producto->ventas += $cantidad;
                 $producto->save();
                 $precio = $producto->precio_venta;                
@@ -86,6 +86,7 @@ class VentaFactory extends Factory
             ]);
             
             $venta->pagos()->create([
+                'caja_id' => 1,
                 'venta_id' => $venta->id,
                 'metodo' => $venta->forma_pago,
                 'monto' => $venta->total,

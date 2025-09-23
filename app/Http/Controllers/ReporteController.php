@@ -68,11 +68,7 @@ class ReporteController extends Controller
                 ->groupBy(function ($venta) {
                     return Carbon::parse($venta->created_at)->format('Y-m-d');
                 })
-                ->map(function ($venta) {
-                    return [
-                        'total' => $venta->sum('total')
-                    ];
-                });
+                ->map(fn ($venta)=> ['total' => $venta->sum('total')]);
 
             $labels = $ventas->keys();
 
