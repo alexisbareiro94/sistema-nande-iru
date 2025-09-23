@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AbrirCajaRequest;
 use App\Http\Requests\UpdateCajaRequest;
-use App\Models\{Caja, MovimientoCaja, Venta, DetalleVenta, Producto, Pago};
+use App\Models\{Caja, MovimientoCaja, Venta, DetalleVenta, User, Pago};
 use App\Services\CajaService;
 
 class CajaController extends Controller
@@ -20,6 +20,7 @@ class CajaController extends Controller
         }
         return view("caja.index", [
             "caja" => $caja ?? "",
+            'personales' => User::where('role', 'personal')->where('activo', true)->get(),
         ]);
     }
 

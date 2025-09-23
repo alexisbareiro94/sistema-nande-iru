@@ -27,6 +27,7 @@ class StoreMovimientoRequest extends FormRequest
             'tipo' => 'required|in:ingreso,egreso',
             'monto' => 'required|numeric|min:0.01',
             'concepto' => 'required|string|max:255',
+            'personal_id' => 'nullable'            
         ];
     }
 

@@ -160,7 +160,7 @@ function renderCarrito() {
     const carrito = JSON.parse(sessionStorage.getItem('carrito')) || {};
     const carritoForm = document.getElementById('carrito-form');
     carritoForm.innerHTML = '';
- 
+
     Object.entries(carrito).forEach(([id, producto]) => {
         const div = document.createElement('div');
         div.classList.add('flex-1')
@@ -423,6 +423,31 @@ document.getElementById('btn-movimiento').addEventListener('click', () => {
     document.getElementById('modal-movimiento-caja').classList.remove('hidden');
 });
 
+document.getElementsByName('tipo-movimiento').forEach(btn => {
+    const salarioCont = document.getElementById('salario-cont');
+    const conceptomm = document.getElementById('concepto-mm');
+    btn.addEventListener('click', () => {
+        if (btn.value == 'salario') {
+            salarioCont.classList.remove('hidden');
+            conceptomm.value = 'Pago de salario'
+            conceptomm.disabled = true;
+        } else {
+            if (!salarioCont.classList.contains('hidden')) {
+                salarioCont.classList.add('hidden');
+            }
+            conceptomm.value = ''
+            conceptomm.disabled = false;
+        }
+    });
+});
+
+const select = document.getElementById('personales');
+let personal = '';
+
+select.addEventListener('change', () => {
+    personal = select.value;
+});
+
 document.getElementById('confirmar-movimiento').addEventListener('click', async (e) => {
     e.preventDefault();
     let errores = '';
@@ -437,6 +462,9 @@ document.getElementById('confirmar-movimiento').addEventListener('click', async 
             tipoSelcted = tipo.value;
         }
     })
+    tipoSelcted == 'salario' ? tipoSelcted = 'egreso' : '';
+
+    
     if (tipoSelcted == undefined) {
         showToast('Debes Seleccionar un tipo de movimiento', 'error');
         errores = '1'
@@ -452,12 +480,12 @@ document.getElementById('confirmar-movimiento').addEventListener('click', async 
     if (errores != '') {
         return;
     }
-
     try {
         const formData = new FormData();
         formData.append('tipo', tipoSelcted);
         formData.append('concepto', concepto.value);
         formData.append('monto', monto.value);
+        formData.append('personal_id', personal);
 
         const res = await fetch('http://localhost:8080/api/movimiento', {
             method: 'POST',
@@ -470,6 +498,8 @@ document.getElementById('confirmar-movimiento').addEventListener('click', async 
         if (!res.ok) {
             throw data
         }
+        console.log(data)
+        personal = '';
         form.reset();
         document.getElementById('modal-movimiento-caja').classList.add('hidden');
         limpiarUI();

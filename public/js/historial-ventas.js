@@ -159,7 +159,9 @@ function setProductos(data) {
     bodyTabla.innerHTML = '';
     if (data.productos != '') {
         data.productos.forEach(producto => {
-            const tipoClass = producto.tipo === 'servicio' ? 'bg-green-200 text-green-700 border broder-green-700' : 'bg-blue-200 text-blue-700 border broder-blue-700';   
+            const tipoClass = producto.tipo === 'servicio'
+  ? 'bg-green-100 text-green-800 border border-green-300'
+  : 'bg-blue-100 text-blue-800 border border-blue-300';
             const tr = document.createElement('tr');
             tr.innerHTML = `
             <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">

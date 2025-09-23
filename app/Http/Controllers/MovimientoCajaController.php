@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMovimientoRequest;
 use Illuminate\Http\Request;
-use App\Models\{MovimientoCaja, Caja};
+use App\Models\{MovimientoCaja, Caja, PagoSalario, User};
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class MovimientoCajaController extends Controller
 {
@@ -19,7 +20,7 @@ class MovimientoCajaController extends Controller
     public function total()
     {
         $ingreso = 0;
-        $egreso = 0;
+        $egreso = 0;        
         try {
             if (session('caja')) {
                 $ingreso = MovimientoCaja::where('tipo', 'ingreso')->whereHas('caja', function ($query) {
@@ -34,6 +35,7 @@ class MovimientoCajaController extends Controller
                 }
             }
             $total = $ingreso - $egreso;
+
             return response()->json([
                 'success' => true,
                 'total' => $total,
@@ -51,16 +53,37 @@ class MovimientoCajaController extends Controller
 
     public function store(StoreMovimientoRequest $request)
     {
-        $data = $request->validated();
+        $data = $request->validated();        
         $data['caja_id'] = Caja::where('estado', 'abierto')->pluck('id')->first();
+        DB::beginTransaction();
         try {
-            MovimientoCaja::create($data);
+            $movimiento = MovimientoCaja::create($data);
             crear_caja();
+            if($data['personal_id'] != null){
+                $user = User::find($data['personal_id']);
+                if($data['monto'] < $user->salario){
+                    $adelanto = true;
+                    $restante = $user->salario - $data['monto'];
+                }else{
+                    $adelanto = false;
+                    $restante = 0;
+                }
+                PagoSalario::create([
+                    'user_id' => $data['personal_id'],
+                    'movimiento_id' => $movimiento->id,
+                    'adelanto' => $adelanto,
+                    'monto' => $data['monto'],
+                    'restante' => $restante,
+                    'created_by' => $request->user()->id,
+                ]);                
+            }
+            DB::commit();
             return response()->json([
                 'success' => true,
                 'message' => 'Movimiento registrado correctamente',
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),

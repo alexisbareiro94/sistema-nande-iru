@@ -26,6 +26,7 @@ class User extends Authenticatable
         'telefono',
         'ruc_ci',
         'password',
+        'salario',
     ];
 
     /**

@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DistribuidorController;
+use App\Http\Controllers\GestionUsersController;
 use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\MovimientoCajaController;
 use App\Http\Controllers\ProductoController;
@@ -15,7 +16,7 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
 use Illuminate\Support\Facades\Route;
 
-use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto};
+use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto, PagoSalario};
 use Carbon\Carbon;
 
 Route::get('/login', [AuthController::class, 'login_view'])->name('login');
@@ -64,7 +65,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/agregar-producto', [ProductoController::class, 'store'])->name('producto.store');
         Route::get('/edit/{id}/producto', [ProductoController::class, 'update_view'])->name('producto.update.view');
         Route::post('/edit/{id}/producto', [ProductoController::class, 'update'])->name('producto.update');
-        Route::get('/api/all', [ProductoController::class, 'all'])->name('producto.all'); //mal nombrado pero bueno xdxdxdxd
+        Route::get('/api/all', [ProductoController::class, 'all'])->name('producto.all'); //mal nombrado pero bueno
         Route::get('/api/productos', [ProductoController::class, 'search'])->name('productos.search');
         Route::get('/api/all-products', [ProductoController::class, 'allProducts'])->name('productos.all.products');
         Route::delete('/api/delete/{id}/producto', [ProductoController::class, 'delete'])->name('producto.delete');
@@ -86,6 +87,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/tipo_venta/{periodo}', [ReporteController::class, 'tipo_venta']);
         Route::get('/api/utilidad/{periodo}/{option?}', [ReporteController::class, 'tendencia']);
         Route::get('/api/tendencias', [ReporteController::class, 'gananacias']);
+
+
+        Route::get('/gestion_usuarios', [GestionUsersController::class, 'index_view'])->name('gestion.index.view');
+        Route::post('/gestion_usuarios', [GestionUsersController::class, 'store'])->name('gestion.users.store');
     });
 });
 
@@ -101,51 +106,5 @@ Route::get('/borrar-session', function () {
 
 
 Route::get('/debug', function () {
-    $hoy = now()->endOfDay();
-    $desde = now()->startOfDay()->subDay(7);
-
-    $datos = [];
-
-    $ventas = DetalleVenta::whereBetween('created_at', [$desde, $hoy])
-        ->with('producto')
-        ->orderBy('created_at')
-        ->get()
-        ->groupBy(function ($query) {
-            return Carbon::parse($query->created_at)->format('Y-m-d');
-        });
-
-    $egresos = MovimientoCaja::whereBetween('created_at', [$desde, $hoy])
-        ->where('tipo', 'egreso')
-        ->orderBy('created_at')
-        ->get()
-        ->groupBy(function ($query) {
-            return Carbon::parse($query->created_at)->format('Y-m-d');
-        })
-        ->map(function ($egreso) {
-            return $egreso->sum('monto');
-        });        
-
-    $index = 0;    
-    foreach ($ventas as $fecha => $detalles) {        
-        $total = $detalles->sum('total');
-        $datos[$index] = [
-            'fecha' => $fecha,
-            'ganancia' => 0,
-            'total_fecha' => $total,
-            'descuento' => 0,
-            'egresos' => 0,
-            'ganacia_egresos' => 0,
-        ];
-        foreach ($detalles as $detalle) {
-            $datos[$index]['descuento'] += ($detalle->producto->precio_compra * $detalle->cantidad);            
-        }
-        $datos[$index]['ganancia'] = $datos[$index]['total_fecha'] - $datos[$index]['descuento'];
-        if(!empty($egresos[$fecha])){
-            $datos[$index]['egresos'] = $egresos[$fecha];
-            $datos[$index]['ganacia_egresos'] = $datos[$index]['ganancia'] - $datos[$index]['egresos'];
-        }
-        $index++;
-    }
-
-    dd($datos);
+    dd(PagoSalario::all());
 });

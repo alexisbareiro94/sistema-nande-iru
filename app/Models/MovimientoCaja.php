@@ -25,4 +25,8 @@ class MovimientoCaja extends Model
     public function venta(){
         return $this->belongsTo(Venta::class);
     }
+
+    public function pagos_salarios(){
+        return $this->hasOne(PagoSalario::class, 'movimiento_id');
+    }
 }
