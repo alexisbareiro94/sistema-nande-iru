@@ -30,28 +30,28 @@ class ReporteService
 
         $usersMesPasado = max(1, User::where('role', 'cliente')->whereBetween('created_at', [$inicioMesPasado, $finMesPasado])->get()->count());
         $usersEsteMes = max(1, User::where('role', 'cliente')->whereBetween('created_at', [$inicioMes, $fechaActual])->get()->count());
-        
+
         $tagUsers = '';
-        $porcentajeUsers = '';        
-        if($usersMesPasado != 0){
+        $porcentajeUsers = '';
+        if ($usersMesPasado != 0) {
             $valor = (($usersEsteMes - $usersMesPasado) / $usersMesPasado) * 100;
             $porcentajeUsers = round(abs($valor));
             $tagUsers = $valor >= 0 ? '+' : '-';
-        }else{
+        } else {
             $porcentajeUsers = 0;
             $tagUsers = $usersEsteMes > 0 ? '+' : ($usersEsteMes < 0 ? '-' : '');
         }
 
         $porcentaje = '';
         $tag = '';
-        if($ventasMesPasado != 0){
+        if ($ventasMesPasado != 0) {
             $valor = (($ventasEsteMes - $ventasMesPasado) / $ventasMesPasado) * 100;
             $porcentaje = round(abs($valor));
             $tag = $valor >= 0 ? '+' : '-';
-        }else{
+        } else {
             $porcentaje = 0;
         }
-        
+
         return [
             'ventas_hoy' => [
                 'saldo' => $ventasEsteMes,
@@ -112,14 +112,33 @@ class ReporteService
             'option' => $option,
             'tag' => '',
         ];
+
+        //ingresos de ventas
         $ventasActual = DetalleVenta::whereBetween('created_at', [$aperturaActual, $cierreActual])
             ->with('producto')
             ->get();
-
         $ventasPasada = DetalleVenta::whereBetween('created_at', [$aperturaPasado, $cierrePasado])
             ->with('producto')
             ->get();
 
+        //otros ingresos
+        $otrosIngresosActual = MovimientoCaja::where('concepto', '!=', 'Apertura de caja')
+            ->where('concepto', '!=', 'Venta de productos')
+            ->where('tipo', '!=', 'egreso')
+            ->whereBetween('created_at', [$aperturaActual, $cierreActual])
+            ->get()
+            ->sum('monto');            
+        $datos['actual']['ganancia'] = $otrosIngresosActual;
+
+        $otrosIngresosPasado = MovimientoCaja::where('concepto', '!=', 'Apertura de caja')
+            ->where('concepto', '!=', 'Venta de productos')
+            ->where('tipo', '!=', 'egreso')
+            ->whereBetween('created_at', [$aperturaPasado, $cierrePasado])
+            ->get()
+            ->sum('monto');
+        $datos['pasado']['ganancia'] = $otrosIngresosPasado;
+
+        //egresos
         $egresosActual = MovimientoCaja::where('tipo', 'egreso')
             ->whereBetween('created_at', [$aperturaActual, $cierreActual])
             ->get()
@@ -138,8 +157,9 @@ class ReporteService
         foreach ($ventasPasada as $venta) {
             $datos['pasado']['descuento'] += (($venta->producto->precio_compra ?? 0) * $venta->cantidad);
         }
-        $datos['actual']['ganancia'] =  $datos['actual']['total_venta'] - $datos['actual']['descuento'];
-        $datos['pasado']['ganancia'] =  $datos['pasado']['total_venta'] - $datos['pasado']['descuento'];
+        
+        $datos['actual']['ganancia'] =  ($datos['actual']['total_venta'] + $datos['actual']['ganancia']) - $datos['actual']['descuento'];
+        $datos['pasado']['ganancia'] =  ($datos['pasado']['total_venta'] + $datos['pasado']['ganancia']) - $datos['pasado']['descuento'];
 
         $actual = $datos['actual']['ganancia'];
         $pasado = $datos['pasado']['ganancia'];
@@ -197,7 +217,7 @@ class ReporteService
             ->groupBy(function ($query) {
                 return Carbon::parse($query->created_at)->format('Y-m-d');
             });
-
+        
         $egresos = MovimientoCaja::whereBetween('created_at', [$desde, $hoy])
             ->where('tipo', 'egreso')
             ->orderBy('created_at')
@@ -205,7 +225,18 @@ class ReporteService
             ->groupBy(function ($query) {
                 return Carbon::parse($query->created_at)->format('Y-m-d');
             })
-            ->map(fn($egreso) => $egreso->sum('monto'));
+            ->map(fn($egreso) => $egreso->sum('monto'));     
+            
+        
+        $otrosIngresos = MovimientoCaja::where('concepto', '!=', 'Apertura de caja')
+            ->where('concepto', '!=', 'Venta de productos')
+            ->where('tipo', '!=', 'egreso')
+            ->whereBetween('created_at', [$desde, $hoy])
+            ->get()
+            ->groupBy(function ($query) {
+                return Carbon::parse($query->created_at)->format('Y-m-d');
+            })
+            ->map(fn($ingreso) => $ingreso->sum('monto'));
 
         $index = 0;
         foreach ($ventas as $fecha => $detalles) {
@@ -231,6 +262,14 @@ class ReporteService
         $labels = $ventas->keys()->map(function ($fecha) {
             return date('d-m', strtotime($fecha));
         });
+
+        foreach($otrosIngresos as $index => $monto){
+            foreach($datos as $i => $dato){            
+                if($dato['fecha'] == $index){
+                    $datos[$i]['ganancia'] += $monto;
+                }
+            }
+        }
 
         return [
             'labels' => $labels,

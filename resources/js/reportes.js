@@ -316,15 +316,16 @@ rEgresosBtns.forEach(btn => {
             b.classList.add('bg-gray-300');
         });
         const option = JSON.parse(sessionStorage.getItem('option'));
-        const periodo = JSON.parse(sessionStorage.getItem('periodo')) || 'dia';
-        console.log(periodo)
+        const periodo = JSON.parse(sessionStorage.getItem('periodo')) || 'dia';   
+        const tenPeriodo = JSON.parse(sessionStorage.getItem('tenPeriodo')) || '7';     
         if (btn.dataset.regreso) {
             sessionStorage.setItem('regreso', JSON.stringify(btn.dataset.regreso))
             await gananacias(periodo, option, btn.dataset.regreso);
-            //TendenciasChart();
+            tendenciasChart(tenPeriodo);
         } else {
             sessionStorage.removeItem('regreso');
             await gananacias(periodo, option, null);
+            tendenciasChart(tenPeriodo);
         }
         setTimeout(() => {
             btn.classList.remove('bg-gray-300');
@@ -338,11 +339,11 @@ async function gananacias(periodo = '7', option = '', egreso = '') {
     const regreso = JSON.parse(sessionStorage.getItem('regreso'));
     const gananciaActual = document.getElementById('ganancia-actual');
     const rangoActual = document.getElementById('rango-actual');
-    const contDiff = document.getElementById('cont-diff');
     const porcentaje = document.getElementById('variacion-porcentaje');
     const diferencia = document.getElementById('variacion-valor');
     const rangoAnterior = document.getElementById('rango-anterior');
     const gananciaAnterior = document.getElementById('ganancia-anterior');
+    const svgCont = document.getElementById('svg-cont-card');
 
     try {
         const res = await fetch(`http://localhost:8080/api/utilidad/${periodo}/${option}`);
@@ -350,6 +351,20 @@ async function gananacias(periodo = '7', option = '', egreso = '') {
         if (!res.ok) {
             throw data;
         }
+
+        const svgUp = `  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+                    </svg>`;
+
+        const svgDown = ` <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181" />
+                    </svg>`;
+
+        svgCont.innerHTML = '';
 
         const fecha = periodo == 'dia'
             ? `Hoy (${data.data.actual.fecha_apertura})`
@@ -363,13 +378,16 @@ async function gananacias(periodo = '7', option = '', egreso = '') {
                 ? `Semana Pasada (${data.data.pasado.fecha_apertura} al ${data.data.pasado.fecha_cierre})`
                 : `Mes Pasado (${data.data.pasado.fecha_apertura} al ${data.data.pasado.fecha_cierre})`);
 
-        if (regreso == 'true') {        
+        if (regreso == 'true') {
             gananciaActual.innerText = `Gs. ${data.data.actual.ganancia_egreso.toLocaleString('es-PY')}`;
             rangoActual.innerText = `Rango: ${fecha}`;
-            
+
             const tagE = data.data.tagE;
             const colorClass = tagE === '+' ? 'text-green-700 bg-green-200 rounded-xl px-1' : 'text-red-700 bg-red-200 rounded-xl px-1';
-            
+            const svgContClass = tagE === '+' ? 'text-green-500' : 'text-red-500';
+            svgCont.classList = svgContClass;
+            svgCont.innerHTML = tagE == '+' ? svgUp : svgDown;
+
             porcentaje.className = `text-sm font-semibold ${colorClass}`;
             porcentaje.innerText = `${tagE} ${data.data.porcentaje_egreso}%`;
 
@@ -377,12 +395,15 @@ async function gananacias(periodo = '7', option = '', egreso = '') {
             diferencia.innerText = `Gs. ${data.data.diferencia_egreso.toLocaleString('es-PY')}`;
             rangoAnterior.innerText = `Rango: ${fechaPasada}`;
 
-        } else {            
+        } else {
             gananciaActual.innerText = `Gs. ${data.data.actual.ganancia.toLocaleString('es-PY')}`;
             rangoActual.innerText = `Rango: ${fecha}`;
-            
+
             const tag = data.data.tag;
             const colorClass = tag === '+' ? 'text-green-700 bg-green-200 rounded-xl px-1' : 'text-red-700 bg-red-200 rounded-xl px-1';
+            const svgContClass = tag === '+' ? 'text-green-500' : 'text-red-500';
+            svgCont.classList = svgContClass;
+            svgCont.innerHTML = tag == '+' ? svgUp : svgDown;
 
             porcentaje.className = `text-sm font-semibold ${colorClass}`;
             porcentaje.innerText = `${tag} ${data.data.porcentaje}%`;
@@ -398,20 +419,28 @@ async function gananacias(periodo = '7', option = '', egreso = '') {
     }
 }
 
-//gananacias('dia');
 //---------------grafico de tendencias-----------------------
 let TendenciasChart = null;
 async function tendenciasChart(periodo = 7) {
+    const regreso = JSON.parse(sessionStorage.getItem('regreso')) || '';    
     try {
+        sessionStorage.setItem('tenPeriodo', JSON.stringify(periodo));        
         const res = await fetch(`http://localhost:8080/api/tendencias/${periodo}`);
         const data = await res.json();
         if (!res.ok) {
             throw data;
         }
-        const ganancias = data.datos.map(item => item?.ganancia ?? 0);
+        
         if (TendenciasChart) {
             TendenciasChart.destroy();
         }
+        let ganancias;
+        if(regreso){
+            ganancias = data.datos.map(item => item?.egresos > 0 ? item.ganacia_egresos : item.ganancia);
+        }else{
+            ganancias = data.datos.map(item => item?.ganancia ?? 0);
+            
+        }        
         TendenciasChart = new Chart(document.getElementById('miniChart'), {
             type: 'line',
             data: {
@@ -458,6 +487,7 @@ tendenciaBtns.forEach(btn => {
             b.classList.remove('bg-gray-50', 'shadow-lg');
             b.classList.add('bg-gray-300');
         });
+        sessionStorage.removeItem('tenPeriodo');
         tendenciasChart(btn.dataset.tendencia);
         setTimeout(() => {
             btn.classList.remove('bg-gray-300');
@@ -483,8 +513,7 @@ async function egresoChart(periodo = 7) {
 
         if (egresosChart) {
             egresosChart.destroy();
-        }
-        console.log(data)
+        }        
         egresosChart = new Chart(bar, {
             type: 'bar',
             data: {
@@ -561,9 +590,7 @@ async function conceptoEgresosChart(periodo = 7) {
         const donut = document.getElementById('egresosConceptoChart');
         if (ConceptoEgresos) {
             ConceptoEgresos.destroy();
-        }
-
-        console.log(data)
+        }        
         const labels = data.labels;
         const egresos = labels.map(fecha => data.egresos[fecha].total);
         ConceptoEgresos = new Chart(donut, {
@@ -619,8 +646,7 @@ conceptoBtns.forEach(btn => {
         conceptoBtns.forEach(b => {
             b.classList.remove('bg-gray-50', 'shadow-lg');
             b.classList.add('bg-gray-300');
-        });
-        console.log(btn.dataset.concepto)
+        });        
         conceptoEgresosChart(btn.dataset.concepto);
         setTimeout(() => {
             btn.classList.remove('bg-gray-300');
