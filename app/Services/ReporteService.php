@@ -29,25 +29,29 @@ class ReporteService
         $ventasEsteMes = max(1, Venta::whereBetween('created_at', [$inicioMes, $fechaActual])->get()->sum('total'));
 
         $usersMesPasado = max(1, User::where('role', 'cliente')->whereBetween('created_at', [$inicioMesPasado, $finMesPasado])->get()->count());
-        $usersEsteMes = max(1,User::where('role', 'cliente')->whereBetween('created_at', [$inicioMes, $fechaActual])->get()->count());
-
-        $tagUsers = $usersEsteMes > $usersMesPasado ? '+' : '-';
-        $porcentajeUsers = '';
-        if ($usersEsteMes > $usersMesPasado) {
-            $porcentajeUsers = (($usersEsteMes - $usersMesPasado) / $usersEsteMes) * 100;
-        } else {
-            $porcentajeUsers = (($usersMesPasado - $usersEsteMes) / $usersMesPasado) * 100;
+        $usersEsteMes = max(1, User::where('role', 'cliente')->whereBetween('created_at', [$inicioMes, $fechaActual])->get()->count());
+        
+        $tagUsers = '';
+        $porcentajeUsers = '';        
+        if($usersMesPasado != 0){
+            $valor = (($usersEsteMes - $usersMesPasado) / $usersMesPasado) * 100;
+            $porcentajeUsers = round(abs($valor));
+            $tagUsers = $valor >= 0 ? '+' : '-';
+        }else{
+            $porcentajeUsers = 0;
+            $tagUsers = $usersEsteMes > 0 ? '+' : ($usersEsteMes < 0 ? '-' : '');
         }
 
         $porcentaje = '';
-        $tag = $ventasEsteMes > $ventasMesPasado ? '+' : '-';
-
-        if ($ventasEsteMes > $ventasMesPasado) {
-            $porcentaje = (($ventasEsteMes - $ventasMesPasado) / $ventasEsteMes) * 100;
-        } else {
-            $porcentaje = (($ventasMesPasado - $ventasEsteMes) / $ventasMesPasado) * 100;
+        $tag = '';
+        if($ventasMesPasado != 0){
+            $valor = (($ventasEsteMes - $ventasMesPasado) / $ventasMesPasado) * 100;
+            $porcentaje = round(abs($valor));
+            $tag = $valor >= 0 ? '+' : '-';
+        }else{
+            $porcentaje = 0;
         }
-
+        
         return [
             'ventas_hoy' => [
                 'saldo' => $ventasEsteMes,
@@ -90,6 +94,8 @@ class ReporteService
                 'total_venta' => 0,
                 'ganancia' => 0,
                 'descuento' => 0,
+                'egreso' => 0,
+                'ganancia_egreso' => 0,
                 'fecha_apertura' => $aperturaActual,
                 'fecha_cierre' => $cierreActual,
             ],
@@ -97,6 +103,8 @@ class ReporteService
                 'total_venta' => 0,
                 'ganancia' => 0,
                 'descuento' => 0,
+                'egreso' => 0,
+                'ganancia_egreso' => 0,
                 'fecha_apertura' => $aperturaPasado,
                 'fecha_cierre' => $cierrePasado,
             ],
@@ -112,6 +120,16 @@ class ReporteService
             ->with('producto')
             ->get();
 
+        $egresosActual = MovimientoCaja::where('tipo', 'egreso')
+            ->whereBetween('created_at', [$aperturaActual, $cierreActual])
+            ->get()
+            ->sum('monto');
+
+        $egresosPasada = MovimientoCaja::where('tipo', 'egreso')
+            ->whereBetween('created_at', [$aperturaPasado, $cierrePasado])
+            ->get()
+            ->sum('monto');
+
         $datos['actual']['total_venta'] = $ventasActual->sum('total');
         $datos['pasado']['total_venta'] = $ventasPasada->sum('total');
         foreach ($ventasActual as $venta) {
@@ -120,28 +138,55 @@ class ReporteService
         foreach ($ventasPasada as $venta) {
             $datos['pasado']['descuento'] += (($venta->producto->precio_compra ?? 0) * $venta->cantidad);
         }
-        $datos['actual']['ganancia'] = max(1, $datos['actual']['total_venta'] - $datos['actual']['descuento']);
-        $datos['pasado']['ganancia'] = max(1, $datos['pasado']['total_venta'] - $datos['pasado']['descuento']);
+        $datos['actual']['ganancia'] =  $datos['actual']['total_venta'] - $datos['actual']['descuento'];
+        $datos['pasado']['ganancia'] =  $datos['pasado']['total_venta'] - $datos['pasado']['descuento'];
 
-        $porcentaje = 0;
-        if ($datos['actual']['ganancia'] > $datos['pasado']['ganancia']) {
-            $porcentaje = round((($datos['actual']['ganancia'] - $datos['pasado']['ganancia']) / $datos['actual']['ganancia']) * 100);
-            $datos['tag'] = '+';
+        $actual = $datos['actual']['ganancia'];
+        $pasado = $datos['pasado']['ganancia'];
+
+        if ($pasado != 0) {
+            $valor = (($actual - $pasado) / abs($pasado)) * 100;
+            $porcentaje = round(abs($valor));
+            $datos['tag'] = $valor >= 0 ? '+' : '-';
         } else {
-            $porcentaje = round((($datos['pasado']['ganancia'] - $datos['actual']['ganancia']) / $datos['pasado']['ganancia']) * 100);
-            $datos['tag'] = '-';
+            $porcentaje = 0;
+            $datos['tag'] = $actual > 0 ? '+' : ($actual < 0 ? '-' : '');
         }
-        $diferencia = $datos['actual']['ganancia'] - $datos['pasado']['ganancia'];
-        $datos['diferencia'] = $diferencia ?? 0;
-        $datos['porcentaje'] = $porcentaje ?? 0;
+
+        $diferencia = $actual - $pasado;
+        $datos['diferencia'] = $diferencia;
+        $datos['porcentaje'] = $porcentaje;
+
+        $datos['actual']['egreso'] = $egresosActual;
+        $datos['actual']['ganancia_egreso'] = $datos['actual']['ganancia'] - $datos['actual']['egreso'];
+
+        $datos['pasado']['egreso'] = $egresosPasada;
+        $datos['pasado']['ganancia_egreso'] = $datos['pasado']['ganancia'] - $datos['pasado']['egreso'];
+
+        $diferencia_egreso = $datos['actual']['ganancia_egreso'] - $datos['pasado']['ganancia_egreso'];
+        $datos['diferencia_egreso'] = $diferencia_egreso;
+
+
+        $actualEgreso = $datos['actual']['ganancia_egreso'];
+        $pasadoEgreso = $datos['pasado']['ganancia_egreso'];
+
+        if ($pasadoEgreso != 0) {
+            $raw = (($actualEgreso - $pasadoEgreso) / abs($pasadoEgreso)) * 100;
+            $porcentaje_egreso = round(abs($raw));
+            $datos['tagE'] = $raw >= 0 ? '+' : '-';
+        } else {
+            $porcentaje_egreso = 0;
+            $datos['tagE'] = $actualEgreso > 0 ? '+' : ($actualEgreso < 0 ? '-' : '');
+        }
+        $datos['porcentaje_egreso'] = $porcentaje_egreso;
 
         return $datos;
     }
 
-    public function gananacias_data(): array
+    public function gananacias_data($periodo): array
     {
         $hoy = now()->endOfDay();
-        $desde = now()->startOfDay()->subDay(7);
+        $desde = now()->startOfDay()->subDay($periodo);
 
         $datos = [];
 
@@ -191,9 +236,5 @@ class ReporteService
             'labels' => $labels,
             'datos' => $datos,
         ];
-    }
-
-    public function egresos(){
-        
     }
 }

@@ -56,6 +56,10 @@ class ReporteController extends Controller
         }
     }
 
+    /**
+     * @param
+     * periodo: 7, 30, 90, representa el rango de fechas
+     */
     public function ventas_chart(string $periodo)
     {
         try {
@@ -68,7 +72,7 @@ class ReporteController extends Controller
                 ->groupBy(function ($venta) {
                     return Carbon::parse($venta->created_at)->format('Y-m-d');
                 })
-                ->map(fn ($venta)=> ['total' => $venta->sum('total')]);
+                ->map(fn($venta) => ['total' => $venta->sum('total')]);
 
             $labels = $ventas->keys();
 
@@ -89,7 +93,7 @@ class ReporteController extends Controller
      * @param
      * periodo= 7, 30 o 90, representa el rango que se va a medir
      */
-    public function tipo_venta(?string $periodo = '7')
+    public function tipo_venta(string $periodo)
     {
         try {
             $inicio = now()->startOfDay()->subDay($periodo);
@@ -134,7 +138,9 @@ class ReporteController extends Controller
     }
     /**
      * @params
-     *  opcion = seria para comparar con la semana o mes completa anterior (== null) o igualar al dia de hoy (== hoy)
+     * function= para la comparativa por dia, semana o mes
+     * opción = seria para comparar con la semana o mes completa anterior (== null) o igualar al dia de hoy (== hoy)
+     * egreso= le resta los egresos
      */
     public function tendencia(string $periodo, ?string $opcion = null)
     {
@@ -158,14 +164,68 @@ class ReporteController extends Controller
         }
     }
 
-    public function gananacias()
+    public function gananacias(string $periodo)
     {
         try {
-            $data = $this->reporteService->gananacias_data();
+            $data = $this->reporteService->gananacias_data($periodo);
 
             return response()->json([
                 'labels' => $data['labels'],
                 'datos' => $data['datos'],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function egresos(string $periodo)
+    {
+        try {
+            $inicio = now()->startOfDay()->subDay($periodo);
+            $hoy = now()->endOfDay();
+
+            $movs = MovimientoCaja::where('tipo', 'egreso')
+                ->whereBetween('created_at', [$inicio, $hoy])
+                ->orderBy('created_at')
+                ->get()
+                ->groupBy(function ($query) {
+                    return Carbon::parse($query->created_at)->format('d-m-Y');
+                })
+                ->map(fn($mov) => ['total' => $mov->sum('monto')]);
+
+            return response()->json([
+                'success' => true,
+                'labels' => $movs->keys(),
+                'egresos' => $movs,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function egresos_concepto(string $periodo)
+    {
+        try {
+            $inicio = now()->startOfDay()->subDay($periodo);
+            $hoy = now()->endOfDay();
+
+            $movs = MovimientoCaja::where('tipo', 'egreso')
+                ->whereBetween('created_at', [$inicio, $hoy])
+                ->orderBy('created_at')
+                ->get()
+                ->groupBy('concepto')
+                ->map(fn($mov) => ['total' => $mov->sum('monto')]);
+
+            return response()->json([
+                'success' => true,
+                'egresos' => $movs,
+                'labels' => $movs->keys(),
             ]);
         } catch (\Exception $e) {
             return response()->json([

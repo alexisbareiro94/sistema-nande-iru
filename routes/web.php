@@ -86,11 +86,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/ventas/{periodo}', [ReporteController::class, 'ventas_chart']);
         Route::get('/api/tipo_venta/{periodo}', [ReporteController::class, 'tipo_venta']);
         Route::get('/api/utilidad/{periodo}/{option?}', [ReporteController::class, 'tendencia']);
-        Route::get('/api/tendencias', [ReporteController::class, 'gananacias']);
+        Route::get('/api/tendencias/{periodo}', [ReporteController::class, 'gananacias']);
+        Route::get('/api/egresos/{periodo}', [ReporteController::class, 'egresos']);
+        Route::get('/api/egresos/concepto/{periodo}', [ReporteController::class, 'egresos_concepto']);
 
 
         Route::get('/gestion_usuarios', [GestionUsersController::class, 'index_view'])->name('gestion.index.view');
         Route::post('/gestion_usuarios', [GestionUsersController::class, 'store'])->name('gestion.users.store');
+    
     });
 });
 
@@ -106,5 +109,15 @@ Route::get('/borrar-session', function () {
 
 
 Route::get('/debug', function () {
-    dd(PagoSalario::all());
+    $inicio = now()->startOfDay()->subDay(7);
+    $hoy = now()->endOfDay();
+
+    $movs = MovimientoCaja::where('tipo', 'egreso')
+        ->whereBetween('created_at', [$inicio, $hoy])
+        ->orderBy('created_at')
+        ->get()
+        ->groupBy('concepto')
+        ->map(fn($mov) => ['total' => $mov->sum('monto')]);
+
+    dd($movs);
 });
