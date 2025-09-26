@@ -56,7 +56,7 @@ async function updateProduct(flag = false) {
     eliminarImagen ? formDataEdit.append('eliminar_imagen', eliminarImagen) : '';
     producto_id ? formDataEdit.append('producto_id', producto_id) : '';    
     try {
-        const res = await fetch(`http://localhost:8080/edit/${encodeURIComponent(producto_id)}/producto`, {
+        const res = await fetch(`http://127.0.0.1:80/edit/${encodeURIComponent(producto_id)}/producto`, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,

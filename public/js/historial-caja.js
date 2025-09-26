@@ -37,7 +37,7 @@ document.querySelectorAll(".detalle-caja").forEach((btn) => {
 
 async function getCaja(id) {
     try {
-        const res = await fetch(`http://localhost:8080/api/caja/${id}`, {
+        const res = await fetch(`http://127.0.0.1:80/api/caja/${id}`, {
             method: "GET",
             headers: {
                 "X-CSRF-TOKEN": csrfToken,

@@ -29,7 +29,7 @@ function cerrarmodalDmDetalleMov() {
 
 async function detalleMov(id) {
     try {
-        const res = await fetch(`http://localhost:8080/venta/${decodeURIComponent(id)}`, {
+        const res = await fetch(`http://127.0.0.1:80/venta/${decodeURIComponent(id)}`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,

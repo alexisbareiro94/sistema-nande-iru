@@ -5,7 +5,7 @@ import Chart from 'chart.js/auto';
 let myChart = null;
 async function loadChart(desde = '', hasta = '', periodo = '') {
   try {
-    const res = await fetch(`http://localhost:8080/api/movimientos/charts_caja?desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&periodoInicio=${encodeURIComponent(periodo)}`);
+    const res = await fetch(`http://127.0.0.1:80/api/movimientos/charts_caja?desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&periodoInicio=${encodeURIComponent(periodo)}`);
     const data = await res.json();
 
     const ctx = document.getElementById('myChart');

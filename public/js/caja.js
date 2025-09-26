@@ -47,7 +47,7 @@ document.getElementById('input-b-producto-ventas').addEventListener('input', (e)
             tablaVentaProductos.innerHTML = '';
         } else {
             try {
-                const res = await fetch(`http://localhost:8080/api/productos?q=${encodeURIComponent(query)}`, {
+                const res = await fetch(`http://127.0.0.1:80/api/productos?q=${encodeURIComponent(query)}`, {
                     method: 'GET',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
@@ -290,7 +290,7 @@ form.addEventListener('submit', async (e) => {
         return;
     }
     try {
-        const res = await fetch(`http://localhost:8080/api/users?q=${encodeURIComponent(q)}`, {
+        const res = await fetch(`http://127.0.0.1:80/api/users?q=${encodeURIComponent(q)}`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -361,7 +361,7 @@ formAddCliente.addEventListener('submit', async (e) => {
     addCliente.append('telefono', document.getElementById('telefono-c').value.trim());
 
     try {
-        const res = await fetch(`http://localhost:8080/api/users`, {
+        const res = await fetch(`http://127.0.0.1:80/api/users`, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -400,7 +400,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 async function recargarSaldo(flag = true) {
     const saldo = document.getElementById('saldo-caja');
     try {
-        const res = await fetch(`http://localhost:8080/api/movimiento/total`, {
+        const res = await fetch(`http://127.0.0.1:80/api/movimiento/total`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -487,7 +487,7 @@ document.getElementById('confirmar-movimiento').addEventListener('click', async 
         formData.append('monto', monto.value);
         formData.append('personal_id', personal);
 
-        const res = await fetch('http://localhost:8080/api/movimiento', {
+        const res = await fetch('http://127.0.0.1:80/api/movimiento', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -525,7 +525,7 @@ async function recargarCierreCaja() {
     const saldoEsperado = document.getElementById('saldo-esperado');
 
     try {
-        const res = await fetch('http://localhost:8080/api/movimiento/total', {
+        const res = await fetch('http://127.0.0.1:80/api/movimiento/total', {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -597,7 +597,7 @@ document.getElementById('confirmar-cierre').addEventListener('click', async () =
     formData.append('egreso', egreso);
 
     try {
-        const res = await fetch('http://localhost:8080/caja', {
+        const res = await fetch('http://127.0.0.1:80/caja', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="{{asset('css/app.css')}}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>@yield('titulo', 'Mi Aplicación')</title>
 </head>
@@ -15,7 +15,7 @@
     <div id="toast-container" class="fixed top-4 right-4 space-y-2 z-[9999]"></div>
     <div id="loading-container" class="fixed top-4 right-4 space-y-2 z-[9999]"></div>
     @include('alertas.alerts')
-    <main class="flex-grow grid grid-cols-5 gap-1">        
+    <main class="flex-grow grid grid-cols-5 gap-1">
         <div @class([
             'bg-gris p-4 animate-fade-in',
             'hidden' => request()->routeIs('home'),
@@ -24,17 +24,17 @@
             <aside class="col-span-1 p-4 fixed transform transition-transform duration-300">
                 @include('home.aside')
             </aside>
-        </div>        
+        </div>
         <section @class([
             'p-6',
             'col-span-5' => request()->routeIs('home'),
             'col-span-4' => !request()->routeIs('home'),
         ])>
-            <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 bg-gray-200 rounded-lg min-h-screen shadow-lg">                
+            <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 bg-gray-200 rounded-lg min-h-screen shadow-lg">
                 <nav @class([
                     'text-sm font-semibold text-gray-700 mb-4',
                     'hidden' => request()->routeIs('home'),
-                    ]) aria-label="Breadcrumb">
+                ]) aria-label="Breadcrumb">
                     <ol class="list-reset flex">
                         <li>
                             <a href="{{ route('home') }}" class="text-blue-500 hover:underline">Inicio</a>
@@ -59,6 +59,13 @@
 
         @include('includes.cerrar-sesion')
     </main>
+
+    <script type="module">
+        window.Echo.channel('test-channel')
+            .listen('TestEvent', (e) => {
+                console.log("Evento recibido:", e.message);
+            });
+    </script>
 
     @yield('js')
     <script src="{{ asset('js/add-producto.js') }}"></script>

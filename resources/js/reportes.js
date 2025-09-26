@@ -12,7 +12,7 @@ function limpiarSessions() {
 let PagosChart = null;
 async function pagosChart(periodo = 7) {
     try {
-        const res = await fetch(`http://localhost:8080/api/pagos/${periodo}`);
+        const res = await fetch(`http://127.0.0.1:80/api/pagos/${periodo}`);
         const data = await res.json();
 
         if (!res.ok) {
@@ -94,7 +94,7 @@ pagoBtns.forEach(btn => {
 let ventaChart = null;
 async function ventasChart(periodo = 7) {
     try {
-        const res = await fetch(`http://localhost:8080/api/ventas/${periodo}`)
+        const res = await fetch(`http://127.0.0.1:80/api/ventas/${periodo}`)
         const data = await res.json();
         if (!res.ok) {
             throw data;
@@ -176,7 +176,7 @@ btns.forEach(btn => {
 let tipoVentaChart = null;
 async function tipoVenta(periodo = 7) {
     try {
-        const res = await fetch(`http://localhost:8080/api/tipo_venta/${periodo}`);
+        const res = await fetch(`http://127.0.0.1:80/api/tipo_venta/${periodo}`);
         const data = await res.json();
 
         if (!res.ok) {
@@ -346,7 +346,7 @@ async function gananacias(periodo = '7', option = '', egreso = '') {
     const svgCont = document.getElementById('svg-cont-card');
 
     try {
-        const res = await fetch(`http://localhost:8080/api/utilidad/${periodo}/${option}`);
+        const res = await fetch(`http://127.0.0.1:80/api/utilidad/${periodo}/${option}`);
         const data = await res.json();
         if (!res.ok) {
             throw data;
@@ -425,7 +425,7 @@ async function tendenciasChart(periodo = 7) {
     const regreso = JSON.parse(sessionStorage.getItem('regreso')) || '';    
     try {
         sessionStorage.setItem('tenPeriodo', JSON.stringify(periodo));        
-        const res = await fetch(`http://localhost:8080/api/tendencias/${periodo}`);
+        const res = await fetch(`http://127.0.0.1:80/api/tendencias/${periodo}`);
         const data = await res.json();
         if (!res.ok) {
             throw data;
@@ -501,7 +501,7 @@ tendenciaBtns.forEach(btn => {
 let egresosChart = null;
 async function egresoChart(periodo = 7) {
     try {
-        const res = await fetch(`http://localhost:8080/api/egresos/${periodo}`)
+        const res = await fetch(`http://127.0.0.1:80/api/egresos/${periodo}`)
         const data = await res.json();
         if (!res.ok) {
             throw data;
@@ -580,7 +580,7 @@ egesosBtns.forEach(btn => {
 let ConceptoEgresos = null;
 async function conceptoEgresosChart(periodo = 7) {
     try {
-        const res = await fetch(`http://localhost:8080/api/egresos/concepto/${periodo}`);
+        const res = await fetch(`http://127.0.0.1:80/api/egresos/concepto/${periodo}`);
         const data = await res.json();
 
         if (!res.ok) {
