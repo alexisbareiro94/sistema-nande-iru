@@ -36,6 +36,9 @@ class AuthController extends Controller
 
         if (Auth::attempt($validate)) {
             $user = Auth::user();
+            if($user->role == 'personal' || $user->role == 'caja'){
+                return redirect()->route('caja.index');
+            }
             if ($user->role === 'cliente') {
                 session()->flush();
             }

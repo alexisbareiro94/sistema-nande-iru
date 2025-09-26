@@ -40,23 +40,25 @@
                         </div>
                     </label>
 
-                    <label class="flex-1 cursor-pointer">
-                        <input type="radio" name="tipo-movimiento" value="salario" class="hidden peer" />
-                        <div
-                            class="px-4 py-2 text-xs font-medium rounded-md peer-checked:bg-yellow-400 peer-checked:shadow-sm transition-all text-gray-600 peer-checked:text-white">
-                            Pago de salario
-                        </div>
-                    </label>
+                    @if (Auth::user()->role == 'admin')
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="tipo-movimiento" value="salario" class="hidden peer" />
+                            <div
+                                class="px-4 py-2 text-xs font-medium rounded-md peer-checked:bg-yellow-400 peer-checked:shadow-sm transition-all text-gray-600 peer-checked:text-white">
+                                Pago de salario
+                            </div>
+                        </label>
+                    @endif
                 </div>
             </div>
 
-            <div id="salario-cont" class="mb-4 hidden">                
+            <div id="salario-cont" class="mb-4 hidden">
                 <div>
                     <span class="text-gray-700 mr-4 font-semibold">Seleccionar Personal:</span>
                     <select class="px-2 py-1 border border-gray-700 rounded-md" name="personal" id="personales">
                         <option value="" disabled selected>Seleccionar Personal</option>
-                        @foreach ($personales as $personal)                        
-                        <option class="personal" value="{{ $personal->id }}">{{ $personal->name }}</option>                        
+                        @foreach ($personales as $personal)
+                            <option class="personal" value="{{ $personal->id }}">{{ $personal->name }}</option>
                         @endforeach
                     </select>
                 </div>

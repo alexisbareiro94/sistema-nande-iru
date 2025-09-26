@@ -3,11 +3,11 @@
 @section('titulo', 'home')
 
 @section('contenido')
- <header class="bg-gray-300 text-black shadow-md">
+    <header class="bg-gray-300 text-black shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <a href="{{ url('/') }}" class="text-xl font-bold"></a>
 
-            <nav class="space-x-4 flex">                
+            <nav class="space-x-4 flex">
                 <a href="" class="hover:text-[#CC0000] font-semibold">Perfil</a>
                 <span id="" class="hover:text-[#CC0000] font-semibold cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -19,7 +19,7 @@
             </nav>
         </div>
     </header>
-    <div class="max-w-7xl mx-auto p-6 pt-8">    
+    <div class="max-w-7xl mx-auto p-6 pt-8">
         <div class="mb-10">
             <h1 class="text-3xl font-bold text-gray-800 mb-2">Panel de Control</h1>
         </div>
@@ -72,38 +72,41 @@
             </a>
 
             <!-- Gestión de Usuarios -->
-            <a href="{{ route('gestion.index.view') }}"
-                class="group bg-gradient-to-b from-white to-gray-50 border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:shadow-purple-100/50 min-h-[180px] flex flex-col items-center p-6">
-                <div class="bg-purple-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="h-8 w-8 text-purple-600">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                    </svg>
+            @if (Auth::user()->role == 'admin')
+                <a href="{{ route('gestion.index.view') }}"
+                    class="group bg-gradient-to-b from-white to-gray-50 border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:shadow-purple-100/50 min-h-[180px] flex flex-col items-center p-6">
+                    <div class="bg-purple-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="h-8 w-8 text-purple-600">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                        </svg>
 
-                </div>
-                <span
-                    class="text-lg font-medium text-gray-800 text-center group-hover:text-purple-600 transition-colors">Gestión
-                    de Usuarios</span>
-            </a>
-
+                    </div>
+                    <span
+                        class="text-lg font-medium text-gray-800 text-center group-hover:text-purple-600 transition-colors">Gestión
+                        de Usuarios</span>
+                </a>
+            @endif
             <!-- Reportes -->
-            <a id="reportes-index" href="{{ route('reporte.index') }}"
-                class="group bg-gradient-to-b from-white to-gray-50 border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:shadow-red-100/50 min-h-[180px] flex flex-col items-center p-6">
-                <div class="bg-red-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="h-8 w-8 text-red-600">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
-                    </svg>
+            @if (Auth::user()->role == 'admin')
+                <a id="reportes-index" href="{{ route('reporte.index') }}"
+                    class="group bg-gradient-to-b from-white to-gray-50 border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:shadow-red-100/50 min-h-[180px] flex flex-col items-center p-6">
+                    <div class="bg-red-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="h-8 w-8 text-red-600">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+                        </svg>
 
-                </div>
-                <span
-                    class="text-lg font-medium text-gray-800 text-center group-hover:text-red-600 transition-colors">Reportes</span>
-            </a>
+                    </div>
+                    <span
+                        class="text-lg font-medium text-gray-800 text-center group-hover:text-red-600 transition-colors">Reportes</span>
+                </a>
+            @endif
         </div>
     </div>
 
 
-    
+
 @endsection
