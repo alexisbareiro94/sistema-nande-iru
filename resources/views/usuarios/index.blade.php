@@ -105,6 +105,15 @@
                         @csrf
                         <input name="name" type="text" placeholder="Nombre y  Apellido" class="w-full p-2 border rounded" />
                         <input name="email" type="email" placeholder="Email" class="w-full p-2 border rounded" />
+                        <div class="relative">
+                            <input type="password" name="password" id="password" placeholder="********" class="w-full p-2 border rounded">                           
+                            <span id="mostrar-gu" class="cursor-pointer px-2 py-1 hover:bg-gray-200 rounded-lg absolute top-1 right-3">
+                                < O >
+                            </span>
+                            <span id="ocultar-gu" class="cursor-pointer px-2 py-1 hover:bg-gray-100 absolute top-1 right-3 hidden">
+                                < \ >
+                            </span>
+                        </div>
                         <input name="telefono" type="tel" placeholder="Teléfono" class="w-full p-2 border rounded" />
                         <select name="role" class="w-full p-2 border rounded">
                             <option disabled selected>Rol</option>
@@ -381,8 +390,23 @@
                 </div>
             </div>
         </section>
-
-    </div>
     </div>
 
+<script>
+    const ocultar = document.getElementById('ocultar-gu');
+    const mostrar = document.getElementById('mostrar-gu');
+    const input = document.getElementById('password');
+
+    mostrar.addEventListener('click', () => {
+        mostrar.classList.add('hidden');
+        ocultar.classList.remove('hidden');
+        password.type = 'text'
+    });
+
+    ocultar.addEventListener('click', () => {
+        ocultar.classList.add('hidden');
+        mostrar.classList.remove('hidden');
+        password.type = 'password'
+    });
+</script>
 @endsection

@@ -11,16 +11,17 @@ class GestionUsersController extends Controller
         return view('usuarios.index');
     }
 
-    public function store(Request $request){
+    public function store(Request $request){        
         try{
             $validated = $request->validate([
                 'role' => 'required',
                 'name' => 'required',
+                'password' => 'required|min:8',
                 'telefono' => 'required',
                 'estado' => 'required',   
                 'email' => 'required|email',    
                 'salario' => 'required|numeric',    
-                'activo' => true,
+                'estado' => 'required',
             ]);
 
             User::create($validated);
