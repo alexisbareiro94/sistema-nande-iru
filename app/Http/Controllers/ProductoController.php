@@ -16,6 +16,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class ProductoController extends Controller
 {
     public function __construct(protected ProductService $productService) {}
+
     public function index()
     {
         $query = Producto::query();
@@ -45,9 +46,9 @@ class ProductoController extends Controller
         $filtro = $request->query('filtro');
         $orderBy = $request->query('orderBy');
         $direction = $request->query('dir');
-        $filter = $request->query('filter');        
+        $filter = $request->query('filter');
         $query = Producto::query();
-        
+
         if ($filtro == "tipo") {
             $query->whereLike("tipo", "%$search%");
         }
@@ -82,7 +83,7 @@ class ProductoController extends Controller
             }
         }
 
-        if (!filled($filtro) && filled($search)) {            
+        if (!filled($filtro) && filled($search)) {
             $query->whereLike("nombre", "%$search%")
                 ->orWhereLike("codigo", "%$search%");
         }
@@ -106,12 +107,11 @@ class ProductoController extends Controller
     }
 
     public function allProducts()
-    { {
-            return response()->json([
-                'success' => true,
-                'productos' => Producto::with(['marca', 'distribuidor', 'categoria'])->orderByDesc('created_at')->get(),
-            ]);
-        }
+    {
+        return response()->json([
+            'success' => true,
+            'productos' => Producto::with(['marca', 'distribuidor', 'categoria'])->orderByDesc('created_at')->get(),
+        ]);
     }
 
     public function add_producto_view()
@@ -212,7 +212,7 @@ class ProductoController extends Controller
     }
 
     public function delete(string $id)
-    {        
+    {
         try {
             $query = Producto::query();
             $productos = $query->get();
@@ -241,8 +241,8 @@ class ProductoController extends Controller
         try {
             $request->validate([
                 'productos' => 'required|mimes:xlsx,xls,csv'
-            ]);            
-            $file = $request->file('productos');            
+            ]);
+            $file = $request->file('productos');
             Excel::import(new ProductosImport, $file);
 
             return response()->json([
@@ -255,5 +255,13 @@ class ProductoController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function top_ventas()
+    {
+        $productos = Producto::orderByDesc('ventas')->get();
+        return view('reportes.includes.all-productos', [
+            'productos' => $productos,
+        ]);
     }
 }

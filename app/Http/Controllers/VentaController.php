@@ -36,8 +36,8 @@ class VentaController extends Controller
     }
 
     public function index(Request $request)
-    {
-        try {
+    {  
+        try {           
             $query = MovimientoCaja::query();
             $paginacion = $request->query('paginacion');
             $desdeC = $request->query('desde');
@@ -47,7 +47,7 @@ class VentaController extends Controller
             $tipo = $request->query('tipo');
             $search = $request->query('q');
             $orderBy = $request->query('orderBy');
-            $dir = $request->query('direction');
+            $dir = $request->query('direction');            
 
             if ($paginacion === 'true' && !filled($desdeC) && !filled($hastaC) && !filled($formaPago) && !filled($tipo) && !filled($search) && !filled($orderBy)) {
                 return response()->json([

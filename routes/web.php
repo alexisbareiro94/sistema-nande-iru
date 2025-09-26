@@ -93,6 +93,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/gestion_usuarios', [GestionUsersController::class, 'index_view'])->name('gestion.index.view');
         Route::post('/gestion_usuarios', [GestionUsersController::class, 'store'])->name('gestion.users.store');
+
+        Route::get('/top_ventas', [ProductoController::class, 'top_ventas'])->name('producto.top.ventas');
     
     });
 });

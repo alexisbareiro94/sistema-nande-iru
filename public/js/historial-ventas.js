@@ -33,7 +33,7 @@ document.getElementById('modal-detalle-venta').addEventListener('click', functio
     }
 });
 
-async function detalleVentas(codigo) {
+async function detalleVentas(codigo) {    
     try {
         const res = await fetch(`http://127.0.0.1:80/venta/${decodeURIComponent(codigo)}`, {
             method: 'GET',
@@ -265,7 +265,6 @@ async function buscar(orderBy = '', direction = '') {
         }
         console.log(data)
         recargarTablaHistorialVentas(data, paginacion);
-
     } catch (err) {
         console.log(err)
         showToast(`${err.error}`, 'error')

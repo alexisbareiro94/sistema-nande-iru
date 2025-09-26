@@ -45,4 +45,11 @@ class Producto extends Model
     {
         return $this->hasMany(DetalleVenta::class, 'producto_id');
     }
+
+    public function ultima_venta()
+    {
+        return $this->hasOne(DetalleVenta::class, 'producto_id')->latest('created_at');
+    }
+
+    
 }
