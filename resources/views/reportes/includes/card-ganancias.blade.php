@@ -55,7 +55,7 @@
                 <div class="mt-1.5 flex flex-col items-end">
                     <span id="variacion-porcentaje"
                         class="text-sm font-semibold {{ $data['utilidad']['tag'] === '+' ? 'text-green-700 bg-green-200 rounded-xl px-1' : 'text-red-700 bg-red-200 rounded-xl px-1' }}">
-                        {{ $data['utilidad']['tag'] }}{{ $data['utilidad']['porcentaje'] }}%
+                        {{ $data['utilidad']['tag'] }} {{ $data['utilidad']['porcentaje'] }}%
                     </span>
                     <span class="text-sm font-medium text-gray-600 mt-1" id="variacion-valor">
                         Gs. {{ number_format($data['utilidad']['diferencia'], 0, ',', '.') }}

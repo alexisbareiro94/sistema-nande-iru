@@ -26,19 +26,23 @@ class Producto extends Model
         'imagen',
     ];
 
-    public function categoria(): \Illuminate\Database\Eloquent\Relations\BelongsTo{
+    public function categoria(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
         return $this->belongsTo(Categoria::class);
     }
 
-    public function marca(): \Illuminate\Database\Eloquent\Relations\BelongsTo{
+    public function marca(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
         return $this->belongsTo(Marca::class);
     }
-    
-    public function distribuidor():\Illuminate\Database\Eloquent\Relations\BelongsTo{
+
+    public function distribuidor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
         return $this->belongsTo(Distribuidor::class);
     }
 
-    public function detalles(){
+    public function detalles()
+    {
         return $this->hasMany(DetalleVenta::class, 'producto_id');
     }
 }

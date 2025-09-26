@@ -258,7 +258,7 @@ class ReporteService
                 $datos[$index]['ganacia_egresos'] = ($datos[$index]['ganancia'] - $datos[$index]['egresos']) ?? 0;
             }
             $index++;
-        }
+        }        
         $labels = $ventas->keys()->map(function ($fecha) {
             return date('d-m', strtotime($fecha));
         });
@@ -267,6 +267,7 @@ class ReporteService
             foreach($datos as $i => $dato){            
                 if($dato['fecha'] == $index){
                     $datos[$i]['ganancia'] += $monto;
+                    $datos[$i]['ganacia_egresos'] += $monto;
                 }
             }
         }
