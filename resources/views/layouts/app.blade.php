@@ -14,6 +14,7 @@
 <body class="bg-gris min-h-screen flex flex-col">
     <div id="toast-container" class="fixed top-4 right-4 space-y-2 z-[9999]"></div>
     <div id="loading-container" class="fixed top-4 right-4 space-y-2 z-[9999]"></div>
+    <div id="notificaciones" class="fixed top-4 right-4 space-y-2 z-[9999]"></div>
     @include('alertas.alerts')
     <main class="flex-grow grid grid-cols-5 gap-1">
         <div @class([
@@ -53,8 +54,7 @@
                         @endif
                     </ol>
                 </nav>
-                @yield('contenido')
-                <div id="notificaciones" class="fixed top-4 right-4 space-y-2 z-[9999]"></div>
+                @yield('contenido')                
             </div>
         </section>
 

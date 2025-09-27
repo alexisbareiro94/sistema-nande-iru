@@ -1,13 +1,12 @@
 import { csrfToken } from './csrf-token';
 
-function mostrarNotificacion(tipo = 'tipo', mensaje = 'No se pudo cargar el mensaje', color = 'blue', objeto = null) {
+function mostrarNotificacion(tipo = 'tipo', mensaje = 'No se pudo cargar el mensaje', color = 'orange') {
     const contenedor = document.getElementById('notificaciones');
 
     if (contenedor.classList.contains('hidden')) {
         contenedor.classList.remove('hidden');
     }
 
-    // Crear un nuevo elemento para la notificación
     const notificacion = document.createElement('div');
     notificacion.className = `p-3 bg-${color}-50 border border-${color}-200 rounded-lg mb-2 transition-opacity duration-500`;
     notificacion.innerHTML = `
@@ -26,19 +25,16 @@ function mostrarNotificacion(tipo = 'tipo', mensaje = 'No se pudo cargar el mens
             </div>
         </div>
     `;
-
-    // Agregar la notificación al contenedor
     contenedor.appendChild(notificacion);
 
-    // Quitar después de 5s con animación
     setTimeout(() => {
-        notificacion.classList.add('opacity-0'); // fade out
+        notificacion.classList.add('opacity-0');
         setTimeout(() => {
-            notificacion.remove(); // eliminar del DOM
+            notificacion.remove();
             if (contenedor.children.length === 0) {
-                contenedor.classList.add('hidden'); // ocultar si ya no hay notificaciones
+                contenedor.classList.add('hidden');
             }
-        }, 500); // tiempo para la transición
+        }, 500);
     }, 5000);
 }
 
@@ -46,9 +42,9 @@ function mostrarNotificacion(tipo = 'tipo', mensaje = 'No se pudo cargar el mens
 function listenNotification() {
     window.Echo.private('admin-notificaciones')
         .listen('NotificacionEvent', (e) => {
-            console.log(e)
             mostrarNotificacion(e.tipo, e.mensaje, e.color);
-            getDataNotificaciones();
+            getDataNotificaciones(); //para las notificaciones dentro del modulo de reportes
+
         })
         .error((error) => {
             console.error('Error en el canal:', error);
@@ -57,6 +53,25 @@ function listenNotification() {
 
 listenNotification();
 
+
+
+function listenCierreCaja() {
+    window.Echo.private('cierre-caja')
+        .listen('CierreCajaEvent', (e) => {
+            if (window.location.pathname === "/caja") {
+                alert('Cierre de Caja');
+                window.location.reload();
+            } else {
+                mostrarNotificacion(e.tipo, e.mensaje, e.color);
+                getDataNotificaciones();
+            }
+        })
+        .error(error => {
+            console.error('Error en el canal: ', error)
+        })
+}
+
+listenCierreCaja();
 
 async function getDataNotificaciones(flag = false) {
     try {
@@ -77,12 +92,11 @@ async function getDataNotificaciones(flag = false) {
     }
 }
 
-
 function renderNotifications(data) {
     const alertCont = document.getElementById('alert-cont');
     alertCont.innerHTML = '';
 
-    data.notificaciones.forEach(item => {
+    data.notificaciones.forEach((item, index) => {
         const div = document.createElement('div');
 
         const fecha = new Date(item.created_at);
@@ -95,20 +109,29 @@ function renderNotifications(data) {
             hour12: false
         }).replace(',', ' -');
 
-        const classDiv = item.is_read == false ? `shadow-md ring-2 ring-${item.color}-400 shadow-${item.color}-500 bg-${item.color}-100` : `bg-${item.color}-50`;
+        const classDiv = item.is_read == false
+            ? `border-l-8 border-${item.color}-600 bg-${item.color}-50`
+            : `bg-${item.color}-50 rounded-md border border-${item.color}-400`;
 
-        div.classList = `p-3 border border-${item.color}-400 rounded-lg ${classDiv}`;
+        // arranca oculto para animar
+        div.classList = `p-3 shadow-md ${classDiv} transition-all duration-300 transform opacity-0 -translate-y-2`;
         div.innerHTML = `          
-            <div class="flex">               
-                <div class="ml-3 relative">
+            <div class="flex relative">               
+                <div class="ml-3 ">
                     <h4 class="text-sm font-medium text-${item.color}-800">${item.titulo}</h4>
                     <p class="text-sm text-${item.color}-700">${item.mensaje}</p>
-                    <span class="text-xs absolute top-0 text-${item.color}-500 right-0" >${fechaFormateada}</span>
+                    <span class="text-xs absolute top-0 text-${item.color}-500 right-0">${fechaFormateada}</span>
                 </div>
-            </div>`
+            </div>`;
+
         alertCont.appendChild(div);
+
+        setTimeout(() => {
+            div.classList.remove("opacity-0", "-translate-y-2");
+        }, 50);
     });
 }
+
 getDataNotificaciones();
 
 
@@ -121,6 +144,7 @@ async function isRead() {
     console.log(ids)
     console.log(ids.length)
     setTimeout(() => {
+        console.log('message')
         try {
             ids.forEach(async (id) => {
                 const res = await fetch(`http://127.0.0.1:80/api/notificaciones/update/${id}`, {
@@ -133,8 +157,6 @@ async function isRead() {
                 if (!res.ok) {
                     throw data
                 }
-
-                console.log('okokokokokoko!')
             })
         } catch (err) {
             console.log(err)
@@ -146,4 +168,5 @@ async function isRead() {
 if (window.location.pathname === "/reportes") {
     isRead();
 }
+
 

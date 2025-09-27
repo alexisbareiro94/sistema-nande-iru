@@ -112,9 +112,10 @@ Route::get('/borrar-session', function () {
     session()->forget('ventas');
 });
 
-use App\Jobs\VentaRealizada;
+use App\Jobs\CierreCaja;
 Route::get('/debug', function () {
-   VentaRealizada::dispatch(Venta::find(56));
+    $mov = MovimientoCaja::find(442);
+   CierreCaja::dispatch(Caja::find(2));
 
 // dd(
 

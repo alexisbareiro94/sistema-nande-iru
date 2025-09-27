@@ -9,3 +9,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('admin-notificaciones', function ($user) {
     return $user->role == 'admin';
 });
+
+Broadcast::channel('cierre-caja', function ($user){
+    return $user->role == 'admin';
+});

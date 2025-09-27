@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMovimientoRequest;
+use App\Jobs\CierreCaja;
 use Illuminate\Http\Request;
 use App\Models\{MovimientoCaja, Caja, PagoSalario, User};
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\MovimientoRealizado;
 
 class MovimientoCajaController extends Controller
 {
@@ -34,8 +36,7 @@ class MovimientoCajaController extends Controller
                     $egreso = 0;
                 }
             }
-            $total = $ingreso - $egreso;
-
+            $total = $ingreso - $egreso;            
             return response()->json([
                 'success' => true,
                 'total' => $total,
@@ -77,7 +78,8 @@ class MovimientoCajaController extends Controller
                     'created_by' => $request->user()->id,
                 ]);                
             }
-            DB::commit();
+            DB::commit();            
+            MovimientoRealizado::dispatch($movimiento, $movimiento->tipo);            
             return response()->json([
                 'success' => true,
                 'message' => 'Movimiento registrado correctamente',
