@@ -13,7 +13,7 @@ class StoreMovimientoRequest extends FormRequest
     public function authorize(): bool
     {
         $user = auth()->user();
-        return $user && in_array($user->role, ['admin', 'caja']);
+        return $user && in_array($user->role, ['admin', 'caja', 'personal']);
     }
 
     /**

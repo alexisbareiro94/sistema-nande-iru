@@ -195,8 +195,6 @@ efectivoTransf.forEach(btn => {
     })
 })
 
-
-
 let timerVentaC;
 async function confirmarVenta(formaPago) {
     try {

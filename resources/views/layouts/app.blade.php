@@ -54,19 +54,12 @@
                     </ol>
                 </nav>
                 @yield('contenido')
+                <div id="notificaciones" class="fixed top-4 right-4 space-y-2 z-[9999]"></div>
             </div>
         </section>
 
         @include('includes.cerrar-sesion')
     </main>
-
-    <script type="module">
-        window.Echo.channel('test-channel')
-            .listen('TestEvent', (e) => {
-                console.log("Evento recibido:", e.message);
-            });
-    </script>
-
     @yield('js')
     <script src="{{ asset('js/add-producto.js') }}"></script>
     <script src="{{ asset('js/inventario.js') }}"></script>

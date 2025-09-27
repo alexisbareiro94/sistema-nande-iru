@@ -12,6 +12,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\VentasExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Cache;
+use App\Jobs\VentaRealizada;
 
 class VentaController extends Controller
 {
@@ -231,6 +232,7 @@ class VentaController extends Controller
                         ], 400);
                     }
                 }
+                $productdb->increment('ventas', $producto->cantidad);                        
             }
 
             foreach ($formaPago as $forma => $monto) {
@@ -258,7 +260,8 @@ class VentaController extends Controller
             $caja = session('caja');
             $caja['saldo'] += $venta->total;
             session()->put(['caja' => $caja]);
-            DB::commit();
+            DB::commit();   
+            VentaRealizada::dispatch($venta);                  
             crear_caja();
             return response()->json([
                 'success' => true,
