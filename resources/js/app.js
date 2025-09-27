@@ -1,5 +1,6 @@
 import './bootstrap';
 import './reportes';
+import './notificaciones';
 import Chart from 'chart.js/auto';
 
 let myChart = null;
@@ -70,3 +71,5 @@ document.getElementById('confirmar-venta').addEventListener('click', () => {
     await loadChart('', '');
   }, 500);
 })
+
+

@@ -17,13 +17,17 @@ class NotificacionEvent implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
+    public $tries = 3;
+
     public string $tipo;
     public string $mensaje;
-    public string $color;
+    public string $color;    
 
     public function __construct(string $tipo, string $mensaje, string $color)
     {
-        
+        $this->tipo = $tipo;
+        $this->mensaje = $mensaje;
+        $this->color = $color;        
     }
 
     /**
@@ -34,7 +38,7 @@ class NotificacionEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel('admin-notificaciones'),
         ];
     }
 }
