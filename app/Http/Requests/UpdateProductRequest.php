@@ -42,18 +42,18 @@ class UpdateProductRequest extends FormRequest
 
     public function messages(): array
     {
-        return [           
-            'codigo.unique' => 'Este código ya está registrado en otro producto.',            
-            'marca_id.exists' => 'La marca seleccionada no existe.',            
-            'categoria_id.exists' => 'La categoría seleccionada no existe.',            
+        return [
+            'codigo.unique' => 'Este código ya está registrado en otro producto.',
+            'marca_id.exists' => 'La marca seleccionada no existe.',
+            'categoria_id.exists' => 'La categoría seleccionada no existe.',
             'stock.numeric' => 'El stock debe ser un número.',
-            'stock.min' => 'El stock no puede ser negativo.',            
+            'stock.min' => 'El stock no puede ser negativo.',
             'stock_minimo.numeric' => 'El stock mínimo debe ser un número.',
-            'stock_minimo.min' => 'El stock mínimo no puede ser negativo.',            
+            'stock_minimo.min' => 'El stock mínimo no puede ser negativo.',
             'precio_venta.numeric' => 'El precio de venta debe ser un número.',
-            'precio_venta.min' => 'El precio de venta debe ser al menos 0.01.',            
+            'precio_venta.min' => 'El precio de venta debe ser al menos 0.01.',
             'precio_compra.numeric' => 'El precio de compra debe ser un número.',
-            'precio_compra.min' => 'El precio de compra no puede ser negativo.',            
+            'precio_compra.min' => 'El precio de compra no puede ser negativo.',
             'distribuidor_id.exists' => 'El distribuidor seleccionado no existe.',
             'imagen.image' => 'El archivo debe ser una imagen.',
             'imagen.mimes' => 'La imagen debe ser de tipo: jpeg, png, jpg o gif.',
@@ -61,7 +61,7 @@ class UpdateProductRequest extends FormRequest
         ];
     }
 
-     protected function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator)
     {
         return response()->json([
             'success' => false,

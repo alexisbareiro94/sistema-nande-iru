@@ -47,7 +47,7 @@ document.getElementById('input-b-producto-ventas').addEventListener('input', (e)
             tablaVentaProductos.innerHTML = '';
         } else {
             try {
-                const res = await fetch(`http://localhost:8080/api/productos?q=${encodeURIComponent(query)}`, {
+                const res = await fetch(`http://127.0.0.1:80/api/productos?q=${encodeURIComponent(query)}`, {
                     method: 'GET',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
@@ -290,7 +290,7 @@ form.addEventListener('submit', async (e) => {
         return;
     }
     try {
-        const res = await fetch(`http://localhost:8080/api/users?q=${encodeURIComponent(q)}`, {
+        const res = await fetch(`http://127.0.0.1:80/api/users?q=${encodeURIComponent(q)}`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -361,7 +361,7 @@ formAddCliente.addEventListener('submit', async (e) => {
     addCliente.append('telefono', document.getElementById('telefono-c').value.trim());
 
     try {
-        const res = await fetch(`http://localhost:8080/api/users`, {
+        const res = await fetch(`http://127.0.0.1:80/api/users`, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -400,7 +400,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 async function recargarSaldo(flag = true) {
     const saldo = document.getElementById('saldo-caja');
     try {
-        const res = await fetch(`http://localhost:8080/api/movimiento/total`, {
+        const res = await fetch(`http://127.0.0.1:80/api/movimiento/total`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -464,7 +464,7 @@ document.getElementById('confirmar-movimiento').addEventListener('click', async 
     })
     tipoSelcted == 'salario' ? tipoSelcted = 'egreso' : '';
 
-    
+
     if (tipoSelcted == undefined) {
         showToast('Debes Seleccionar un tipo de movimiento', 'error');
         errores = '1'
@@ -487,7 +487,7 @@ document.getElementById('confirmar-movimiento').addEventListener('click', async 
         formData.append('monto', monto.value);
         formData.append('personal_id', personal);
 
-        const res = await fetch('http://localhost:8080/api/movimiento', {
+        const res = await fetch('http://127.0.0.1:80/api/movimiento', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -502,6 +502,7 @@ document.getElementById('confirmar-movimiento').addEventListener('click', async 
         personal = '';
         form.reset();
         document.getElementById('modal-movimiento-caja').classList.add('hidden');
+        document.getElementById('datos-personal').classList.add('hidden');
         limpiarUI();
         showToast('Movimiento registrado');
     } catch (err) {
@@ -525,7 +526,7 @@ async function recargarCierreCaja() {
     const saldoEsperado = document.getElementById('saldo-esperado');
 
     try {
-        const res = await fetch('http://localhost:8080/api/movimiento/total', {
+        const res = await fetch('http://127.0.0.1:80/api/movimiento/total', {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -597,7 +598,7 @@ document.getElementById('confirmar-cierre').addEventListener('click', async () =
     formData.append('egreso', egreso);
 
     try {
-        const res = await fetch('http://localhost:8080/caja', {
+        const res = await fetch('http://127.0.0.1:80/caja', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -622,3 +623,45 @@ document.getElementById('confirmar-cierre').addEventListener('click', async () =
         showToast(`${err.error}`, 'error')
     }
 });
+
+const selectPersonal = document.getElementById('personales');
+
+selectPersonal.addEventListener('change', async (e) => {
+    const datosPersonal = document.getElementById('datos-personal');
+
+    try {
+        const res = await fetch(`http://127.0.0.1:80/api/user/${e.target.value}`);
+        const data = await res.json();
+        if (!res.ok) {
+            throw data;
+        }
+        let fecha = '';
+        let fechaFormateada = '';
+        if (data.data.user) {
+            fecha = new Date(data.data.created_at);
+            fechaFormateada = fecha.toLocaleString('es-PY', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }).replace(',', ' -');
+        }
+
+        const nombre = data.data.name ?? data.data.user.name;
+        const salario = data.data.salario ?? data.data.user.salario;
+        const restante = data.data.restante ?? data.data.salario;
+        datosPersonal.classList.remove('hidden');
+        datosPersonal.innerHTML = `
+                        <p class="font-medium">${nombre}</p>
+                        <p class="text-sm"><span class="data-personal font-semibold">Salario:</span> Gs. ${salario.toLocaleString('es-PY')}</p>
+                        <p class="text-sm"><span class="data-personal font-semibold">Restante:</span> Gs. ${restante.toLocaleString('es-PY')}</p>
+                        <p class="text-sm"><span class="data-personal font-semibold">Adelanto:</span> ${fechaFormateada}</p>`;
+
+
+    } catch (err) {
+        console.log(err)
+    }
+});
+

@@ -14,9 +14,8 @@ class CajaMiddleware
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
-    {   
-        //role == cliente
-        if($request->user()->role != 'caja' && $request->user()->role != 'admin'){
+    {           
+        if($request->user()->role != 'caja' && $request->user()->role != 'admin' && $request->user()->role != 'personal'){
             return redirect('login')->with('error', 'No estas autorizado');
         }
         return $next($request);

@@ -12,7 +12,8 @@ class AbrirCajaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = auth()->user();
+        return $user && in_array($user->role, ['admin', 'caja', 'personal']);
     }
 
     /**

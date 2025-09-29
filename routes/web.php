@@ -16,6 +16,7 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\NotificacionController;
 use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto, PagoSalario};
 use Carbon\Carbon;
 
@@ -57,6 +58,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/movimiento/total', [MovimientoCajaController::class, 'total'])->name('movimiento.total');
         Route::post('/api/movimiento', [MovimientoCajaController::class, 'store'])->name('movimiento.store');
         Route::get('/api/movimientos/charts_caja', [MovimientoCajaController::class, 'charts_caja']);
+        Route::get('/api/productos', [ProductoController::class, 'search'])->name('productos.search');
     });
 
     Route::middleware(AdminMiddleware::class)->group(function () {
@@ -66,7 +68,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/edit/{id}/producto', [ProductoController::class, 'update_view'])->name('producto.update.view');
         Route::post('/edit/{id}/producto', [ProductoController::class, 'update'])->name('producto.update');
         Route::get('/api/all', [ProductoController::class, 'all'])->name('producto.all'); //mal nombrado pero bueno
-        Route::get('/api/productos', [ProductoController::class, 'search'])->name('productos.search');
         Route::get('/api/all-products', [ProductoController::class, 'allProducts'])->name('productos.all.products');
         Route::delete('/api/delete/{id}/producto', [ProductoController::class, 'delete'])->name('producto.delete');
         Route::get('/api/producto/{id}', [ProductoController::class, 'show'])->name('producto.show');
@@ -90,10 +91,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/egresos/{periodo}', [ReporteController::class, 'egresos']);
         Route::get('/api/egresos/concepto/{periodo}', [ReporteController::class, 'egresos_concepto']);
 
-
         Route::get('/gestion_usuarios', [GestionUsersController::class, 'index_view'])->name('gestion.index.view');
         Route::post('/gestion_usuarios', [GestionUsersController::class, 'store'])->name('gestion.users.store');
-    
+
+        Route::get('/top_ventas', [ProductoController::class, 'top_ventas'])->name('producto.top.ventas');
+
+        Route::get('/api/notificaciones', [NotificacionController::class, 'index']);
+        Route::put('/api/notificaciones/update/{id}', [NotificacionController::class, 'update']);
+
+        Route::get('/api/user/{id}', [UserController::class, 'show']);
+        Route::get('/api/gestion_users', [GestionUsersController::class, 'index']);
+        Route::get('/api/gestion_user/{id}', [GestionUsersController::class, 'show']);
+        Route::post('/api/gestion_user/{id}', [GestionUsersController::class, 'update']);
+        Route::delete('/api/gestion_user/{id}', [GestionUsersController::class, 'delete']);
     });
 });
 
@@ -107,17 +117,14 @@ Route::get('/borrar-session', function () {
 });
 
 
-
 Route::get('/debug', function () {
-    $inicio = now()->startOfDay()->subDay(7);
-    $hoy = now()->endOfDay();
 
-    $movs = MovimientoCaja::where('tipo', 'egreso')
-        ->whereBetween('created_at', [$inicio, $hoy])
-        ->orderBy('created_at')
+    $a = PagoSalario::whereHas('user', function ($q) {
+        return $q->where('id', 18);
+    })
+        ->orderByDesc('created_at')
+        ->with('user')
         ->get()
-        ->groupBy('concepto')
-        ->map(fn($mov) => ['total' => $mov->sum('monto')]);
-
-    dd($movs);
+        ->unique('user_id');
+    dd(filled($a));
 });

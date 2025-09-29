@@ -14,7 +14,7 @@ class UpdateCajaRequest extends FormRequest
     public function authorize(): bool
     {
         $user = auth()->user();
-        return $user->role === 'admin' || $user->role === 'caja';
+        return $user->role === 'admin' || $user->role === 'caja' || $user->role = 'personal';
     }
 
     /**

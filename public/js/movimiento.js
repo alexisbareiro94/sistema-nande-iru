@@ -4,7 +4,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 async function getMovimientos() {
     try {
-        const res = await fetch(`http://localhost:8080/api/movimiento`, {
+        const res = await fetch(`http://127.0.0.1:80/api/movimiento`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,

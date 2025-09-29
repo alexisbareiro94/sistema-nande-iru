@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AbrirCajaRequest;
 use App\Http\Requests\UpdateCajaRequest;
-use App\Models\{Caja, MovimientoCaja, Venta, DetalleVenta, User, Pago};
+use App\Models\{Caja, MovimientoCaja, Venta, DetalleVenta, Pago, PagoSalario, User};
 use App\Services\CajaService;
+use App\Jobs\{MovimientoRealizado, CierreCaja};
 
 class CajaController extends Controller
 {
@@ -18,9 +19,21 @@ class CajaController extends Controller
         if (!session("caja")) {
             $caja = Caja::orderByDesc("id")->first();
         }
+
+        $pagosSalario = PagoSalario::whereHas('user', function ($q) {
+            return $q->where('role', 'personal')->where('activo', true);
+        })
+            ->orderByDesc('created_at')
+            ->with('user')
+            ->get()
+            ->unique('user_id');
+
+        $users = User::where('role', 'personal')->where('activo', true)->get();
+
         return view("caja.index", [
             "caja" => $caja ?? "",
-            'personales' => User::where('role', 'personal')->where('activo', true)->get(),
+            'pagosSalario' => $pagosSalario,
+            'users' => $users,
         ]);
     }
 
@@ -36,7 +49,7 @@ class CajaController extends Controller
             session("caja", []);
             $caja = Caja::create($data);
 
-            MovimientoCaja::create([
+            $movimiento = MovimientoCaja::create([
                 "caja_id" => $caja->id,
                 "tipo" => "ingreso",
                 "concepto" => "Apertura de caja",
@@ -46,6 +59,7 @@ class CajaController extends Controller
             $arrayCaja = $caja->load("user:id,name")->toArray();
             $arrayCaja["saldo"] = $arrayCaja["monto_inicial"];
             session()->put(["caja" => $arrayCaja]);
+            MovimientoRealizado::dispatch($movimiento, $movimiento->tipo);
             return back()->with("success", "Caja Abierta Correctamente");
         } catch (\Exception $e) {
             return back()->with("error", $e->getMessage());
@@ -56,19 +70,15 @@ class CajaController extends Controller
     {
         //cuando se cierra la caja
         $data = $request->validated();
-        //return response()->json([$data, now()]);
         $ingreso = 0;
         $egreso = 0;
         try {
             $caja = Caja::where("estado", "abierto")->first();
             if ($caja == null) {
-                return response()->json(
-                    [
-                        "success" => false,
-                        "error" => "La caja ya esta cerrada",
-                    ],
-                    400,
-                );
+                return response()->json([
+                    "success" => false,
+                    "error" => "La caja ya esta cerrada",
+                ], 400);
             }
             $caja->update([
                 "monto_cierre" => $data["monto_cierre"], // monto contado
@@ -82,6 +92,8 @@ class CajaController extends Controller
             ]);
 
             session()->forget("caja");
+
+            CierreCaja::dispatch($caja);
 
             return response()->json([
                 "success" => true,

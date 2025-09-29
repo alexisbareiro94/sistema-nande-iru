@@ -195,8 +195,6 @@ efectivoTransf.forEach(btn => {
     })
 })
 
-
-
 let timerVentaC;
 async function confirmarVenta(formaPago) {
     try {
@@ -210,7 +208,7 @@ async function confirmarVenta(formaPago) {
         ventaData.append('ruc', document.getElementById('i-ruc-ci').value.trim());
         ventaData.append('razon', document.getElementById('i-nombre-razon').value.trim());
 
-        const res = await fetch(`http://localhost:8080/api/venta`, {
+        const res = await fetch(`http://127.0.0.1:80/api/venta`, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,

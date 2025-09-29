@@ -12,6 +12,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\VentasExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Cache;
+use App\Jobs\VentaRealizada;
 
 class VentaController extends Controller
 {
@@ -36,8 +37,8 @@ class VentaController extends Controller
     }
 
     public function index(Request $request)
-    {
-        try {
+    {  
+        try {           
             $query = MovimientoCaja::query();
             $paginacion = $request->query('paginacion');
             $desdeC = $request->query('desde');
@@ -47,7 +48,7 @@ class VentaController extends Controller
             $tipo = $request->query('tipo');
             $search = $request->query('q');
             $orderBy = $request->query('orderBy');
-            $dir = $request->query('direction');
+            $dir = $request->query('direction');            
 
             if ($paginacion === 'true' && !filled($desdeC) && !filled($hastaC) && !filled($formaPago) && !filled($tipo) && !filled($search) && !filled($orderBy)) {
                 return response()->json([
@@ -231,6 +232,7 @@ class VentaController extends Controller
                         ], 400);
                     }
                 }
+                $productdb->increment('ventas', $producto->cantidad);                        
             }
 
             foreach ($formaPago as $forma => $monto) {
@@ -258,7 +260,8 @@ class VentaController extends Controller
             $caja = session('caja');
             $caja['saldo'] += $venta->total;
             session()->put(['caja' => $caja]);
-            DB::commit();
+            DB::commit();   
+            VentaRealizada::dispatch($venta);                  
             crear_caja();
             return response()->json([
                 'success' => true,

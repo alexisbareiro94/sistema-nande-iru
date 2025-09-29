@@ -70,4 +70,5 @@
             </main>
         </div>
     </div>
+    @include('reportes.modal-todas-notificaciones')
 @endsection

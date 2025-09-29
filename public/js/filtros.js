@@ -1,6 +1,6 @@
 async function orderBy(column, direction) {
     try {
-        const res = await fetch(`http://localhost:8080/api/productos?orderBy=${column}&dir=${direction}`, {
+        const res = await fetch(`http://127.0.0.1:80/api/productos?orderBy=${column}&dir=${direction}`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,

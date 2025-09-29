@@ -33,9 +33,9 @@ document.getElementById('modal-detalle-venta').addEventListener('click', functio
     }
 });
 
-async function detalleVentas(codigo) {
+async function detalleVentas(codigo) {    
     try {
-        const res = await fetch(`http://localhost:8080/venta/${decodeURIComponent(codigo)}`, {
+        const res = await fetch(`http://127.0.0.1:80/venta/${decodeURIComponent(codigo)}`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -253,7 +253,7 @@ async function buscar(orderBy = '', direction = '') {
         paginacion = true;
     }
     try {
-        const res = await fetch(`http://localhost:8080/venta?q=${encodeURIComponent(q)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&estado=${encodeURIComponent(estado)}&formaPago=${encodeURIComponent(formaPago)}&tipo=${encodeURIComponent(tipo)}&paginacion=${encodeURIComponent(paginacion)}&orderBy=${encodeURIComponent(orderBy)}&direction=${encodeURIComponent(direction)}`, {
+        const res = await fetch(`http://127.0.0.1:80/venta?q=${encodeURIComponent(q)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&estado=${encodeURIComponent(estado)}&formaPago=${encodeURIComponent(formaPago)}&tipo=${encodeURIComponent(tipo)}&paginacion=${encodeURIComponent(paginacion)}&orderBy=${encodeURIComponent(orderBy)}&direction=${encodeURIComponent(direction)}`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -265,7 +265,6 @@ async function buscar(orderBy = '', direction = '') {
         }
         console.log(data)
         recargarTablaHistorialVentas(data, paginacion);
-
     } catch (err) {
         console.log(err)
         showToast(`${err.error}`, 'error')

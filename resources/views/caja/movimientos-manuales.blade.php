@@ -40,25 +40,35 @@
                         </div>
                     </label>
 
-                    <label class="flex-1 cursor-pointer">
-                        <input type="radio" name="tipo-movimiento" value="salario" class="hidden peer" />
-                        <div
-                            class="px-4 py-2 text-xs font-medium rounded-md peer-checked:bg-yellow-400 peer-checked:shadow-sm transition-all text-gray-600 peer-checked:text-white">
-                            Pago de salario
-                        </div>
-                    </label>
+                    @if (Auth::user()->role == 'admin')
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="tipo-movimiento" value="salario" class="hidden peer" />
+                            <div
+                                class="px-4 py-2 text-xs font-medium rounded-md peer-checked:bg-yellow-400 peer-checked:shadow-sm transition-all text-gray-600 peer-checked:text-white">
+                                Pago de salario
+                            </div>
+                        </label>
+                    @endif
                 </div>
             </div>
 
-            <div id="salario-cont" class="mb-4 hidden">                
-                <div>
-                    <span class="text-gray-700 mr-4 font-semibold">Seleccionar Personal:</span>
-                    <select class="px-2 py-1 border border-gray-700 rounded-md" name="personal" id="personales">
+            <div id="salario-cont" class="mb-4 hidden">
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-gray-50 rounded-lg">
+                    <select id="personales" name="personal"
+                        class="px-3 py-2 border border-gray-400 text-gray-700 bg-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                         <option value="" disabled selected>Seleccionar Personal</option>
-                        @foreach ($personales as $personal)                        
-                        <option class="personal" value="{{ $personal->id }}">{{ $personal->name }}</option>                        
+                        @foreach ($users as $user)
+                            <option class="personal" value="{{ $user->id }}">{{ $user->name }}</option>
                         @endforeach
                     </select>
+
+                    <div id="datos-personal" class="hidden text-right text-gray-800 space-y-1">
+                        <p class="font-medium">Alexis Bareiro</p>
+                        <p class="text-sm"><span class="data-personal font-semibold">Salario:</span> 3.200.000</p>
+                        <p class="text-sm"><span class="data-personal font-semibold">Restante:</span> 1.200.000</p>
+                        <p class="text-sm"><span class="data-personal font-semibold">Adelanto:</span> 9-09</p>
+                    </div>
                 </div>
             </div>
 
