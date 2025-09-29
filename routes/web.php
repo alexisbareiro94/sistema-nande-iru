@@ -99,7 +99,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/api/notificaciones', [NotificacionController::class, 'index']);
         Route::put('/api/notificaciones/update/{id}', [NotificacionController::class, 'update']);
-    
+
+        Route::get('/api/user/{id}', [UserController::class, 'show']);
     });
 });
 
@@ -112,16 +113,15 @@ Route::get('/borrar-session', function () {
     session()->forget('ventas');
 });
 
-use App\Jobs\CierreCaja;
+
 Route::get('/debug', function () {
-    $mov = MovimientoCaja::find(442);
-   CierreCaja::dispatch(Caja::find(2));
-
-// dd(
-
-//     Venta::whereHas('detalleVentas', function($query){
-//         return $query->where('producto_id', 41);
-//     })->first()
-
-// );
+    
+        $a = PagoSalario::whereHas('user', function($q){
+            return $q->where('id', 18);
+        })
+            ->orderByDesc('created_at')
+            ->with('user')
+            ->get()
+            ->unique('user_id');
+    dd(filled($a));
 });

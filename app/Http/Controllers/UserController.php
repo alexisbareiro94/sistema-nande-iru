@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
+use App\Models\{User, PagoSalario};
 use App\Http\Requests\StoreUserRequest;
 
 class UserController extends Controller
@@ -31,17 +31,41 @@ class UserController extends Controller
         }
     }
 
-    public function store(StoreUserRequest $request) {
-        $data = $request->validated();                
-        try{
+    public function store(StoreUserRequest $request)
+    {
+        $data = $request->validated();
+        try {
             $cliente = User::create($data);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Cliente Agregado con éxito',
-                'cliente' => $cliente, 
+                'cliente' => $cliente,
             ]);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function show(string $id)
+    {
+        try {
+            $pagosSalario = PagoSalario::whereHas('user', function ($q) use ($id) {
+                return $q->where('id', $id);
+            })
+                ->orderByDesc('created_at')
+                ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+                ->with('user')
+                ->first();            
+
+            return response()->json([
+                'success' => true,
+                'data' => $pagosSalario ?? User::find($id),
+            ]);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),

@@ -109,6 +109,22 @@ function renderNotifications(data) {
             hour12: false
         }).replace(',', ' -');
 
+        const colors = {
+            orange: {
+                text: "text-orange-700",
+                title: "text-orange-800",
+                span: "text-orange-500",
+                div: "border-orange-600"
+            },
+            red: {
+                text: "text-red-700",
+                title: "text-red-800",
+                span: "text-red-500",
+            },
+            // etc...
+        };
+
+
         const classDiv = item.is_read == false
             ? `border-l-8 border-${item.color}-600 bg-${item.color}-50`
             : `bg-${item.color}-50 rounded-md border border-${item.color}-400`;

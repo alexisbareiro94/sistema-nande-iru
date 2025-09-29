@@ -20,4 +20,8 @@ class PagoSalario extends Model
     public function movimientos(){
         return $this->belongsTo(MovimientoCaja::class);
     }
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 }
