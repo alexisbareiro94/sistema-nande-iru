@@ -11,7 +11,7 @@
 
         </div>
     </div>
-    <button class="mt-4 w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700">
+    <button id="todas-alertas" class="mt-4 w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-gray-700">
         Ver todas las alertas
     </button>
 </div>

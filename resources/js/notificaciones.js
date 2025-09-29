@@ -157,10 +157,7 @@ async function isRead() {
         .filter(item => item?.is_read === false)
         .map(item => item.id);
 
-    console.log(ids)
-    console.log(ids.length)
     setTimeout(() => {
-        console.log('message')
         try {
             ids.forEach(async (id) => {
                 const res = await fetch(`http://127.0.0.1:80/api/notificaciones/update/${id}`, {
@@ -180,9 +177,79 @@ async function isRead() {
     }, 1000);
 }
 
-
 if (window.location.pathname === "/reportes") {
     isRead();
 }
 
+document.getElementById('todas-alertas').addEventListener('click', () => {
+    document.getElementById('todas-notificaciones-modal').classList.remove('hidden');
+    sessionStorage.setItem('pag', JSON.stringify(10));
+    renderNotificaciones();
+});
 
+document.getElementById('cerrar-notificaciones').addEventListener('click', () => {
+    sessionStorage.removeItem('pag');
+    const cargarMas = document.getElementById('cargar-mas');
+    cargarMas.classList = 'px-3 py-2 rounded-lg font-semibold bg-gray-200 cursor-pointer transition-all duration-200 hover:bg-gray-300'
+    cargarMas.innerText = 'Cargar mas'
+    document.getElementById('todas-notificaciones-modal').classList.add('hidden');
+});
+
+async function allNotifications() {
+    const pag = JSON.parse(sessionStorage.getItem('pag'));
+    try {
+        const res = await fetch(`http://127.0.0.1:80/api/notificaciones?all=${pag}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw data;
+        }
+        return data;
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+
+async function renderNotificaciones() {
+    const allNotifCont = document.getElementById('all-notif-cont');
+    const data = await allNotifications();    
+    const pag = JSON.parse(sessionStorage.getItem('pag'));
+    allNotifCont.innerHTML = '';
+    
+    data.data.forEach(item => {
+        const fecha = new Date(item.created_at);
+        const fechaFormateada = fecha.toLocaleString('es-PY', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).replace(',', ' -');
+        const div = document.createElement('div');
+        div.classList = `col col-span-1 p-3 shadow-md transition-all duration-300 transform bg-${item.color}-50 rounded-md border border-${item.color}-400`
+        div.innerHTML = `<div class="flex relative">
+                            <div class="ml-3 ">
+                                <h4 class="text-sm font-medium text-${item.color}-800">${item.titulo}</h4>
+                                <p class="text-sm text-${item.color}-700">${item.mensaje}</p>
+                                <span
+                                    class="text-xs absolute top-0 text-${item.color}-500 right-0">${fechaFormateada}</span>
+                            </div>
+                        </div>`;
+    allNotifCont.appendChild(div);
+    });
+    console.log(data.count, pag)
+    if(pag > data.count){
+        const cargarMas = document.getElementById('cargar-mas');
+        cargarMas.classList = 'px-3 py-2 rounded-lg font-semibold'
+        cargarMas.innerText = 'Ya no hay notificaciones'
+    }
+    
+}
+
+document.getElementById('cargar-mas').addEventListener('click', ()=>{
+    const pag = JSON.parse(sessionStorage.getItem('pag')) + 10;    
+    sessionStorage.setItem('pag', JSON.stringify(pag));
+    renderNotificaciones();
+});
