@@ -27,6 +27,7 @@ class UpdatePersonalRequest extends FormRequest
             'email' => 'sometimes',
             'role' => 'sometimes', // prox feat: preguntar si existe por id
             'salario' => 'sometimes',
+            'activo' => 'sometimes',
         ];
     }
 

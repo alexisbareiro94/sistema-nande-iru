@@ -100,8 +100,10 @@ Route::middleware('auth')->group(function () {
         Route::put('/api/notificaciones/update/{id}', [NotificacionController::class, 'update']);
 
         Route::get('/api/user/{id}', [UserController::class, 'show']);
+        Route::get('/api/gestion_users', [GestionUsersController::class, 'index']);
         Route::get('/api/gestion_user/{id}', [GestionUsersController::class, 'show']);
         Route::post('/api/gestion_user/{id}', [GestionUsersController::class, 'update']);
+        Route::delete('/api/gestion_user/{id}', [GestionUsersController::class, 'delete']);
     });
 });
 

@@ -1,43 +1,72 @@
 import { csrfToken } from './csrf-token';
-import {showToast} from './toast';
+import { showToast } from './toast';
 
 let userId = '';
-function selectUser(){
-    document.getElementById('edit-user').addEventListener('change', async (e)=>{
+function selectUser() {
+    document.getElementById('edit-user').addEventListener('change', async (e) => {
         const name = document.getElementById('name-selected');
         const email = document.getElementById('email-selected');
         const rol = document.getElementById('rol-selected');
         const salario = document.getElementById('salario-selected');
-        userId = e.target.value;        
-        try{    
+        userId = e.target.value;
+        try {
             const res = await fetch(`http://127.0.0.1:80/api/gestion_user/${e.target.value}`);
             const data = await res.json();
-            if(!res.ok){
+            if (!res.ok) {
                 throw data;
+            }
+            if (data.data.activo == false) {
+                document.getElementById('btn-actualizar').innerText = 'Actualizar y activar'
+            } else {
+                document.getElementById('btn-actualizar').innerText = 'Actualizar'
             }
             name.value = data.data.name;
             email.value = data.data.email;
-            salario.value = `${data.data.salario}`;  
-        }catch(err){
+            salario.value = `${data.data.salario}`;
+        } catch (err) {
             console.log(err.error)
         }
-    }); 
+    });
 }
 selectUser();
 
-document.getElementById('update-personal-form').addEventListener('submit', async (e)=>{
-    e.preventDefault();        
+document.getElementById('update-personal-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await updatePersonal(true);
+    await renderSelects();
+});
+
+
+document.getElementById('personal-activo').addEventListener('change', (e) => {
+    userId = e.target.value;
+    console.log(userId);
+});
+
+const btns = document.querySelectorAll('.delDes-personal');
+btns.forEach(async (btn) => {
+    btn.addEventListener('click', async () => {
+        if (btn.id === 'desactivar') {
+            await updatePersonal(false);
+            await renderSelects();
+        } else {
+            await deletePersonal();
+            await renderSelects();
+        }
+    });
+})
+
+async function updatePersonal(activo) {
     const name = document.getElementById('name-selected').value;
     const email = document.getElementById('email-selected').value;
     const rol = document.getElementById('rol-selected').value;
     const salario = document.getElementById('salario-selected').value;
-
-    try{
+    try {
         const formData = new FormData();
-        formData.append('name', name);
-        formData.append('email', email);
-        formData.append('rol', rol);
-        formData.append('salario', salario);
+        name != '' ? formData.append('name', name) : '';
+        email != '' ? formData.append('email', email) : '';
+        rol != '' ? formData.append('rol', rol) : '';
+        salario != '' ? formData.append('salario', salario) : '';
+        formData.append('activo', activo);
 
         const res = await fetch(`http://127.0.0.1:80/api/gestion_user/${userId}`, {
             method: 'POST',
@@ -47,11 +76,105 @@ document.getElementById('update-personal-form').addEventListener('submit', async
             body: formData,
         });
         const data = await res.json();
-        if(!res.ok){
+        console.log(data);
+        if (!res.ok) {
             throw data
         }
         showToast('Usuario Actualizado');
-    }catch(err){
+    } catch (err) {
         console.log(err)
     }
-});
+}
+
+async function deletePersonal() {
+    try {
+        const res = await fetch(`http://127.0.0.1/api/gestion_user/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+            }
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+            throw data;
+        }
+        console.log(data)
+        showToast('Usuario Eliminado')
+    } catch (err) {
+        showToast(`No se puede eliminar este usuario porque tiene cajas relacionadas, puedes desactivarlo`, 'error')
+    }
+}
+
+async function renderSelects() {
+    await rerenderEliDes();
+    await rerenderForm();
+
+}
+
+
+async function rerenderEliDes() {
+    const eliDesUser = document.getElementById('personal-activo');
+    try {
+        const res = await fetch('http://127.0.0.1:80/api/gestion_users');
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw data;
+        }
+
+        eliDesUser.innerHTML = '';
+        const optionOne = document.createElement('option');
+        optionOne.disabled = true;
+        optionOne.selected = true;
+        optionOne.textContent = 'Seleccionar usuario';
+        eliDesUser.appendChild(optionOne);
+        const users = data.data.filter(user => user.activo == true);
+        console.log(users)
+        users.forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.id;
+            option.textContent = user.name;
+
+            eliDesUser.appendChild(option);
+        });
+
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+async function rerenderForm() {
+    const editUser = document.getElementById('edit-user');
+
+    try {
+        const res = await fetch('http://127.0.0.1:80/api/gestion_users');
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw data;
+        }
+
+        editUser.innerHTML = '';
+        const optionOne = document.createElement('option');
+        optionOne.disabled = true;
+        optionOne.selected = true;
+        optionOne.textContent = 'Seleccionar usuario';
+        editUser.appendChild(optionOne);
+
+        data.data.forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.id;
+            option.textContent = user.name + (user.activo == false ? ' - Inactivo' : '');
+
+            if (user.activo == false) {
+                option.className = 'text-gray-300 underline';
+            }
+
+            editUser.appendChild(option);
+        });
+
+    } catch (err) {
+        console.log(err);
+    }
+}
