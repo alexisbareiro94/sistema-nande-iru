@@ -11,17 +11,17 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\NotificacionController;
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\NotificacionController;
 use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto, PagoSalario};
 use Carbon\Carbon;
 
 Route::get('/login', [AuthController::class, 'login_view'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post')->middleware('throttle:5,1');
 Route::get('/register', [AuthController::class, 'register_view'])->name('register.view');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 
