@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AbrirCajaRequest;
 use App\Http\Requests\UpdateCajaRequest;
-use App\Models\{Caja, MovimientoCaja, Venta, DetalleVenta, User, Pago};
+use App\Models\{Caja, MovimientoCaja, Venta, DetalleVenta, Pago, PagoSalario, User};
 use App\Services\CajaService;
 use App\Jobs\{MovimientoRealizado, CierreCaja};
 
@@ -19,9 +19,21 @@ class CajaController extends Controller
         if (!session("caja")) {
             $caja = Caja::orderByDesc("id")->first();
         }
+
+        $pagosSalario = PagoSalario::whereHas('user', function ($q) {
+            return $q->where('role', 'personal')->where('activo', true);
+        })
+            ->orderByDesc('created_at')
+            ->with('user')
+            ->get()
+            ->unique('user_id');
+
+        $users = User::where('role', 'personal')->where('activo', true)->get();
+
         return view("caja.index", [
             "caja" => $caja ?? "",
-            'personales' => User::where('role', 'personal')->where('activo', true)->get(),
+            'pagosSalario' => $pagosSalario,
+            'users' => $users,
         ]);
     }
 
@@ -57,7 +69,7 @@ class CajaController extends Controller
     public function update(UpdateCajaRequest $request)
     {
         //cuando se cierra la caja
-        $data = $request->validated();        
+        $data = $request->validated();
         $ingreso = 0;
         $egreso = 0;
         try {

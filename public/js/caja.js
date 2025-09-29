@@ -464,7 +464,7 @@ document.getElementById('confirmar-movimiento').addEventListener('click', async 
     })
     tipoSelcted == 'salario' ? tipoSelcted = 'egreso' : '';
 
-    
+
     if (tipoSelcted == undefined) {
         showToast('Debes Seleccionar un tipo de movimiento', 'error');
         errores = '1'
@@ -502,6 +502,7 @@ document.getElementById('confirmar-movimiento').addEventListener('click', async 
         personal = '';
         form.reset();
         document.getElementById('modal-movimiento-caja').classList.add('hidden');
+        document.getElementById('datos-personal').classList.add('hidden');
         limpiarUI();
         showToast('Movimiento registrado');
     } catch (err) {
@@ -622,3 +623,45 @@ document.getElementById('confirmar-cierre').addEventListener('click', async () =
         showToast(`${err.error}`, 'error')
     }
 });
+
+const selectPersonal = document.getElementById('personales');
+
+selectPersonal.addEventListener('change', async (e) => {
+    const datosPersonal = document.getElementById('datos-personal');
+
+    try {
+        const res = await fetch(`http://127.0.0.1:80/api/user/${e.target.value}`);
+        const data = await res.json();
+        if (!res.ok) {
+            throw data;
+        }
+        let fecha = '';
+        let fechaFormateada = '';
+        if (data.data.user) {
+            fecha = new Date(data.data.created_at);
+            fechaFormateada = fecha.toLocaleString('es-PY', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }).replace(',', ' -');
+        }
+
+        const nombre = data.data.name ?? data.data.user.name;
+        const salario = data.data.salario ?? data.data.user.salario;
+        const restante = data.data.restante ?? data.data.salario;
+        datosPersonal.classList.remove('hidden');
+        datosPersonal.innerHTML = `
+                        <p class="font-medium">${nombre}</p>
+                        <p class="text-sm"><span class="data-personal font-semibold">Salario:</span> Gs. ${salario.toLocaleString('es-PY')}</p>
+                        <p class="text-sm"><span class="data-personal font-semibold">Restante:</span> Gs. ${restante.toLocaleString('es-PY')}</p>
+                        <p class="text-sm"><span class="data-personal font-semibold">Adelanto:</span> ${fechaFormateada}</p>`;
+
+
+    } catch (err) {
+        console.log(err)
+    }
+});
+

@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMovimientoRequest;
-use App\Jobs\CierreCaja;
 use Illuminate\Http\Request;
-use App\Models\{MovimientoCaja, Caja, PagoSalario, User};
+use App\Models\{MovimientoCaja, Caja};
+use App\Services\MovimientoService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Jobs\MovimientoRealizado;
 
 class MovimientoCajaController extends Controller
 {
+    public function __construct(protected MovimientoService $movimientoService){}
+
     public function index()
     {
         return response()->json([
@@ -22,7 +24,7 @@ class MovimientoCajaController extends Controller
     public function total()
     {
         $ingreso = 0;
-        $egreso = 0;        
+        $egreso = 0;
         try {
             if (session('caja')) {
                 $ingreso = MovimientoCaja::where('tipo', 'ingreso')->whereHas('caja', function ($query) {
@@ -36,7 +38,7 @@ class MovimientoCajaController extends Controller
                     $egreso = 0;
                 }
             }
-            $total = $ingreso - $egreso;            
+            $total = $ingreso - $egreso;
             return response()->json([
                 'success' => true,
                 'total' => $total,
@@ -54,32 +56,24 @@ class MovimientoCajaController extends Controller
 
     public function store(StoreMovimientoRequest $request)
     {
-        $data = $request->validated();        
+        $data = $request->validated();
         $data['caja_id'] = Caja::where('estado', 'abierto')->pluck('id')->first();
         DB::beginTransaction();
         try {
             $movimiento = MovimientoCaja::create($data);
             crear_caja();
-            if($data['personal_id'] != null){
-                $user = User::find($data['personal_id']);
-                if($data['monto'] < $user->salario){
-                    $adelanto = true;
-                    $restante = $user->salario - $data['monto'];
-                }else{
-                    $adelanto = false;
-                    $restante = 0;
+            if ($data['personal_id'] != null) {
+                $pago = $this->movimientoService->pago_salario($data, $movimiento, $request->user()->id);
+
+                if($pago == false){
+                    DB::rollBack();
+                    return response()->json([
+                        'error' => 'Error al pagar el salario' 
+                    ], 400);
                 }
-                PagoSalario::create([
-                    'user_id' => $data['personal_id'],
-                    'movimiento_id' => $movimiento->id,
-                    'adelanto' => $adelanto,
-                    'monto' => $data['monto'],
-                    'restante' => $restante,
-                    'created_by' => $request->user()->id,
-                ]);                
             }
-            DB::commit();            
-            MovimientoRealizado::dispatch($movimiento, $movimiento->tipo);            
+            DB::commit();
+            MovimientoRealizado::dispatch($movimiento, $movimiento->tipo);
             return response()->json([
                 'success' => true,
                 'message' => 'Movimiento registrado correctamente',
@@ -96,16 +90,16 @@ class MovimientoCajaController extends Controller
     public function charts_caja(Request $request)
     {
         try {
-            $periodo = $request->query('periodoInicio') ?? 'semana';                        
-            if($periodo == 'mes'){
+            $periodo = $request->query('periodoInicio') ?? 'semana';
+            if ($periodo == 'mes') {
                 $periodoInicio = now()->startOfMonth();
                 $periodoFin    = now()->endOfMonth();
                 $formatoGroup  = "TO_CHAR(created_at, 'MM-YYYY')";
-            }elseif($periodo == 'anio' || $periodo == 'año'){
+            } elseif ($periodo == 'anio' || $periodo == 'año') {
                 $periodoInicio = now()->startOfYear();
                 $periodoFin    = now()->endOfYear();
                 $formatoGroup  = "TO_CHAR(created_at, 'YYYY')";
-            }else{
+            } else {
                 $periodoInicio = now()->startOfWeek();
                 $periodoFin    = now()->endOfWeek();
                 $formatoGroup  = "TO_CHAR(created_at, 'DD-MM-YY')";
@@ -113,10 +107,10 @@ class MovimientoCajaController extends Controller
 
             $queryDesde = $request->query('desde') == null ? null : Carbon::parse($request->query('desde'))->startOfDay();
             $queryHasta = $request->query('hasta') == null ? null : Carbon::parse($request->query('hasta'))->endOfDay();
-            
+
             $desde = $queryDesde ?: $periodoInicio;
-            $hasta = $queryHasta ?: $periodoFin;            
-            
+            $hasta = $queryHasta ?: $periodoFin;
+
             $movimientos = MovimientoCaja::selectRaw("
                     $formatoGroup as periodo,
                     SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END) as ingresos,
@@ -125,14 +119,12 @@ class MovimientoCajaController extends Controller
                 ->whereBetween('created_at', [$desde, $hasta])
                 ->groupBy('periodo')
                 ->orderByRaw("MIN(created_at)")
-                ->get();
-            //dd($movimientos, $desde,$hasta);
+                ->get();            
             return response()->json([
                 'labels'   => $movimientos->pluck('periodo'),
                 'ingresos' => $movimientos->pluck('ingresos'),
                 'egresos'  => $movimientos->pluck('egresos'),
             ]);
-            
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
