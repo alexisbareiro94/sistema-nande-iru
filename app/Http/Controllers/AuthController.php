@@ -25,29 +25,33 @@ class AuthController extends Controller
     }
   
     public function login(Request $request)
-    {
-        $validate = $request->validate([
-            'email' => 'required|exists:users,email',
-            'password' => 'required'
-        ], [
-            'email.required' => 'completar el campo email',
-            'email.exists' => 'El email no esta registrado',
-            'password.*' => 'completar el campo contraseña'
-        ]);
-
-        if (Auth::attempt($validate)) {
-            $user = Auth::user();
-            NotificacionEvent::dispatch('Nuevo Inicio de Sesion', "$user->name inicio sesion", 'blue');
-            if($user->role == 'personal' || $user->role == 'caja'){
-                return redirect()->route('caja.index');
-            }
-            if ($user->role === 'cliente') {
-                session()->flush();
-            }
-            return redirect()->route('home');
-        } else {
-            NotificacionEvent::dispatch('Intento de inicio de sesion'," de: " . $validate['email'] , 'orange');
-            return back()->with('error');
+    {      
+        try{
+            $validate = $request->validate([
+                'email' => 'required|exists:users,email',
+                'password' => 'required'
+            ], [
+                'email.required' => 'completar el campo email',
+                'email.exists' => 'El email no esta registrado',
+                'password.*' => 'completar el campo contraseña'
+            ]);
+            if (Auth::attempt($validate)) {
+                $user = Auth::user();
+                NotificacionEvent::dispatch('Nuevo Inicio de Sesion', "$user->name inicio sesion", 'blue');
+                if($user->role == 'personal' || $user->role == 'caja'){
+                    return redirect()->route('caja.index');
+                }
+                if ($user->role === 'cliente') {
+                    session()->flush();
+                }
+                return redirect()->route('home');
+            } else {            ;
+                NotificacionEvent::dispatch('Intento de inicio de sesion'," de: " . $validate['email'] , 'orange');
+                return back()->with('error');
+            }     
+        }catch(\Exception $e){
+            NotificacionEvent::dispatch('Intento de inicio de sesion'," de: " . $request->email , 'orange');            
+            return back()->with('error', $e->getMessage());
         }
     }
 
