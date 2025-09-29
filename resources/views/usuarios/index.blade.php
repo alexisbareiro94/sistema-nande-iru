@@ -16,7 +16,7 @@
 
         <!-- Sección 1: Dashboard / Resumen -->
         <section class="mb-10">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">📊 Dashboard / Resumen de Usuarios</h2>
+            <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">Dashboard / Resumen de Usuarios</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Total Usuarios Activos -->
                 <div class="bg-white p-5 rounded-lg shadow-md flex flex-col items-center justify-center text-center">
@@ -54,7 +54,7 @@
 
             <!-- Estadísticas por Rol -->
             <div class="bg-white p-6 rounded-lg shadow-md">
-                <h3 class="font-bold text-lg mb-4">👥 Empleados por Rol</h3>
+                <h3 class="font-bold text-lg mb-4">Empleados por Rol</h3>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
@@ -96,21 +96,25 @@
 
         <!-- Sección 2: Gestión de Usuarios -->
         <section class="mb-10">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">👥 Gestión de Usuarios</h2>
+            <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">Gestión de Usuarios</h2>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Crear Usuario -->
                 <div class="bg-white p-5 rounded-lg shadow-md">
-                    <h3 class="font-bold mb-3">➕ Crear Nuevo Usuario</h3>
+                    <h3 class="font-bold mb-3">Crear Nuevo Usuario</h3>
                     <form class="space-y-3" action="{{ route('gestion.users.store') }}" method="POST">
                         @csrf
-                        <input name="name" type="text" placeholder="Nombre y  Apellido" class="w-full p-2 border rounded" />
+                        <input name="name" type="text" placeholder="Nombre y  Apellido"
+                            class="w-full p-2 border rounded" />
                         <input name="email" type="email" placeholder="Email" class="w-full p-2 border rounded" />
                         <div class="relative">
-                            <input type="password" name="password" id="password" placeholder="********" class="w-full p-2 border rounded">                           
-                            <span id="mostrar-gu" class="cursor-pointer px-2 py-1 hover:bg-gray-200 rounded-lg absolute top-1 right-3">
+                            <input type="password" name="password" id="password" placeholder="********"
+                                class="w-full p-2 border rounded">
+                            <span id="mostrar-gu"
+                                class="cursor-pointer font-semibold px-2 py-1 hover:bg-gray-200 rounded-lg absolute top-1 right-3">
                                 < O >
                             </span>
-                            <span id="ocultar-gu" class="cursor-pointer px-2 py-1 hover:bg-gray-100 absolute top-1 right-3 hidden">
+                            <span id="ocultar-gu"
+                                class="cursor-pointer px-2 py-1 hover:bg-gray-100 absolute top-1 right-3 hidden">
                                 < \ >
                             </span>
                         </div>
@@ -122,35 +126,37 @@
                             <option>Vendedor</option>
                             <option>Soporte</option>
                         </select>
-                        <select name="estado" class="w-full p-2 border rounded">
+                        <select name="activo" class="w-full p-2 border rounded">
                             <option disabled selected>Estado</option>
-                            <option value="true" >Activo</option>
+                            <option value="true">Activo</option>
                             <option value="false">Inactivo</option>
                         </select>
                         <input name="salario" type="number" placeholder="Salario" class="w-full p-2 border rounded" />
                         <button class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">Crear
                             Usuario</button>
                     </form>
-                </div>                
+                </div>
 
                 <!-- Editar Usuario -->
                 <div class="bg-white p-5 rounded-lg shadow-md">
-                    <h3 class="font-bold mb-3">✏️ Editar Usuario</h3>
-                    <form class="space-y-3">
-                        <select class="w-full p-2 border rounded">
+                    <h3 class="font-bold mb-3">Editar Usuario</h3>
+                    <form id="update-personal-form" class="space-y-3">
+                        <select id="edit-user" class="w-full p-2 border rounded">
                             <option disabled selected>Seleccionar usuario</option>
-                            <option>Juan Pérez</option>
-                            <option>María Gómez</option>
+                            @foreach ($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
                         </select>
-                        <input type="text" placeholder="Nombre" class="w-full p-2 border rounded" value="Juan" />
-                        <input type="text" placeholder="Apellido" class="w-full p-2 border rounded" value="Pérez" />
-                        <select class="w-full p-2 border rounded">
+                        <input id="name-selected" type="text" placeholder="Nombre" class="w-full p-2 border rounded" value="" />
+                        <input id="email-selected" type="email" placeholder="Email" class="w-full p-2 border rounded" value="" />
+                        <select id="rol-selected" class="w-full p-2 border rounded">                                                     
                             <option>Cajero</option>
+                            <option>Personal</option>
                             <option selected>Administrador</option>
                         </select>
-                        <input type="number" placeholder="Nuevo salario" class="w-full p-2 border rounded"
-                            value="4000" />
-                        <button class="w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600">Actualizar</button>
+                        <input id="salario-selected" type="number" placeholder="Nuevo salario" class="w-full p-2 border rounded" value="" />
+                        <button type="submit"
+                            class="w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600">Actualizar</button>
                     </form>
                 </div>
 
@@ -160,16 +166,16 @@
                     <form class="space-y-3">
                         <select class="w-full p-2 border rounded">
                             <option disabled selected>Seleccionar usuario</option>
-                            <option>Juan Pérez</option>
-                            <option>María Gómez</option>
+                            @foreach ($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
                         </select>
                         <div class="flex space-x-2">
                             <button class="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-600">Eliminar</button>
-                            <button class="flex-1 bg-gray-500 text-white py-2 rounded hover:bg-gray-600">Desactivar</button>
+                            <button
+                                class="flex-1 bg-gray-500 text-white py-2 rounded hover:bg-gray-600">Desactivar</button>
                         </div>
-                        <p class="text-xs text-gray-500 mt-2">* Eliminar borra permanentemente. Desactivar lo mantiene
-                            en el
-                            sistema.</p>
+                        <p class="text-xs text-gray-500 mt-2">* Eliminar borra permanentemente. Desactivar lo mantiene en el sistema.</p>
                     </form>
                 </div>
             </div>
@@ -392,21 +398,21 @@
         </section>
     </div>
 
-<script>
-    const ocultar = document.getElementById('ocultar-gu');
-    const mostrar = document.getElementById('mostrar-gu');
-    const input = document.getElementById('password');
+    <script>
+        const ocultar = document.getElementById('ocultar-gu');
+        const mostrar = document.getElementById('mostrar-gu');
+        const input = document.getElementById('password');
 
-    mostrar.addEventListener('click', () => {
-        mostrar.classList.add('hidden');
-        ocultar.classList.remove('hidden');
-        password.type = 'text'
-    });
+        mostrar.addEventListener('click', () => {
+            mostrar.classList.add('hidden');
+            ocultar.classList.remove('hidden');
+            password.type = 'text'
+        });
 
-    ocultar.addEventListener('click', () => {
-        ocultar.classList.add('hidden');
-        mostrar.classList.remove('hidden');
-        password.type = 'password'
-    });
-</script>
+        ocultar.addEventListener('click', () => {
+            ocultar.classList.add('hidden');
+            mostrar.classList.remove('hidden');
+            password.type = 'password'
+        });
+    </script>
 @endsection

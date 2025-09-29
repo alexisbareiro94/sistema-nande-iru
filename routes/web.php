@@ -16,7 +16,6 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
 use Illuminate\Support\Facades\Route;
 
-use App\Events\NotificacionEvent;
 use App\Http\Controllers\NotificacionController;
 use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto, PagoSalario};
 use Carbon\Carbon;
@@ -101,6 +100,8 @@ Route::middleware('auth')->group(function () {
         Route::put('/api/notificaciones/update/{id}', [NotificacionController::class, 'update']);
 
         Route::get('/api/user/{id}', [UserController::class, 'show']);
+        Route::get('/api/gestion_user/{id}', [GestionUsersController::class, 'show']);
+        Route::post('/api/gestion_user/{id}', [GestionUsersController::class, 'update']);
     });
 });
 
@@ -115,13 +116,13 @@ Route::get('/borrar-session', function () {
 
 
 Route::get('/debug', function () {
-    
-        $a = PagoSalario::whereHas('user', function($q){
-            return $q->where('id', 18);
-        })
-            ->orderByDesc('created_at')
-            ->with('user')
-            ->get()
-            ->unique('user_id');
+
+    $a = PagoSalario::whereHas('user', function ($q) {
+        return $q->where('id', 18);
+    })
+        ->orderByDesc('created_at')
+        ->with('user')
+        ->get()
+        ->unique('user_id');
     dd(filled($a));
 });

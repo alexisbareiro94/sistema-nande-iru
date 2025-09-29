@@ -1,6 +1,7 @@
 import './bootstrap';
 import './reportes';
 import './notificaciones';
+import './gestion-user';
 import Chart from 'chart.js/auto';
 
 let myChart = null;
