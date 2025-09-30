@@ -35,6 +35,11 @@ class DatabaseSeeder extends Seeder
         //     "nombre" => "sin distribuidor",
         // ]);
 
+        // DB::table('configuraciones')->insert([
+        //     'key' => 'max_cajas',
+        //     'valor' => 1,
+        // ]);
+
         // \App\Models\Producto::factory(50)->create();
 
         User::factory(11)->create();

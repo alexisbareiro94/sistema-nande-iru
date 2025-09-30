@@ -53,21 +53,22 @@
                                         @endif
                                     </span>
                                 </div>
-
                                 <!-- Saldo actual -->
-                                <div class="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
-                                    <p class="text-gray-600 text-sm mb-2">Saldo actual</p>
-                                    <p id="saldo-caja" class="text-3xl font-bold text-gray-800">
-                                        <svg id="loader-saldo" class="animate-spin h-8 w-8 text-gray-400"
-                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor"
-                                                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
-                                            </path>
-                                        </svg>
-                                    </p>
-                                </div>
+                                @if (auth()->user()->role === 'admin')
+                                    <div class="bg-white rounded-lg p-5 border border-gray-200 shadow-sm">
+                                        <p class="text-gray-600 text-sm mb-2">Saldo actual</p>
+                                        <p id="saldo-caja" class="text-3xl font-bold text-gray-800">
+                                            <svg id="loader-saldo" class="animate-spin h-8 w-8 text-gray-400"
+                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                    stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+                                                </path>
+                                            </svg>
+                                        </p>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -75,45 +76,47 @@
                     <!-- Botones principales -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <!-- Botón Abrir/Cerrar Caja -->
-                        <button {{ !session('caja') ? 'id=btn-abrir-caja' : 'id=btn-cerrar-caja' }}
-                            @class([
-                                'cursor-pointer text-white font-semibold py-4 rounded-lg transition-all duration-200 hover:shadow-md',
-                                'bg-green-600 hover:bg-green-700' => empty(session('caja')),
-                                'bg-red-600 hover:bg-red-700' => session('caja'),
-                            ])>
-                            <div class="flex flex-col items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12h18M5 10h14a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2z" />
-                                </svg>
-                                <span>{{ session('caja') ? 'Cerrar Caja' : 'Abrir Caja' }}</span>
-                            </div>
-                        </button>
-
-                        <!-- Botón Movimientos Manuales -->
-                        <div class="relative">
-                            <button {{ !session('caja') ? 'disabled' : '' }} id="btn-movimiento"
-                                class="cursor-pointer w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 rounded-lg
-                                transition-all duration-200 hover:shadow-md disabled:cursor-not-allowed">
+                        @if (auth()->user()->role === 'admin')
+                            <button {{ !session('caja') ? 'id=btn-abrir-caja' : 'id=btn-cerrar-caja' }}
+                                @class([
+                                    'cursor-pointer text-white font-semibold py-4 rounded-lg transition-all duration-200 hover:shadow-md',
+                                    'bg-green-600 hover:bg-green-700' => empty(session('caja')),
+                                    'bg-red-600 hover:bg-red-700' => session('caja'),
+                                ])>
                                 <div class="flex flex-col items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                            d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12h18M5 10h14a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2z" />
                                     </svg>
-                                    <span>Movimientos Manuales</span>
+                                    <span>{{ session('caja') ? 'Cerrar Caja' : 'Abrir Caja' }}</span>
                                 </div>
                             </button>
 
-                            @if (!session('caja'))
-                                <div
-                                    class="absolute  inset-0 bg-gray-100/70 rounded-lg flex items-center justify-center backdrop-blur-[2px]">
-                                    <span class="text-gray-500 text-sm font-medium">Caja cerrada</span>
-                                </div>
-                            @endif
-                        </div>
 
+                            <!-- Botón Movimientos Manuales -->
+                            <div class="relative">
+                                <button {{ !session('caja') ? 'disabled' : '' }} id="btn-movimiento"
+                                    class="cursor-pointer w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-4 rounded-lg
+                                    transition-all duration-200 hover:shadow-md disabled:cursor-not-allowed">
+                                    <div class="flex flex-col items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                        </svg>
+                                        <span>Movimientos Manuales</span>
+                                    </div>
+                                </button>
+
+                                @if (!session('caja'))
+                                    <div
+                                        class="absolute  inset-0 bg-gray-100/70 rounded-lg flex items-center justify-center backdrop-blur-[2px]">
+                                        <span class="text-gray-500 text-sm font-medium">Caja cerrada</span>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
                         <!-- Botón Ir a Ventas -->
                         <div class="relative">
                             <button id="ir-a-ventas"
@@ -140,12 +143,10 @@
                 </div>
 
                 <!-- Panel derecho - Historial de movimientos -->
-                {{-- @if (Auth::user()->role == 'admin') --}}
-                    <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Historial de Movimientos</h3>
-                        @include('caja.includes.movimientos')
-                    </div>
-                {{-- @endif --}}
+                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Historial de Movimientos</h3>
+                    @include('caja.includes.movimientos')
+                </div>
             </div>
         </div>
 

@@ -47,7 +47,7 @@ function listenNotification() {
 
         })
         .error((error) => {
-            console.error('Error en el canal:', error);
+            console.log('Error en el canal:', error);
         });
 }
 
@@ -67,7 +67,7 @@ function listenCierreCaja() {
             }
         })
         .error(error => {
-            console.error('Error en el canal: ', error)
+            console.log('Error en el canal: ', error)
         })
 }
 
@@ -94,6 +94,9 @@ async function getDataNotificaciones(flag = false) {
 
 function renderNotifications(data) {
     const alertCont = document.getElementById('alert-cont');
+    if(!alertCont){
+        return;
+    }
     alertCont.innerHTML = '';
 
     data.notificaciones.forEach((item, index) => {
@@ -181,19 +184,23 @@ if (window.location.pathname === "/reportes") {
     isRead();
 }
 
-document.getElementById('todas-alertas').addEventListener('click', () => {
-    document.getElementById('todas-notificaciones-modal').classList.remove('hidden');
-    sessionStorage.setItem('pag', JSON.stringify(10));
-    renderNotificaciones();
-});
+if(document.getElementById('todas-alertas')){
+    document.getElementById('todas-alertas').addEventListener('click', () => {
+        document.getElementById('todas-notificaciones-modal').classList.remove('hidden');
+        sessionStorage.setItem('pag', JSON.stringify(10));
+        renderNotificaciones();
+    });
+}
 
-document.getElementById('cerrar-notificaciones').addEventListener('click', () => {
-    sessionStorage.removeItem('pag');
-    const cargarMas = document.getElementById('cargar-mas');
-    cargarMas.classList = 'px-3 py-2 rounded-lg font-semibold bg-gray-200 cursor-pointer transition-all duration-200 hover:bg-gray-300'
-    cargarMas.innerText = 'Cargar mas'
-    document.getElementById('todas-notificaciones-modal').classList.add('hidden');
-});
+if(document.getElementById('cerrar-notificaciones')){
+    document.getElementById('cerrar-notificaciones').addEventListener('click', () => {
+        sessionStorage.removeItem('pag');
+        const cargarMas = document.getElementById('cargar-mas');
+        cargarMas.classList = 'px-3 py-2 rounded-lg font-semibold bg-gray-200 cursor-pointer transition-all duration-200 hover:bg-gray-300'
+        cargarMas.innerText = 'Cargar mas'
+        document.getElementById('todas-notificaciones-modal').classList.add('hidden');
+    });   
+}
 
 async function allNotifications() {
     const pag = JSON.parse(sessionStorage.getItem('pag'));
@@ -248,8 +255,10 @@ async function renderNotificaciones() {
     
 }
 
-document.getElementById('cargar-mas').addEventListener('click', ()=>{
-    const pag = JSON.parse(sessionStorage.getItem('pag')) + 10;    
-    sessionStorage.setItem('pag', JSON.stringify(pag));
-    renderNotificaciones();
-});
+if(document.getElementById('cargar-mas')){
+    document.getElementById('cargar-mas').addEventListener('click', ()=>{
+        const pag = JSON.parse(sessionStorage.getItem('pag')) + 10;    
+        sessionStorage.setItem('pag', JSON.stringify(pag));
+        renderNotificaciones();
+    });
+}

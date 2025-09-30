@@ -19,7 +19,7 @@
     <main class="flex-grow grid grid-cols-5 gap-1">
         <div @class([
             'bg-gris p-4 animate-fade-in',
-            'hidden' => request()->routeIs('home'),
+            'hidden' => request()->routeIs('home') || auth()->user()->role != 'admin',
             'col-span-1 animate-slide-in-right' => !request()->routeIs('home'),
         ])>
             <aside class="col-span-1 p-4 fixed transform transition-transform duration-300">
@@ -27,14 +27,14 @@
             </aside>
         </div>
         <section @class([
-            'p-6',
-            'col-span-5' => request()->routeIs('home'),
-            'col-span-4' => !request()->routeIs('home'),
+            'p-6',            
+            'col-span-5' => request()->routeIs('home') || auth()->user()->role != 'admin',
+            'col-span-4' => !request()->routeIs('home'),            
         ])>
             <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 bg-gray-200 rounded-lg min-h-screen shadow-lg">
                 <nav @class([
                     'text-sm font-semibold text-gray-700 mb-4',
-                    'hidden' => request()->routeIs('home'),
+                    'hidden' => request()->routeIs('home'),                    
                 ]) aria-label="Breadcrumb">
                     <ol class="list-reset flex">
                         <li>

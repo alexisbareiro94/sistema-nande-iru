@@ -1,21 +1,23 @@
+import Chart from 'chart.js/auto';
 import './bootstrap';
 import './reportes';
 import './notificaciones';
 import './gestion-user';
-import Chart from 'chart.js/auto';
+
 
 let myChart = null;
 async function loadChart(desde = '', hasta = '', periodo = '') {
   try {
     const res = await fetch(`http://127.0.0.1:80/api/movimientos/charts_caja?desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&periodoInicio=${encodeURIComponent(periodo)}`);
     const data = await res.json();
-
     const ctx = document.getElementById('myChart');
 
     if (myChart) {
-      myChart.destroy();  
+      myChart.destroy();
     }
-
+    if (!ctx) {
+      return
+    }
     myChart = new Chart(ctx, {
       type: 'bar',
       data: {
@@ -51,26 +53,33 @@ async function loadChart(desde = '', hasta = '', periodo = '') {
   }
 }
 
-loadChart('', '');
-
-document.getElementById('dv-form-fecha').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const desde = document.getElementById('dv-fecha-desde').value;
-  const hasta = document.getElementById('dv-fecha-hasta').value;
-  const periodo = document.getElementById('dv-periodo').value;
-  await loadChart(desde, hasta, periodo);
-});
-
-
-document.getElementById('confirmar-movimiento').addEventListener('click', async () => {
-  await loadChart('', '');
+document.addEventListener('DOMContentLoaded', () => {
+  loadChart('', '');
 })
 
-document.getElementById('confirmar-venta').addEventListener('click', () => {
-  
-  setTimeout(async () => {
+if (document.getElementById('dv-form-fecha')) {
+  document.getElementById('dv-form-fecha').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const desde = document.getElementById('dv-fecha-desde').value;
+    const hasta = document.getElementById('dv-fecha-hasta').value;
+    const periodo = document.getElementById('dv-periodo').value;
+    await loadChart(desde, hasta, periodo);
+  });
+}
+
+if (document.getElementById('confirmar-movimiento')) {
+  document.getElementById('confirmar-movimiento').addEventListener('click', async () => {
     await loadChart('', '');
-  }, 500);
-})
+  })
+}
+
+if (document.getElementById('confirmar-venta')) {
+  document.getElementById('confirmar-venta').addEventListener('click', () => {
+
+    setTimeout(async () => {
+      await loadChart('', '');
+    }, 500);
+  })
+}
 
 

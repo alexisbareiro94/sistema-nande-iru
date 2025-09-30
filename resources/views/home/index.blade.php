@@ -9,13 +9,16 @@
 
             <nav class="space-x-4 flex">
                 <a href="" class="hover:text-[#CC0000] font-semibold">Perfil</a>
-                <span id="" class="hover:text-[#CC0000] font-semibold cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-                    </svg>
-                </span>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button class="hover:text-[#CC0000] font-semibold cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                        </svg>
+                    </button>
+                </form>
             </nav>
         </div>
     </header>
@@ -91,12 +94,13 @@
                 </div>
             @endif
             <!-- Reportes -->
-            @if (Auth::user()->role == 'admin')            
+            @if (Auth::user()->role == 'admin')
                 <div class="relative">
-                    @if (Auth::user()->notificaciones->where('is_read', false)->count() > 0)                        
-                    <span class="absolute -top-2 -right-2 z-40 bg-gradient-to-t from-red-300 to-red-500 border border-red-400 px-3 py-1 rounded-full text-white font-black animate-bounce">
-                        {{ Auth::user()->notificaciones->where('is_read', false)->count() }}
-                    </span>
+                    @if (Auth::user()->notificaciones->where('is_read', false)->count() > 0)
+                        <span
+                            class="absolute -top-2 -right-2 z-40 bg-gradient-to-t from-red-300 to-red-500 border border-red-400 px-3 py-1 rounded-full text-white font-black animate-bounce">
+                            {{ Auth::user()->notificaciones->where('is_read', false)->count() }}
+                        </span>
                     @endif
                     <a id="reportes-index" href="{{ route('reporte.index') }}"
                         class="group bg-gradient-to-b from-white to-gray-50 border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:shadow-red-100/50 min-h-[180px] flex flex-col items-center p-6">

@@ -399,6 +399,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 async function recargarSaldo(flag = true) {
     const saldo = document.getElementById('saldo-caja');
+    if (!saldo) {
+        return;
+    }
     try {
         const res = await fetch(`http://127.0.0.1:80/api/movimiento/total`, {
             method: 'GET',
@@ -419,27 +422,31 @@ async function recargarSaldo(flag = true) {
     }
 }
 
-document.getElementById('btn-movimiento').addEventListener('click', () => {
-    document.getElementById('modal-movimiento-caja').classList.remove('hidden');
-});
-
-document.getElementsByName('tipo-movimiento').forEach(btn => {
-    const salarioCont = document.getElementById('salario-cont');
-    const conceptomm = document.getElementById('concepto-mm');
-    btn.addEventListener('click', () => {
-        if (btn.value == 'salario') {
-            salarioCont.classList.remove('hidden');
-            conceptomm.value = 'Pago de salario'
-            conceptomm.disabled = true;
-        } else {
-            if (!salarioCont.classList.contains('hidden')) {
-                salarioCont.classList.add('hidden');
-            }
-            conceptomm.value = ''
-            conceptomm.disabled = false;
-        }
+if (document.getElementById('btn-movimiento')) {
+    document.getElementById('btn-movimiento').addEventListener('click', () => {
+        document.getElementById('modal-movimiento-caja').classList.remove('hidden');
     });
-});
+}
+
+if (document.getElementsByName('tipo-movimiento')) {
+    document.getElementsByName('tipo-movimiento').forEach(btn => {
+        const salarioCont = document.getElementById('salario-cont');
+        const conceptomm = document.getElementById('concepto-mm');
+        btn.addEventListener('click', () => {
+            if (btn.value == 'salario') {
+                salarioCont.classList.remove('hidden');
+                conceptomm.value = 'Pago de salario'
+                conceptomm.disabled = true;
+            } else {
+                if (!salarioCont.classList.contains('hidden')) {
+                    salarioCont.classList.add('hidden');
+                }
+                conceptomm.value = ''
+                conceptomm.disabled = false;
+            }
+        });
+    });
+}
 
 const select = document.getElementById('personales');
 let personal = '';
@@ -511,11 +518,13 @@ document.getElementById('confirmar-movimiento').addEventListener('click', async 
 });
 
 //cierre de caja
-document.getElementById('btn-cerrar-caja').addEventListener('click', async () => {
-    const modalCierreCaja = document.getElementById('modalCierreCaja');
-    modalCierreCaja.classList.remove('hidden')
-    await recargarCierreCaja();
-});
+if (document.getElementById('btn-cerrar-caja')) {
+    document.getElementById('btn-cerrar-caja').addEventListener('click', async () => {
+        const modalCierreCaja = document.getElementById('modalCierreCaja');
+        modalCierreCaja.classList.remove('hidden')
+        await recargarCierreCaja();
+    });
+}
 
 async function recargarCierreCaja() {
     const nombreCC = document.getElementById('nombre-cc');
@@ -658,10 +667,37 @@ selectPersonal.addEventListener('change', async (e) => {
                         <p class="text-sm"><span class="data-personal font-semibold">Salario:</span> Gs. ${salario.toLocaleString('es-PY')}</p>
                         <p class="text-sm"><span class="data-personal font-semibold">Restante:</span> Gs. ${restante.toLocaleString('es-PY')}</p>
                         <p class="text-sm"><span class="data-personal font-semibold">Adelanto:</span> ${fechaFormateada}</p>`;
-
-
     } catch (err) {
         console.log(err)
     }
 });
 
+if (document.getElementById('max-cajas-form')) {
+    document.getElementById('max-cajas-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const valor = document.getElementById('valor').value;
+        const id = document.getElementById('cong-id').value;
+
+        try {
+            const formData = new FormData();
+            formData.append('valor', valor);
+            const res = await fetch(`http://127.0.0.1:80/api/conf/${id}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: formData
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                throw data
+            }
+            console.log(data)
+            showToast('Cantidad máxima de cajas cambiado');
+        } catch (err) {
+            console.log(err)
+        }
+    })
+
+
+}

@@ -3,6 +3,9 @@ import { showToast } from './toast';
 
 let userId = '';
 function selectUser() {
+    if(!document.getElementById('edit-user')){
+        return;
+    }
     document.getElementById('edit-user').addEventListener('change', async (e) => {
         const name = document.getElementById('name-selected');
         const email = document.getElementById('email-selected');
@@ -29,18 +32,20 @@ function selectUser() {
     });
 }
 selectUser();
+if(document.getElementById('update-personal-form')){
+    document.getElementById('update-personal-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await updatePersonal(true);
+        await renderSelects();
+    });
+}
 
-document.getElementById('update-personal-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    await updatePersonal(true);
-    await renderSelects();
-});
-
-
-document.getElementById('personal-activo').addEventListener('change', (e) => {
-    userId = e.target.value;
-    console.log(userId);
-});
+if(document.getElementById('personal-activo')){
+    document.getElementById('personal-activo').addEventListener('change', (e) => {
+        userId = e.target.value;
+        console.log(userId);
+    });
+}
 
 const btns = document.querySelectorAll('.delDes-personal');
 btns.forEach(async (btn) => {

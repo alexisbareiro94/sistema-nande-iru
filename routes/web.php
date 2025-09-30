@@ -104,6 +104,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/gestion_user/{id}', [GestionUsersController::class, 'show']);
         Route::post('/api/gestion_user/{id}', [GestionUsersController::class, 'update']);
         Route::delete('/api/gestion_user/{id}', [GestionUsersController::class, 'delete']);
+
+
+        Route::post('/api/conf/{id}', [CajaController::class, 'max_cajas']);
     });
 });
 
@@ -118,13 +121,12 @@ Route::get('/borrar-session', function () {
 
 
 Route::get('/debug', function () {
-
-    $a = PagoSalario::whereHas('user', function ($q) {
-        return $q->where('id', 18);
-    })
-        ->orderByDesc('created_at')
-        ->with('user')
-        ->get()
-        ->unique('user_id');
-    dd(filled($a));
+    dd( Venta::where('id', 286)
+                    ->with([
+                        'detalleVentas',
+                        'cliente',
+                        'pagos',
+                        'caja.user',
+                        'vendedor'
+                    ])->first());
 });

@@ -28,6 +28,7 @@ class VentaFactory extends Factory
             'estado' => 'completado',
             'created_at' => $this->faker->dateTimeBetween('2025-01-01', now()),
             'updated_at' => now(),
+            'vendedor_id' => 1,
         ];
     }
 

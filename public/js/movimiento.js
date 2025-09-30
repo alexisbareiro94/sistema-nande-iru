@@ -15,6 +15,7 @@ async function getMovimientos() {
         if (!res.ok) {
             throw data;
         }        
+        console.log(data)        
         return data;
     } catch (err) {
         showToast(`${err.error}`);
@@ -25,7 +26,7 @@ async function recargarMovimientos() {
     const movimientoCont = document.getElementById('movimiento-cont');
     const data = await getMovimientos();
     movimientoCont.innerHTML = '';
-
+    console.log(data)
     data.movimientos.forEach((movimiento) => {
         let fecha = new Date(movimiento.created_at);
         let fechaFormateada = fecha.toLocaleString('es-PY', {

@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AbrirCajaRequest;
 use App\Http\Requests\UpdateCajaRequest;
-use App\Models\{Caja, MovimientoCaja, Venta, DetalleVenta, Pago, PagoSalario, User};
+use App\Models\{Caja, MovimientoCaja, Venta, DetalleVenta, Pago, PagoSalario, User, Configuracion};
 use App\Services\CajaService;
 use App\Jobs\{MovimientoRealizado, CierreCaja};
+use Illuminate\Http\Request;
 
 class CajaController extends Controller
 {
@@ -28,12 +29,12 @@ class CajaController extends Controller
             ->get()
             ->unique('user_id');
 
-        $users = User::where('role', 'personal')->where('activo', true)->get();
-
+        $users = User::where('role', 'personal')->where('activo', true)->get();        
         return view("caja.index", [
             "caja" => $caja ?? "",
             'pagosSalario' => $pagosSalario,
             'users' => $users,
+            'conf' => Configuracion::where('key', 'max_cajas')->first(),
         ]);
     }
 
@@ -174,5 +175,24 @@ class CajaController extends Controller
         return view("caja.anteriores.index", [
             "cajas" => Caja::all(),
         ]);
+    }
+
+    public function max_cajas(Request $request, string $id){
+        try{            
+            $validated = $request->validate([
+                'valor' => 'required|numeric|min:1'
+            ]);
+            
+            $conf = Configuracion::find($id)
+                ->update($validated);
+            return response()->json([
+                'data' => $conf,
+            ]);
+
+        }catch(\Exception $e){  
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 400);
+        }     
     }
 }

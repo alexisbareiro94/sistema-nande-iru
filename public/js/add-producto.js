@@ -12,15 +12,18 @@ const boton = document.getElementById("boton");
 const distribuidor_id = document.getElementById("distribuidor_id");
 const tipoProductoRadios = document.getElementsByName("tipo-producto");
 let codigoAuto = false;
-document.getElementById('codigo-auto').addEventListener('click', function(){
-    if (this.value === 'false'){
-        codigoAuto = true;
-        this.value = true;
-    }else{
-        codigoAuto = false;
-        this.value = false;
-    }
-});
+
+if (document.getElementById('codigo-auto')) {
+    document.getElementById('codigo-auto').addEventListener('click', function () {
+        if (this.value === 'false') {
+            codigoAuto = true;
+            this.value = true;
+        } else {
+            codigoAuto = false;
+            this.value = false;
+        }
+    });
+}
 
 const labelServicio = document.getElementById("l-servicio");
 const labelProducto = document.getElementById("l-producto");
@@ -33,98 +36,105 @@ tipoProductoRadios.forEach(radio => {
         if (e.target.value === 'servicio') {
             labelServicio.classList.add('bg-gray-700');
             labelProducto.classList.remove('bg-gray-700');
-            spanProducto.classList = 'text-gray-800 font-black'    
-            spanServicio.classList = 'text-white font-black'    
+            spanProducto.classList = 'text-gray-800 font-black'
+            spanServicio.classList = 'text-white font-black'
             tipoSeleccionado = "servicio";
         } else {
             labelServicio.classList.remove('bg-gray-700');
             labelProducto.classList.add('bg-gray-700');
-            spanServicio.classList = 'text-gray-800 font-black'    
-            spanProducto.classList = 'text-white font-black'    
+            spanServicio.classList = 'text-gray-800 font-black'
+            spanProducto.classList = 'text-white font-black'
             tipoSeleccionado = "producto";
         }
     });
 });
 
-boton.addEventListener("click", (e) => {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    const formData = new FormData();
-    formData.append('nombre', nombre.value);
-    formData.append('codigo', codigo.value);
-    formData.append('codigo_auto', codigoAuto);
-    formData.append('categoria_id', categoria_id.value ?? "");
-    formData.append('marca_id', marca_id.value ?? "");
-    formData.append('descripcion', descripcion.value ?? "");
-    formData.append('precio_venta', precio_venta.value ?? "");
-    formData.append('precio_compra', precio_compra.value ?? "");
-    formData.append('stock', stock.value ?? "");
-    formData.append('stock_minimo', stock_minimo.value ?? "");
-    formData.append('distribuidor_id', distribuidor_id.value ?? "");
-    formData.append('tipo', tipoSeleccionado ?? "");
-    formData.append('imagen', imagen.files[0] ?? "");    
-    fetch('http://127.0.0.1:80/agregar-producto', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': csrfToken
-        },
-        body: formData
-    })
-        .then(res => {
-            if (!res.ok) {
-                return res.json().then(errData => { throw errData });
-            }
-            return res.json();
+if (boton) {
+
+    boton.addEventListener("click", (e) => {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const formData = new FormData();
+        formData.append('nombre', nombre.value);
+        formData.append('codigo', codigo.value);
+        formData.append('codigo_auto', codigoAuto);
+        formData.append('categoria_id', categoria_id.value ?? "");
+        formData.append('marca_id', marca_id.value ?? "");
+        formData.append('descripcion', descripcion.value ?? "");
+        formData.append('precio_venta', precio_venta.value ?? "");
+        formData.append('precio_compra', precio_compra.value ?? "");
+        formData.append('stock', stock.value ?? "");
+        formData.append('stock_minimo', stock_minimo.value ?? "");
+        formData.append('distribuidor_id', distribuidor_id.value ?? "");
+        formData.append('tipo', tipoSeleccionado ?? "");
+        formData.append('imagen', imagen.files[0] ?? "");
+        fetch('http://127.0.0.1:80/agregar-producto', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: formData
         })
-        .then(data => {            
-            document.getElementById('form-add-producto').reset();
-            document.getElementById('imagen-preview').src = "";
-            document.getElementById("preview-cont").classList.add('hidden');
-            document.getElementById("div-img-original").classList.remove('hidden');
-            showToast("Producto agregado con éxito", "success");            
-        })
-        .catch(err => {            
-            const errores = ['nombre', 'codigo', 'tipo', 'descripcion', 'precio_compra', 'precio_venta', 'stock', 'stock_minimo',
-                'categoria_id', 'marca_id', 'distribuidor_id', 'ventas', 'imagen',]
-            errores.forEach(errori => {
-                if (err.errors[errori]) {
-                    showToast(`${err.errors[errori]}`, "error");
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(errData => { throw errData });
                 }
+                return res.json();
+            })
+            .then(data => {
+                document.getElementById('form-add-producto').reset();
+                document.getElementById('imagen-preview').src = "";
+                document.getElementById("preview-cont").classList.add('hidden');
+                document.getElementById("div-img-original").classList.remove('hidden');
+                showToast("Producto agregado con éxito", "success");
+            })
+            .catch(err => {
+                const errores = ['nombre', 'codigo', 'tipo', 'descripcion', 'precio_compra', 'precio_venta', 'stock', 'stock_minimo',
+                    'categoria_id', 'marca_id', 'distribuidor_id', 'ventas', 'imagen',]
+                errores.forEach(errori => {
+                    if (err.errors[errori]) {
+                        showToast(`${err.errors[errori]}`, "error");
+                    }
+                });
             });
-        });
-});
+    });
 
+}
 //mostar preview de la imagen
-imagen.addEventListener('change', (e) => { //evento del input de la imagen    
-    const file = e.target.files[0];
-    const contImgOriginal = document.getElementById("div-img-original"); //div contenedor de la imagen que se va a enviar
-    const preview = document.getElementById("imagen-preview"); //input para el preview de la imagen
-    const previewCont = document.getElementById("preview-cont"); //<div/> contenedor donde se va a mostrar el preview
+if (imagen) {
+    imagen.addEventListener('change', (e) => { //evento del input de la imagen    
+        const file = e.target.files[0];
+        const contImgOriginal = document.getElementById("div-img-original"); //div contenedor de la imagen que se va a enviar
+        const preview = document.getElementById("imagen-preview"); //input para el preview de la imagen
+        const previewCont = document.getElementById("preview-cont"); //<div/> contenedor donde se va a mostrar el preview
 
-    if (file) {
-        const reader = new FileReader();
+        if (file) {
+            const reader = new FileReader();
 
-        reader.onload = (e) => {
-            preview.src = e.target.result;
-            previewCont.classList.remove('hidden');
-            contImgOriginal.classList.add('hidden');
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+                previewCont.classList.remove('hidden');
+                contImgOriginal.classList.add('hidden');
+            }
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = "";
+            //previewCont.classList.remove('hidden');
         }
-        reader.readAsDataURL(file);
-    } else {
-        preview.src = "";
-        //previewCont.classList.remove('hidden');
-    }
-});
+    });
+}
 
 //elimiar el preview
-document.getElementById("cerrar-preview").addEventListener("click", () => {
-    const contImgOriginal = document.getElementById("div-img-original"); //div contenedor de la imagen que se va a enviar
-    const preview = document.getElementById("imagen-preview"); //input para el preview de la imagen
-    const previewCont = document.getElementById("preview-cont"); //<div/> contenedor donde se va a mostrar el preview
-
-    contImgOriginal.classList.remove('hidden');
-    preview.src = ""
-    previewCont.classList.add('hidden');
-});
+if(document.getElementById("cerrar-preview")){
+    document.getElementById("cerrar-preview").addEventListener("click", () => {
+        const contImgOriginal = document.getElementById("div-img-original"); //div contenedor de la imagen que se va a enviar
+        const preview = document.getElementById("imagen-preview"); //input para el preview de la imagen
+        const previewCont = document.getElementById("preview-cont"); //<div/> contenedor donde se va a mostrar el preview
+        
+        contImgOriginal.classList.remove('hidden');
+        preview.src = ""
+        previewCont.classList.add('hidden');
+    });
+}
 
 //agregar categorias y marcas
 addCategoria = document.getElementById("add-categoria");
@@ -132,22 +142,25 @@ addMarca = document.getElementById("add-marca");
 btnCerrarCategoria = document.getElementById("cerrar-categoria");
 contAddCategoria = document.getElementById("cont-add-categoria");
 
-addCategoria.addEventListener("click", () => {
-    contAddCategoria.classList.remove('hidden');
-
-});
-
-btnCerrarCategoria.addEventListener("click", () => {
-    contAddCategoria.classList.add('hidden');
-});
+if(addCategoria){
+    addCategoria.addEventListener("click", () => {
+        contAddCategoria.classList.remove('hidden');
+        
+    });
+}
+if(btnCerrarCategoria){
+    btnCerrarCategoria.addEventListener("click", () => {
+        contAddCategoria.classList.add('hidden');
+    });
+}
 
 function showToast(message, type = 'success') {
     const container = document.getElementById('toast-container');
     const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
-    const icon = type === 'success' ? 
+    const icon = type === 'success' ?
         `<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
             <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a1 1 0 0 0 1.414 0l4-4Z" clip-rule="evenodd"/>
-        </svg>`  : 
+        </svg>`  :
         `<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
             <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v5a1 1 0 1 0 2 0V8Zm-1 7a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H12Z" clip-rule="evenodd"/>
         </svg>`;
@@ -190,7 +203,7 @@ const contVerDistribuidores = document.getElementById("cont-ver-dists");
 verDistribuidores.addEventListener("click", (e) => {
     contVerDistribuidores.classList.remove('hidden');
     const q = document.getElementById('query');
-    const cerrarq = document.getElementById('cerrar-q');    
+    const cerrarq = document.getElementById('cerrar-q');
 });
 cerrarVerDist = document.getElementById("cerrar-ver-dists");
 cerrarVerDist.addEventListener("click", (e) => {
@@ -326,15 +339,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return res.json();
             })
             .then(data => {
-                showToast("Marca agregada con éxito", "success");                
+                showToast("Marca agregada con éxito", "success");
                 recargarTodo();
                 marcaNombre.value = '';
             })
             .catch(err => {
                 if (err.errors) {
-                    showToast("⚠ Error: " + Object.values(err.errors).join(', '), "error");                    
+                    showToast("⚠ Error: " + Object.values(err.errors).join(', '), "error");
                 } else {
-                    showToast(`${err['nombre']}`, "error");                    
+                    showToast(`${err['nombre']}`, "error");
                 }
             });
     }
@@ -370,15 +383,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return res.json();
             })
             .then(data => {
-                showToast("Categoría agregada con éxito", "success");                
+                showToast("Categoría agregada con éxito", "success");
                 recargarTodo(); // recargar los selects
                 categoriaNombre.value = ''; // limpiar input
             })
             .catch(err => {
                 if (err.errors) {
-                    showToast("⚠ Error: " + Object.values(err.errors).join(', '), "error");                    
+                    showToast("⚠ Error: " + Object.values(err.errors).join(', '), "error");
                 } else {
-                    showToast(`${err['nombre']}`, "error");                    
+                    showToast(`${err['nombre']}`, "error");
                 }
             });
     }
@@ -392,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addDistribuidor();
     });
 
-    function addDistribuidor() {        
+    function addDistribuidor() {
         const distNombre = document.getElementById('dist-nombre');
         const distRuc = document.getElementById('dist-ruc');
         const distCelular = document.getElementById('dist-celular');
@@ -550,19 +563,19 @@ cerrarq.addEventListener('click', () => {
 }, 300);
 
 
-document.getElementById('btn-abrir-import').addEventListener('click', ()=>{
+document.getElementById('btn-abrir-import').addEventListener('click', () => {
     document.getElementById('import-productos').classList.remove('hidden');
 });
 
 
 
 document.getElementById('import-doc').addEventListener('change', (e) => {
-    const file = e.target.files[0];    
+    const file = e.target.files[0];
     const contFile = document.getElementById('import-cont');
     const preview = document.getElementById('preview-file');
-    const previewCont = document.getElementById('preview-cont-file');    
+    const previewCont = document.getElementById('preview-cont-file');
 
-    if (file) {        
+    if (file) {
         previewCont.classList.remove('hidden');
         preview.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
         contFile.classList.add('hidden');
@@ -582,10 +595,10 @@ document.getElementById('remove-file').addEventListener('click', () => {
 
 document.getElementById('import-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const file = document.getElementById('import-doc').files[0];        
+    const file = document.getElementById('import-doc').files[0];
     const formData = new FormData();
-    formData.append('productos', file);    
-    try{
+    formData.append('productos', file);
+    try {
         const res = await fetch('http://127.0.0.1:80/api/import-products', {
             method: 'POST',
             headers: {
@@ -594,11 +607,11 @@ document.getElementById('import-form').addEventListener('submit', async (e) => {
             body: formData,
         });
         const data = await res.json();
-        if(!res.ok){
+        if (!res.ok) {
             throw data;
-        }        
+        }
         showToast('Productos Importados');
-    }catch(err){
+    } catch (err) {
         showToast(`${err.error}`, 'error');
     }
 });

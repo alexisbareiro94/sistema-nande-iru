@@ -107,7 +107,9 @@ async function ventasChart(periodo = 7) {
         if (ventaChart) {
             ventaChart.destroy();
         }
-
+        if(!bar){
+            return;
+        }
         ventaChart = new Chart(bar, {
             type: 'bar',
             data: {
@@ -441,7 +443,11 @@ async function tendenciasChart(periodo = 7) {
             ganancias = data.datos.map(item => item?.ganancia ?? 0);
             
         }        
-        TendenciasChart = new Chart(document.getElementById('miniChart'), {
+        const miniChart = document.getElementById('miniChart');
+        if(!miniChart){
+            return;
+        }
+        TendenciasChart = new Chart(miniChart, {
             type: 'line',
             data: {
                 labels: data.labels,
@@ -513,7 +519,10 @@ async function egresoChart(periodo = 7) {
 
         if (egresosChart) {
             egresosChart.destroy();
-        }        
+        }       
+        if(!bar){
+            return;
+        } 
         egresosChart = new Chart(bar, {
             type: 'bar',
             data: {
@@ -593,6 +602,9 @@ async function conceptoEgresosChart(periodo = 7) {
         }        
         const labels = data.labels;
         const egresos = labels.map(fecha => data.egresos[fecha].total);
+        if(!donut){
+            return;
+        }
         ConceptoEgresos = new Chart(donut, {
             type: 'pie',
             data: {
