@@ -65,4 +65,9 @@ class Venta extends Model
     {
         return $this->belongsTo(MovimientoCaja::class, 'venta_id');
     }
+
+    public function vendedor()
+    {
+        return $this->belongsTo(User::class, 'vendedor_id');
+    }
 }

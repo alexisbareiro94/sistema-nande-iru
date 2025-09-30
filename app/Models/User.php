@@ -60,7 +60,7 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class, 'user_id');
     }
 
-    public function hasNotification(){
-        
+    public function ventas(){
+        return $this->hasMany(Venta::class, 'vendedor_id');
     }
 }
