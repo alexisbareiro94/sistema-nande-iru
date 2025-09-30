@@ -11,7 +11,11 @@ class NotificacionController extends Controller
     {
         $q = $request->query('all');
         if (filled($q)) {
-            $notificaciones = Notification::orderByDesc('id')->get()->take($q);
+            $items = Notification::orderByDesc('id')->get()->take($q);
+            $notificaciones = $items->each(function ($not) {
+                $not->update(['is_read' => true]);
+            });
+
             return response()->json([
                 'success' => true,
                 'data' => $notificaciones,
