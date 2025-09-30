@@ -25,7 +25,18 @@ class VentaController extends Controller
         $totalVentas = count($query->get());
         $ingresos = $query->sum('total');
         $ingresosHoy = $query->where('created_at', '>=', now()->format('Y-m-d'))->get()->sum('total');
-        $ventas = MovimientoCaja::orderByDesc('created_at')->with('venta')->paginate(10);
+        if (auth()->user()->role === 'admin') {
+            $ventas = MovimientoCaja::orderByDesc('created_at')
+                ->with('venta')
+                ->paginate(10);
+        } else {
+            $ventas = MovimientoCaja::orderByDesc('created_at')
+                ->whereHas('venta', function ($query) {
+                    $query->where('vendedor_id', auth()->user()->id);
+                })
+                ->with('venta')
+                ->paginate(10);
+        }
 
         return view('caja.historial-completo.index', [
             'clientes' => $clientes,
@@ -37,8 +48,8 @@ class VentaController extends Controller
     }
 
     public function index(Request $request)
-    {  
-        try {           
+    {
+        try {
             $query = MovimientoCaja::query();
             $paginacion = $request->query('paginacion');
             $desdeC = $request->query('desde');
@@ -48,13 +59,22 @@ class VentaController extends Controller
             $tipo = $request->query('tipo');
             $search = $request->query('q');
             $orderBy = $request->query('orderBy');
-            $dir = $request->query('direction');            
+            $dir = $request->query('direction');
 
             if ($paginacion === 'true' && !filled($desdeC) && !filled($hastaC) && !filled($formaPago) && !filled($tipo) && !filled($search) && !filled($orderBy)) {
+
+                if (auth()->user()->role === 'admin') {
+                    $ventas = $query->with('venta.cliente')->orderByDesc('created_at')->get()->take(10);
+                } else {
+                    $ventas = $query->whereHas('venta', function ($q) {
+                        return  $q->where('vendedor_id', auth()->user()->id);
+                    })->with('venta.cliente')->orderByDesc('created_at')->get()->take(10);
+                }
+
                 return response()->json([
                     'success' => true,
                     'paginacion' => $paginacion,
-                    'ventas' => $query->with('venta.cliente')->orderByDesc('created_at')->get()->take(10),
+                    'ventas' => $ventas,
                 ]);
             }
 
@@ -106,9 +126,17 @@ class VentaController extends Controller
                 $query->orderBy($orderBy, $dir);
             }
 
-            $ventas = $query->with(['venta' => function ($query) {
-                $query->with(['cliente', 'detalleVentas', 'productos']);
-            }])->orderByDesc('created_at')->get();
+            if (auth()->user()->role === 'admin') {
+                $ventas = $query->with(['venta' => function ($query) {
+                    $query->with(['cliente', 'detalleVentas', 'productos']);
+                }])->orderByDesc('created_at')->get();
+            } else {
+                $ventas = $query->whereHas('venta', function ($query) {
+                    return $query->where('vendedor_id', auth()->user()->id);
+                })->with(['venta' => function ($query) {
+                    $query->with(['cliente', 'detalleVentas', 'productos']);
+                }])->orderByDesc('created_at')->get();
+            }
 
             $egresosFiltros = $ventas->filter(fn($item) => $item->tipo === 'egreso')->sum('monto');
             $ingresosFiltros = $ventas->filter(fn($item) => $item->tipo === 'ingreso')->sum('monto');
@@ -185,6 +213,7 @@ class VentaController extends Controller
             $venta = Venta::create([
                 'caja_id' => $cajaId,
                 'codigo' => generate_code(),
+                'vendedor_id' => auth()->user()->id,
                 'cliente_id' => $userId,
                 'cantidad_productos' => $totalCarrito['cantidadTotal'],
                 'forma_pago' => $metodoPago[0],
@@ -194,7 +223,7 @@ class VentaController extends Controller
                 'total' => $totalCarrito['total'],
                 'estado' => 'completado',
             ]);
-                        
+
             MovimientoCaja::create([
                 'caja_id' => $cajaId,
                 'tipo' => 'ingreso',
@@ -232,7 +261,7 @@ class VentaController extends Controller
                         ], 400);
                     }
                 }
-                $productdb->increment('ventas', $producto->cantidad);                        
+                $productdb->increment('ventas', $producto->cantidad);
             }
 
             foreach ($formaPago as $forma => $monto) {
@@ -260,8 +289,8 @@ class VentaController extends Controller
             $caja = session('caja');
             $caja['saldo'] += $venta->total;
             session()->put(['caja' => $caja]);
-            DB::commit();   
-            VentaRealizada::dispatch($venta);                  
+            DB::commit();
+            VentaRealizada::dispatch($venta);
             crear_caja();
             return response()->json([
                 'success' => true,

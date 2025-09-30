@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('codigo')->unique();            
             $table->foreignId('caja_id')->constrained('users');
             $table->foreignId('cliente_id')->constrained('users');
+            $table->foreignId('vendedor_id')->constrained('users');
             $table->string('nro_ticket')->nullable()->unique();
             $table->string('nro_factura')->nullable()->unique();
             $table->integer('cantidad_productos');
