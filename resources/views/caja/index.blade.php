@@ -5,17 +5,21 @@
 @section('ruta-actual', 'Caja')
 
 @section('contenido')
-    <div class="flex flex-col md:flex-row md:items-center mb-6 gap-4">
-        <div>
-            <h2 class="text-2xl font-bold text-gray-800">Gestión de Caja</h2>
+    <header class="flex justify-between md:flex-row md:items-center mb-6 gap-4">
+        <div class="flex items-center">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800">Gestión de Caja</h2>
+            </div>
+            @if (auth()->user()->role == 'admin')
+                <div>
+                    <a href="{{ route('caja.anteriores') }}"
+                        class="text-sm bg-gray-200 hover:underline text-gray-600 hover:text-gray-800 px-3 py-1.5 rounded-lg transition">
+                        Ver Cajas Anteriores
+                    </a>
+                </div>
+            @endif
         </div>
-        <div>
-            <a href="{{ route('caja.anteriores') }}"
-                class="text-sm bg-gray-200 hover:underline text-gray-600 hover:text-gray-800 px-3 py-1.5 rounded-lg transition">
-                Ver Cajas Anteriores
-            </a>
-        </div>
-    </div>
+    </header>
 
     <div class="flex flex-col">
         <div class="bg-white rounded-xl shadow-sm overflow-hidden p-4">
@@ -136,20 +140,20 @@
                 </div>
 
                 <!-- Panel derecho - Historial de movimientos -->
-                @if (Auth::user()->role == 'admin')                    
-                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Historial de Movimientos</h3>
-                    @include('caja.includes.movimientos')
-                </div>
-                @endif
+                {{-- @if (Auth::user()->role == 'admin') --}}
+                    <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Historial de Movimientos</h3>
+                        @include('caja.includes.movimientos')
+                    </div>
+                {{-- @endif --}}
             </div>
         </div>
 
         <!-- graficos -->
-        @if (Auth::user()->role == 'admin')            
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden p-6 mt-4 h-auto">                     
-            @include('caja.graficos.graficos')
-        </div>
+        @if (Auth::user()->role == 'admin')
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden p-6 mt-4 h-auto">
+                @include('caja.graficos.graficos')
+            </div>
         @endif
 
         @include('caja.includes.modal-venta')

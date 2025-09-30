@@ -12,12 +12,22 @@ use App\Jobs\MovimientoRealizado;
 
 class MovimientoCajaController extends Controller
 {
-    public function __construct(protected MovimientoService $movimientoService){}
+    public function __construct(protected MovimientoService $movimientoService) {}
 
-    public function index()
+    public function index(Request $request)
     {
+        if (auth()->user()->role == 'admin') {
+            $movimientos = MovimientoCaja::orderBy('created_at', 'desc')->limit(3)->get();
+        } else {
+            $movimientos = MovimientoCaja::orderBy('created_at', 'desc')
+                ->whereHas('venta', function ($query) {
+                    return $query->where('vendedor_id', auth()->user()->id);
+                })
+                ->limit(3)
+                ->get();
+        }
         return response()->json([
-            'movimientos' => MovimientoCaja::orderBy('created_at', 'desc')->limit(3)->get(),
+            'movimientos' => $movimientos,
         ]);
     }
 
@@ -65,10 +75,10 @@ class MovimientoCajaController extends Controller
             if ($data['personal_id'] != null) {
                 $pago = $this->movimientoService->pago_salario($data, $movimiento, $request->user()->id);
 
-                if($pago == false){
+                if ($pago == false) {
                     DB::rollBack();
                     return response()->json([
-                        'error' => 'Error al pagar el salario' 
+                        'error' => 'Error al pagar el salario'
                     ], 400);
                 }
             }
@@ -119,7 +129,7 @@ class MovimientoCajaController extends Controller
                 ->whereBetween('created_at', [$desde, $hasta])
                 ->groupBy('periodo')
                 ->orderByRaw("MIN(created_at)")
-                ->get();            
+                ->get();
             return response()->json([
                 'labels'   => $movimientos->pluck('periodo'),
                 'ingresos' => $movimientos->pluck('ingresos'),
