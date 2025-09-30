@@ -160,7 +160,14 @@ class VentaController extends Controller
     {
         try {
             if (!is_numeric($codigo)) {
-                $venta = Venta::where('codigo', $codigo)->with(['detalleVentas', 'cliente', 'pagos', 'caja.user'])->first();
+                $venta = Venta::where('codigo', $codigo)
+                    ->with([
+                        'detalleVentas',
+                        'cliente',
+                        'pagos',
+                        'caja.user',
+                        'vendedor'
+                    ])->first();
 
                 $productos = Producto::whereHas('detalles', function ($query) use ($venta) {
                     return $query->where('venta_id', $venta->id);
@@ -169,7 +176,7 @@ class VentaController extends Controller
                 }])->get();
             }
             if (is_numeric($codigo)) {
-                $venta = MovimientoCaja::find($codigo)->load('caja.user');
+                $venta = MovimientoCaja::find($codigo)->load(['caja.user', 'vendedor']);
             }
 
             return response()->json([

@@ -33,7 +33,7 @@ document.getElementById('modal-detalle-venta').addEventListener('click', functio
     }
 });
 
-async function detalleVentas(codigo) {    
+async function detalleVentas(codigo) {
     try {
         const res = await fetch(`http://127.0.0.1:80/venta/${decodeURIComponent(codigo)}`, {
             method: 'GET',
@@ -61,9 +61,8 @@ function setDataDetalleVenta(data) {
     const mPago = document.getElementById('d-v-pago');
     const codigo = document.getElementById('d-v-codigo');
     const total = document.getElementById('d-v-total');
-    const dvCajero = document.getElementById('dv-cajero');
-
-    dvCajero.innerText = `${data.venta.caja.user.name}`
+    const dvCajero = document.getElementById('dv-cajero');    
+    dvCajero.innerText = `${data.venta.vendedor.name}`
 
     let metodoDePago = '';
     let estadoClass = data.venta.estado === 'completado' ? 'px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium' :
@@ -127,14 +126,29 @@ function setDataDetalleVenta(data) {
 
 document.getElementById('svg-mixto').addEventListener('click', (e) => {
     document.getElementById('d-v-if-mixto').classList.toggle('hidden');
-
 });
 
+let clicks = 0;
+document.addEventListener('click', () => {
+    if (!document.getElementById('d-v-if-mixto').classList.contains('hidden')) {
+        clicks++;
+        if (clicks >= 2) {
+            document.getElementById('d-v-if-mixto').classList.add('hidden');
+            clicks = 0;
+        }
+    } else {
+        return;
+    }
+});
 
 function setMetodosPagosMixto(data) {
     const transf = document.getElementById('d-v-mixto-transf');
     const efectivo = document.getElementById('d-v-mixto-efectivo');
     const total = document.getElementById('d-v-total-mixto');
+
+    if (!transf && !efectivo && !total) {
+        return;
+    }
 
     transf.innerText = `Gs. ${data.venta.pagos[1].monto.toLocaleString('es-PY')}`;
     efectivo.innerText = `Gs. ${data.venta.pagos[0].monto.toLocaleString('es-PY')}`;
@@ -146,6 +160,10 @@ function setCliente(data) {
         const razon = document.getElementById('d-v-razon');
         const rucCi = document.getElementById('d-v-ruc');
 
+        if (!razon && !rucCi) {
+            return;
+        }
+
         razon.innerText = data.venta.cliente.razon_social;
         rucCi.innerText = data.venta.cliente.ruc_ci;
     } else {
@@ -153,15 +171,17 @@ function setCliente(data) {
     }
 }
 
-function setProductos(data) {    
+function setProductos(data) {
+    if (!document.getElementById('d-v-bodyTable')) {
+        return;
+    }
     const bodyTabla = document.getElementById('d-v-bodyTable');
-    console.log(data)    
     bodyTabla.innerHTML = '';
     if (data.productos != '') {
         data.productos.forEach(producto => {
             const tipoClass = producto.tipo === 'servicio'
-  ? 'bg-green-100 text-green-800 border border-green-300'
-  : 'bg-blue-100 text-blue-800 border border-blue-300';
+                ? 'bg-green-100 text-green-800 border border-green-300'
+                : 'bg-blue-100 text-blue-800 border border-blue-300';
             const tr = document.createElement('tr');
             tr.innerHTML = `
             <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -189,49 +209,53 @@ function setProductos(data) {
 }
 
 
-document.getElementById('dv-buscar').addEventListener('click', () => {
-    const desde = document.getElementById('dv-desde').value;
-    const hasta = document.getElementById('dv-hasta').value;
-    const estado = document.getElementById('dv-i-estado').value;
-    const formaPago = document.getElementById('dv-forma-pago').value;
-    const tipo = document.getElementById('dv-tipo').value;
+if (document.getElementById('dv-buscar')) {
+    document.getElementById('dv-buscar').addEventListener('click', () => {
+        const desde = document.getElementById('dv-desde').value;
+        const hasta = document.getElementById('dv-hasta').value;
+        const estado = document.getElementById('dv-i-estado').value;
+        const formaPago = document.getElementById('dv-forma-pago').value;
+        const tipo = document.getElementById('dv-tipo').value;
 
-    if (desde == '' && hasta == '' && estado == '' && formaPago == '' && tipo == '') {
-        window.location.href = '/movimientos'
-        return;
-    }
+        if (desde == '' && hasta == '' && estado == '' && formaPago == '' && tipo == '') {
+            window.location.href = '/movimientos'
+            return;
+        }
 
-    let datos = JSON.parse(sessionStorage.getItem('datos')) ?? {};
-    document.getElementById('dv-borrar-filtros').classList.remove('hidden')
-    datos = {
-        desde: desde,
-        hasta: hasta,
-        estado: estado,
-        formaPago: formaPago,
-        tipo: tipo,
-    }
-    sessionStorage.setItem('datos', JSON.stringify(datos))
-    buscar();
-});
+        let datos = JSON.parse(sessionStorage.getItem('datos')) ?? {};
+        document.getElementById('dv-borrar-filtros').classList.remove('hidden')
+        datos = {
+            desde: desde,
+            hasta: hasta,
+            estado: estado,
+            formaPago: formaPago,
+            tipo: tipo,
+        }
+        sessionStorage.setItem('datos', JSON.stringify(datos))
+        buscar();
+    });
+}
 
 window.addEventListener('DOMContentLoaded', () => {
     let datos = JSON.parse(sessionStorage.getItem('datos'));
     if (datos != null) {
         document.getElementById('dv-borrar-filtros').classList.remove('hidden')
     }
-    if(sessionStorage.getItem('datos')){
+    if (sessionStorage.getItem('datos')) {
         sessionStorage.removeItem('datos')
-        if(!document.getElementById('dv-borrar-filtros').classList.contains('hidden')){
+        if (!document.getElementById('dv-borrar-filtros').classList.contains('hidden')) {
             document.getElementById('dv-borrar-filtros').classList.add('hidden');
         }
     }
 })
 
-document.getElementById('dv-borrar-filtros').addEventListener('click', (e) => {
-    e.target.classList.add('hidden');
-    sessionStorage.removeItem('datos')
-    window.location.href = '/movimientos'
-});
+if (document.getElementById('dv-borrar-filtros')) {
+    document.getElementById('dv-borrar-filtros').addEventListener('click', (e) => {
+        e.target.classList.add('hidden');
+        sessionStorage.removeItem('datos')
+        window.location.href = '/movimientos'
+    });
+}
 
 async function buscar(orderBy = '', direction = '') {
     const datos = JSON.parse(sessionStorage.getItem('datos')) || {};
@@ -511,7 +535,7 @@ document.addEventListener('click', (e) => {
         exportMenu.classList.add('hidden');
         exportMenu.classList.remove('opacity-100');
         exportMenu.classList.add('opacity-0');
-        
+
         iconFlecha.classList.remove('rotate-180');
     }
 });
@@ -519,7 +543,7 @@ document.addEventListener('click', (e) => {
 
 function toastLoading(message = "Cargando...") {
     const container = document.getElementById('loading-container');
-    
+
     const spinner = `
         <svg class="animate-spin w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -533,7 +557,7 @@ function toastLoading(message = "Cargando...") {
     container.appendChild(toast);
 
     setTimeout(() => toast.classList.remove('opacity-0'), 10);
-    
+
     setTimeout(() => {
         toast.classList.add('opacity-0');
         setTimeout(() => toast.remove(), 500);
