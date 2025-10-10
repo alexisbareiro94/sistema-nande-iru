@@ -13,3 +13,12 @@ Broadcast::channel('admin-notificaciones', function ($user) {
 Broadcast::channel('cierre-caja', function ($user){
     return $user->role == 'admin';
 });
+
+//este evento no se usa
+Broadcast::channel('logout', function($user){
+    return $user->role == 'admin';
+});
+
+Broadcast::channel('auth-event', function($user){
+    return $user->role == 'admin';
+});

@@ -28,6 +28,8 @@ class User extends Authenticatable
         'password',
         'salario',
         'activo',
+        'ultima_conexion',
+        'en_linea',
     ];
 
     /**

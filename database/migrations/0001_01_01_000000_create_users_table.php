@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->integer('salario')->nullable();
             $table->boolean('activo')->nullable();
+            $table->boolean('en_linea')->nullable();
             $table->dateTimeTz('ultima_conexion')->nullable();
             $table->rememberToken();
             $table->timestamps();

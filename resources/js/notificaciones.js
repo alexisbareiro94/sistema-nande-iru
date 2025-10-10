@@ -266,3 +266,29 @@ if (document.getElementById('cargar-mas')) {
         renderNotificaciones();
     });
 }
+
+window.Echo.private('auth-event')
+    .listen('AuthEvent', (e) => {
+        conexion(e.user, e.tipo, e.ultimaConexion);
+    })
+    .error((error) => {
+        console.log('Error en el canal:', error);
+    });
+    
+function conexion(userFromEvent, tipo, ultimaConexion = null) {
+    const tds = document.querySelectorAll('.td-personal');
+    
+    tds.forEach(td => {
+        const userIdTd = td.dataset.id;
+
+        if (userFromEvent.id == userIdTd) {
+            td.classList.remove('text-green-500');
+            if (tipo === 'logout') {
+                td.innerText = ultimaConexion;
+            } else {
+                td.classList.add('text-green-500');
+                td.innerText = 'En línea';
+            }
+        }
+    });
+}

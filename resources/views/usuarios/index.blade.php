@@ -68,6 +68,12 @@
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                                     Sueldo
                                 </th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                    conexión
+                                </th>                                
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                    ultima actividad
+                                </th>                                
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -76,6 +82,12 @@
                                     <td class="px-4 py-3">{{ ucfirst($user->role) }}</td>
                                     <td class="px-4 py-3">{{ ucfirst($user->name) }}</td>
                                     <td class="px-4 py-3">Gs. {{ moneda($user->salario) }}</td>
+                                    <td id="estado" data-id="{{ $user->id }}" @class([
+                                        'td-personal px-4 py-3 font-semibold', 
+                                        'text-green-500' => $user->en_linea])
+                                    > 
+                                        {{ $user->en_linea ? 'En linea' : ($user->ultima_conexion != null ? format_time($user->ultima_conexion) : '' ) }}                                        
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -239,47 +251,6 @@
                             @endforeach
                         </tbody>
                     </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- Sección 5: Actividad y Auditoría -->
-        <section class="mb-10">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">📋 Actividad y Auditoría</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Últimos accesos -->
-                <div class="bg-white p-5 rounded-lg shadow-md">
-                    <h3 class="font-bold mb-3">🚪 Últimos Accesos</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><strong>Juan Pérez</strong> - hace 2 horas</li>
-                        <li><strong>Ana López</strong> - hace 4 horas</li>
-                        <li><strong>Carlos Ruiz</strong> - ayer</li>
-                        <li><strong>Lucía Méndez</strong> - hace 3 días</li>
-                    </ul>
-                </div>
-                <!-- Últimas acciones -->
-                <div class="bg-white p-5 rounded-lg shadow-md">
-                    <h3 class="font-bold mb-3">📝 Últimas Acciones</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><strong>Registro de venta</strong> por Ana López - ID #1023</li>
-                        <li><strong>Edición de producto</strong> por Juan Pérez - “Laptop XYZ”</li>
-                        <li><strong>Nuevo usuario creado</strong> por Admin - “Carlos Ruiz”</li>
-                        <li><strong>Reporte descargado</strong> por Lucía Méndez</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <span class="h-5 w-5 text-yellow-500 font-bold">⚠️</span>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm text-yellow-800">
-                            <strong>Alerta:</strong> 3 intentos fallidos de inicio de sesión para
-                            “carlos.ruiz@email.com”.
-                            <a href="#" class="underline ml-1">Investigar</a>
-                        </p>
-                    </div>
                 </div>
             </div>
         </section>
