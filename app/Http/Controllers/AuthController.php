@@ -7,15 +7,17 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\{User, Caja, MovimientoCaja};
 use App\Events\NotificacionEvent;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function __construct()    
+    public function __construct()
     {
-       crear_caja();
+        crear_caja();
     }
 
-    public function index(){              
+    public function index()
+    {
         return view('home.index');
     }
 
@@ -23,10 +25,10 @@ class AuthController extends Controller
     {
         return view('Auth.login');
     }
-  
+
     public function login(Request $request)
-    {      
-        try{
+    {
+        try {
             $validate = $request->validate([
                 'email' => 'required|exists:users,email',
                 'password' => 'required'
@@ -34,23 +36,24 @@ class AuthController extends Controller
                 'email.required' => 'completar el campo email',
                 'email.exists' => 'El email no esta registrado',
                 'password.*' => 'completar el campo contraseña'
-            ]);
+            ]);            
+
             if (Auth::attempt($validate)) {
                 $user = Auth::user();
                 NotificacionEvent::dispatch('Nuevo Inicio de Sesion', "$user->name inicio sesion", 'blue');
-                if($user->role == 'personal' || $user->role == 'caja'){
+                if ($user->role == 'personal' || $user->role == 'caja') {
                     return redirect()->route('caja.index');
                 }
                 if ($user->role === 'cliente') {
                     session()->flush();
-                }
+                }              
                 return redirect()->route('home');
-            } else {            ;
-                NotificacionEvent::dispatch('Intento de inicio de sesion'," de: " . $validate['email'] , 'orange');
+            } else {;
+                NotificacionEvent::dispatch('Intento de inicio de sesion', " de: " . $validate['email'], 'orange');
                 return back()->with('error');
-            }     
-        }catch(\Exception $e){
-            NotificacionEvent::dispatch('Intento de inicio de sesion'," de: " . $request->email , 'orange');            
+            }
+        } catch (\Exception $e) {
+            NotificacionEvent::dispatch('Intento de inicio de sesion', " de: " . $request->email, 'orange');
             return back()->with('error', $e->getMessage());
         }
     }
@@ -87,7 +90,7 @@ class AuthController extends Controller
     }
 
     public function logout()
-    {   
+    {
         $user = Auth::user();
         NotificacionEvent::dispatch('Cierre de Sesion', "$user->name a cerrado sesion", 'blue');
         Auth::logout();
