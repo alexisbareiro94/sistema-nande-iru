@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{MovimientoCaja, Venta, Producto, Pago, DetalleVenta};
+use App\Models\{MovimientoCaja, Venta};
 use App\Services\ReporteService;
 use Carbon\Carbon;
+use App\Events\NotificacionEvent;
 
 class ReporteController extends Controller
 {

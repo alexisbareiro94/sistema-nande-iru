@@ -38,7 +38,6 @@ function mostrarNotificacion(tipo = 'tipo', mensaje = 'No se pudo cargar el mens
     }, 5000);
 }
 
-// Escuchar canal privado de admins
 function listenNotification() {
     window.Echo.private('admin-notificaciones')
         .listen('NotificacionEvent', (e) => {
@@ -75,6 +74,9 @@ listenCierreCaja();
 
 async function getDataNotificaciones(flag = false) {
     try {
+        if (!document.getElementById('alert-cont')) {
+            return;
+        }
         const res = await fetch('http://127.0.0.1:80/api/notificaciones');
         const data = await res.json();
 
@@ -94,7 +96,7 @@ async function getDataNotificaciones(flag = false) {
 
 function renderNotifications(data) {
     const alertCont = document.getElementById('alert-cont');
-    if(!alertCont){
+    if (!alertCont) {
         return;
     }
     alertCont.innerHTML = '';
@@ -124,7 +126,6 @@ function renderNotifications(data) {
                 title: "text-red-800",
                 span: "text-red-500",
             },
-            // etc...
         };
 
 
@@ -155,6 +156,9 @@ getDataNotificaciones();
 
 
 async function isRead() {
+    if (!document.getElementById('alert-cont')) {
+        return;
+    }
     const data = await getDataNotificaciones(true)
     const ids = data.notificaciones
         .filter(item => item?.is_read === false)
@@ -184,7 +188,7 @@ if (window.location.pathname === "/reportes") {
     isRead();
 }
 
-if(document.getElementById('todas-alertas')){
+if (document.getElementById('todas-alertas')) {
     document.getElementById('todas-alertas').addEventListener('click', () => {
         document.getElementById('todas-notificaciones-modal').classList.remove('hidden');
         sessionStorage.setItem('pag', JSON.stringify(10));
@@ -192,14 +196,14 @@ if(document.getElementById('todas-alertas')){
     });
 }
 
-if(document.getElementById('cerrar-notificaciones')){
+if (document.getElementById('cerrar-notificaciones')) {
     document.getElementById('cerrar-notificaciones').addEventListener('click', () => {
         sessionStorage.removeItem('pag');
         const cargarMas = document.getElementById('cargar-mas');
         cargarMas.classList = 'px-3 py-2 rounded-lg font-semibold bg-gray-200 cursor-pointer transition-all duration-200 hover:bg-gray-300'
         cargarMas.innerText = 'Cargar mas'
         document.getElementById('todas-notificaciones-modal').classList.add('hidden');
-    });   
+    });
 }
 
 async function allNotifications() {
@@ -220,10 +224,10 @@ async function allNotifications() {
 
 async function renderNotificaciones() {
     const allNotifCont = document.getElementById('all-notif-cont');
-    const data = await allNotifications();    
+    const data = await allNotifications();
     const pag = JSON.parse(sessionStorage.getItem('pag'));
     allNotifCont.innerHTML = '';
-    
+
     data.data.forEach(item => {
         const fecha = new Date(item.created_at);
         const fechaFormateada = fecha.toLocaleString('es-PY', {
@@ -244,20 +248,20 @@ async function renderNotificaciones() {
                                     class="text-xs absolute top-0 text-${item.color}-500 right-0">${fechaFormateada}</span>
                             </div>
                         </div>`;
-    allNotifCont.appendChild(div);
+        allNotifCont.appendChild(div);
     });
     console.log(data.count, pag)
-    if(pag > data.count){
+    if (pag > data.count) {
         const cargarMas = document.getElementById('cargar-mas');
         cargarMas.classList = 'px-3 py-2 rounded-lg font-semibold'
         cargarMas.innerText = 'Ya no hay notificaciones'
     }
-    
+
 }
 
-if(document.getElementById('cargar-mas')){
-    document.getElementById('cargar-mas').addEventListener('click', ()=>{
-        const pag = JSON.parse(sessionStorage.getItem('pag')) + 10;    
+if (document.getElementById('cargar-mas')) {
+    document.getElementById('cargar-mas').addEventListener('click', () => {
+        const pag = JSON.parse(sessionStorage.getItem('pag')) + 10;
         sessionStorage.setItem('pag', JSON.stringify(pag));
         renderNotificaciones();
     });

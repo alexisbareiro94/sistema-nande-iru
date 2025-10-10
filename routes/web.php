@@ -119,14 +119,11 @@ Route::get('/borrar-session', function () {
     session()->forget('ventas');
 });
 
+use Illuminate\Http\Request;
+Route::get('/debug', function (Request $request) {
+     $salarios = User::whereNot('role', 'cliente')
+            ->where('activo', true)
+            ->selectRaw("sum(salario) as salarios")->get();
 
-Route::get('/debug', function () {
-    dd( Venta::where('id', 286)
-                    ->with([
-                        'detalleVentas',
-                        'cliente',
-                        'pagos',
-                        'caja.user',
-                        'vendedor'
-                    ])->first());
+            dd($salarios);
 });

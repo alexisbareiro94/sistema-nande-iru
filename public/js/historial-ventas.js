@@ -53,8 +53,6 @@ async function detalleVentas(codigo) {
     }
 }
 
-
-
 function setDataDetalleVenta(data) {
     const fecha = document.getElementById('d-v-fecha');
     const estado = document.getElementById('d-v-estado');

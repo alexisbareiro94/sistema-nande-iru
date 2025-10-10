@@ -12,14 +12,17 @@ function limpiarSessions() {
 let PagosChart = null;
 async function pagosChart(periodo = 7) {
     try {
+        const donut = document.getElementById('pagosChart');
+        if(!donut){
+            return;
+        }
         const res = await fetch(`http://127.0.0.1:80/api/pagos/${periodo}`);
         const data = await res.json();
 
         if (!res.ok) {
             throw data
         }
-
-        const donut = document.getElementById('pagosChart');
+        
         if (PagosChart) {
             PagosChart.destroy();
         }
@@ -94,12 +97,15 @@ pagoBtns.forEach(btn => {
 let ventaChart = null;
 async function ventasChart(periodo = 7) {
     try {
+        const bar = document.getElementById('ventasChart');
+        if(!bar){
+            return;
+        }
         const res = await fetch(`http://127.0.0.1:80/api/ventas/${periodo}`)
         const data = await res.json();
         if (!res.ok) {
             throw data;
-        }
-        const bar = document.getElementById('ventasChart');
+        }        
 
         const labels = data.labels;
         const valores = labels.map(fecha => data.ventas[fecha].total);
@@ -107,9 +113,7 @@ async function ventasChart(periodo = 7) {
         if (ventaChart) {
             ventaChart.destroy();
         }
-        if(!bar){
-            return;
-        }
+        
         ventaChart = new Chart(bar, {
             type: 'bar',
             data: {
@@ -178,13 +182,16 @@ btns.forEach(btn => {
 let tipoVentaChart = null;
 async function tipoVenta(periodo = 7) {
     try {
+        const donutVenta = document.getElementById('tipoVentaChart');
+        if(!donutVenta){
+            return;
+        }
         const res = await fetch(`http://127.0.0.1:80/api/tipo_venta/${periodo}`);
         const data = await res.json();
 
         if (!res.ok) {
             throw data
-        }
-        const donutVenta = document.getElementById('tipoVentaChart');
+        }        
         if (tipoVentaChart) {
             tipoVentaChart.destroy();
         }
@@ -416,8 +423,7 @@ async function gananacias(periodo = '7', option = '', egreso = '') {
         }
 
     } catch (err) {
-        console.log(err)
-        // showToast(`${err.error ?? 'error'}`, 'error');
+        console.log(err)        
     }
 }
 
@@ -425,7 +431,11 @@ async function gananacias(periodo = '7', option = '', egreso = '') {
 let TendenciasChart = null;
 async function tendenciasChart(periodo = 7) {
     const regreso = JSON.parse(sessionStorage.getItem('regreso')) || '';    
-    try {
+    try {        
+        const miniChart = document.getElementById('miniChart');
+        if(!miniChart){
+            return;
+        }
         sessionStorage.setItem('tenPeriodo', JSON.stringify(periodo));        
         const res = await fetch(`http://127.0.0.1:80/api/tendencias/${periodo}`);
         const data = await res.json();
@@ -442,11 +452,7 @@ async function tendenciasChart(periodo = 7) {
         }else{
             ganancias = data.datos.map(item => item?.ganancia ?? 0);
             
-        }        
-        const miniChart = document.getElementById('miniChart');
-        if(!miniChart){
-            return;
-        }
+        }                
         TendenciasChart = new Chart(miniChart, {
             type: 'line',
             data: {
@@ -507,13 +513,16 @@ tendenciaBtns.forEach(btn => {
 let egresosChart = null;
 async function egresoChart(periodo = 7) {
     try {
+        const bar = document.getElementById('egresosChart');
+        if(!bar){
+            return;
+        }
         const res = await fetch(`http://127.0.0.1:80/api/egresos/${periodo}`)
         const data = await res.json();
         if (!res.ok) {
             throw data;
         }
-        const bar = document.getElementById('egresosChart');
-
+        
         const labels = data.labels;
         const egresos = labels.map(fecha => data.egresos[fecha].total);
 
@@ -589,14 +598,17 @@ egesosBtns.forEach(btn => {
 let ConceptoEgresos = null;
 async function conceptoEgresosChart(periodo = 7) {
     try {
+        const donut = document.getElementById('egresosConceptoChart');
+        if(!donut){
+            return;
+        }
         const res = await fetch(`http://127.0.0.1:80/api/egresos/concepto/${periodo}`);
         const data = await res.json();
 
         if (!res.ok) {
             throw data
         }
-
-        const donut = document.getElementById('egresosConceptoChart');
+        
         if (ConceptoEgresos) {
             ConceptoEgresos.destroy();
         }        
