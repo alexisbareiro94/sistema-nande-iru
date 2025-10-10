@@ -5,24 +5,38 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdatePersonalRequest;
+use App\Models\MovimientoCaja;
+use App\Models\PagoSalario;
 
 class GestionUsersController extends Controller
 {
     public function index_view()
     {
-        $users = User::whereNot('role', 'admin')
-            ->whereNot('role', 'cliente')
+        $users = User::whereNot('role', 'cliente')
+            ->where('activo', true)
+            ->with('pagoSalarios')
             ->get();
+
+        $salarios = User::whereNot('role', 'cliente')
+            ->where('activo', true)
+            ->selectRaw("sum(salario) as salario")
+            ->first()->salario;    
+
+        $pagos = PagoSalario::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+            ->with('user')
+            ->get();        
 
         return view('usuarios.index', [
             'users' => $users,
+            'salarios' => $salarios,
+            'pagos' => $pagos,
         ]);
     }
 
     public function index()
     {
         $users = User::whereNot('role', 'admin')
-            ->whereNot('role', 'cliente')            
+            ->whereNot('role', 'cliente')
             ->get();
 
         return response()->json([
@@ -55,7 +69,7 @@ class GestionUsersController extends Controller
     {
         try {
             $user = User::whereNot('role', 'admin')
-                ->whereNot('role', 'cliente')                
+                ->whereNot('role', 'cliente')
                 ->where('id', $id)
                 ->first();
 
@@ -74,7 +88,7 @@ class GestionUsersController extends Controller
     public function update(UpdatePersonalRequest $request, string $id)
     {
         try {
-            $data = $request->validated();            
+            $data = $request->validated();
             User::find($id)->update($data);
 
             return response()->json([

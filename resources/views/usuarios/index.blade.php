@@ -8,7 +8,7 @@
     <!-- Navbar -->
     <header class="flex flex-col md:flex-row md:items-center mb-6 gap-4">
         <div>
-            <h2 class="text-2xl font-bold text-gray-800">Gestión de Caja</h2>
+            <h2 class="text-2xl font-bold text-gray-800">Gestión de Usuarios</h2>
         </div>
     </header>
 
@@ -40,7 +40,7 @@
                         <span class="text-blue-600 font-bold">$</span>
                     </div>
                     <h3 class="font-semibold text-gray-700">Sueldo Total (Mes)</h3>
-                    <p class="text-2xl font-bold text-gray-900">$18,500</p>
+                    <p class="text-2xl font-bold text-gray-900">Gs. {{ moneda($salarios) }}</p>
                 </div>
                 <!-- Roles Existentes -->
                 <div class="bg-white p-5 rounded-lg shadow-md flex flex-col items-center justify-center text-center">
@@ -54,40 +54,30 @@
 
             <!-- Estadísticas por Rol -->
             <div class="bg-white p-6 rounded-lg shadow-md">
-                <h3 class="font-bold text-lg mb-4">Empleados por Rol</h3>
+                <h3 class="font-bold text-lg mb-4">Empleados</h3>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Rol</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cantidad
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                    Rol
                                 </th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Sueldo
-                                    Promedio
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                    Nombre
+                                </th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                    Sueldo
                                 </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            <tr>
-                                <td class="px-4 py-3">Administrador</td>
-                                <td class="px-4 py-3">3</td>
-                                <td class="px-4 py-3">$4,000</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3">Cajero</td>
-                                <td class="px-4 py-3">15</td>
-                                <td class="px-4 py-3">$1,200</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3">Vendedor</td>
-                                <td class="px-4 py-3">25</td>
-                                <td class="px-4 py-3">$1,500</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3">Soporte</td>
-                                <td class="px-4 py-3">5</td>
-                                <td class="px-4 py-3">$1,300</td>
-                            </tr>
+                            @foreach ($users as $user)
+                                <tr>
+                                    <td class="px-4 py-3">{{ ucfirst($user->role) }}</td>
+                                    <td class="px-4 py-3">{{ ucfirst($user->name) }}</td>
+                                    <td class="px-4 py-3">Gs. {{ moneda($user->salario) }}</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -158,11 +148,8 @@
                         <select id="edit-user" class="w-full p-2 border rounded">
                             <option disabled selected>Seleccionar usuario</option>
                             @foreach ($users as $user)
-                                <option @class([
-                                    '', 
-                                    'text-gray-300 underline' => $user->activo == false
-                                    ]) 
-                                    value="{{ $user->id }}">{{ $user->name }} {{ $user->activo == false ? ' - Inactivo' : '' }} </option>
+                                <option @class(['', 'text-gray-300 underline' => $user->activo == false]) value="{{ $user->id }}">{{ $user->name }}
+                                    {{ $user->activo == false ? ' - Inactivo' : '' }} </option>
                             @endforeach
                         </select>
                         <input id="name-selected" type="text" placeholder="Nombre" class="w-full p-2 border rounded"
@@ -176,7 +163,7 @@
                         </select>
                         <input id="salario-selected" type="number" placeholder="Nuevo salario"
                             class="w-full p-2 border rounded" value="" />
-                        <button id="btn-actualizar" type="submit" 
+                        <button id="btn-actualizar" type="submit"
                             class="w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600">Actualizar</button>
                     </form>
                 </div>
@@ -188,9 +175,9 @@
                         <select id="personal-activo" class="w-full p-2 border rounded">
                             <option disabled selected>Seleccionar usuario</option>
                             @foreach ($users as $user)
-                                @if ($user->activo == true)                                
+                                @if ($user->activo == true)
                                     <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endif                        
+                                @endif
                             @endforeach
                         </select>
                         <div class="flex space-x-2">
@@ -210,58 +197,9 @@
             </div>
         </section>
 
-        <!-- Sección 3: Roles y Permisos -->
-        <section class="mb-10">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">🔐 Roles y Permisos</h2>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h3 class="font-bold mb-4">Definir permisos por rol</h3>
-                <div class="space-y-4">
-                    <!-- Ejemplo: Administrador -->
-                    <div class="border p-4 rounded">
-                        <h4 class="font-semibold text-indigo-700">Administrador</h4>
-                        <p class="text-sm text-gray-600">Puede hacer todo: gestionar usuarios, roles, productos,
-                            ventas,
-                            sueldos, etc.</p>
-                    </div>
-                    <!-- Cajero -->
-                    <div class="border p-4 rounded">
-                        <h4 class="font-semibold text-green-700">Cajero</h4>
-                        <p class="text-sm text-gray-600">Registrar ventas y ver su historial. Sin acceso a gestión de
-                            usuarios o productos.</p>
-                    </div>
-                    <!-- Vendedor -->
-                    <div class="border p-4 rounded">
-                        <h4 class="font-semibold text-blue-700">Vendedor</h4>
-                        <p class="text-sm text-gray-600">Ver productos y registrar ventas. Sin acceso a caja completa o
-                            reportes financieros.</p>
-                    </div>
-                </div>
-                <div class="mt-6">
-                    <h4 class="font-semibold mb-2">➕ Crear Rol Personalizado</h4>
-                    <input type="text" placeholder="Nombre del rol" class="w-full p-2 border rounded mb-2" />
-                    <div class="space-y-2 text-sm">
-                        <label class="flex items-center">
-                            <input type="checkbox" class="mr-2" /> Gestionar usuarios
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" class="mr-2" /> Registrar ventas
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" class="mr-2" /> Ver reportes
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" class="mr-2" /> Gestionar productos
-                        </label>
-                    </div>
-                    <button class="mt-3 bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700">Crear
-                        Rol</button>
-                </div>
-            </div>
-        </section>
-
         <!-- Sección 4: Visualización de Sueldos -->
         <section class="mb-10">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">💰 Sueldos</h2>
+            <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">💰 Pago de Sueldos</h2>
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4">
                     <h3 class="font-bold">Listado de Sueldos</h3>
@@ -280,8 +218,7 @@
                         <thead>
                             <tr>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Empleado
-                                </th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Rol</th>
+                                </th>                                
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Sueldo</th>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Fecha Pago
                                 </th>
@@ -290,24 +227,16 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            <tr>
-                                <td class="px-4 py-3">Juan Pérez</td>
-                                <td class="px-4 py-3">Administrador</td>
-                                <td class="px-4 py-3">$4,000</td>
-                                <td class="px-4 py-3">01/04/2025</td>
-                                <td class="px-4 py-3">
-                                    <button class="text-blue-600 hover:underline text-sm">Ver recibo</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3">Ana López</td>
-                                <td class="px-4 py-3">Cajero</td>
-                                <td class="px-4 py-3">$1,200</td>
-                                <td class="px-4 py-3">01/04/2025</td>
-                                <td class="px-4 py-3">
-                                    <button class="text-blue-600 hover:underline text-sm">Ver recibo</button>
-                                </td>
-                            </tr>
+                            @foreach ($pagos as $pago)
+                                <tr>
+                                    <td class="px-4 py-3">{{ $pago->user->name }}</td> 
+                                    <td class="px-4 py-3"> Gs. {{ moneda($pago->monto) }}</td>
+                                    <td class="px-4 py-3">{{ format_time($pago->created_at) }}</td>
+                                    <td class="px-4 py-3">
+                                        <button class="text-blue-600 hover:underline text-sm">Ver recibo</button>
+                                    </td>
+                                </tr>                            
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
