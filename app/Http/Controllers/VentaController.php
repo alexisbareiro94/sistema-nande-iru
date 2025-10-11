@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\PdfGeneradoEvent;
 use App\Events\PdfNotificacionEvent;
+use App\Events\UltimaActividadEvent;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreVentaRequest;
 use App\Services\VentaService;
@@ -301,6 +302,7 @@ class VentaController extends Controller
             session()->put(['caja' => $caja]);
             DB::commit();
             VentaRealizada::dispatch($venta);
+            UltimaActividadEvent::dispatch(auth()->user()->id, $venta->total);
             crear_caja();
             return response()->json([
                 'success' => true,
@@ -343,8 +345,7 @@ class VentaController extends Controller
             return response()->json([
                 'data' => 'listo',
             ]);
-        } else {
-        //    return response()->json($item);
+        } else {        
             $ventas = $item->toArray();
             $items = count($ventas);                        
             Cache::forget('ventas');
