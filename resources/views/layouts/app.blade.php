@@ -6,12 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>
+        window.userId = {{ auth()->id() }};
+    </script>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>@yield('titulo', 'Mi Aplicación')</title>
 </head>
 
-<body class="bg-gris min-h-screen flex flex-col">
+<body class="bg-gris min-h-screen flex flex-col">    
+    <div id="pdf-notificacion" class="fixed top-4 right-4 space-y-2 z-[9999]"></div>
     <div id="toast-container" class="fixed top-4 right-4 space-y-2 z-[9999]"></div>
     <div id="loading-container" class="fixed top-4 right-4 space-y-2 z-[9999]"></div>
     <div id="notificaciones" class="fixed top-4 right-4 space-y-2 z-[9999]"></div>
@@ -61,12 +65,20 @@
         @include('includes.cerrar-sesion')
     </main>
     @yield('js')
+
+
     <script src="{{ asset('js/add-producto.js') }}"></script>
     <script src="{{ asset('js/inventario.js') }}"></script>
     <script src="{{ asset('js/edit-producto.js') }}"></script>
     <script src="{{ asset('js/marca.js') }}"></script>
     <script src="{{ asset('js/categoria.js') }}"></script>
     <script src="{{ asset('js/filtros.js') }}"></script>
+    <script src="{{ asset('js/historial-ventas.js') }}" ></script>
+    <script>
+        if(sessionStorage.getItem('pdf-toast')){
+            toastLoading();
+        }
+    </script>
     @if (request()->routeIs('producto.update.view') || request()->routeIs('producto.update'))
         <script src="{{ asset('js/edit-productorep.js') }}"></script>
     @endif

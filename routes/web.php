@@ -29,6 +29,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [AuthController::class, 'index'])->name('home');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/download', function(){
+        return response()->download(public_path("reports/report.pdf"));
+    });
 
     Route::middleware(CajaMiddleware::class)->group(function () {
         //caja
@@ -121,9 +124,5 @@ Route::get('/borrar-session', function () {
 
 use Illuminate\Http\Request;
 Route::get('/debug', function (Request $request) {
-     $salarios = User::whereNot('role', 'cliente')
-            ->where('activo', true)
-            ->selectRaw("sum(salario) as salarios")->get();
-
-            dd($salarios);
+    return response()->download(public_path("reports/report.pdf"));
 });

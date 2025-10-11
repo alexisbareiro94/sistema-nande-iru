@@ -26,3 +26,7 @@ Broadcast::channel('auth-event', function($user){
 Broadcast::channel('pdf-ready.{id}', function($user, $id){
     return (int) $user->id === (int) $id;
 });
+
+Broadcast::channel('ultima-actividad', function($user){
+    return $user->role === 'admin';
+});
