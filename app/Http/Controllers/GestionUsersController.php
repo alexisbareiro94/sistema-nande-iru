@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\{User, PagoSalario, Venta};
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdatePersonalRequest;
-use App\Models\MovimientoCaja;
-use App\Models\PagoSalario;
 
 class GestionUsersController extends Controller
 {
@@ -14,7 +12,7 @@ class GestionUsersController extends Controller
     {
         $users = User::whereNot('role', 'cliente')
             ->where('activo', true)
-            ->with('pagoSalarios')
+            ->with(['pagoSalarios', 'ultima_venta'])
             ->get();
 
         $salarios = User::whereNot('role', 'cliente')
@@ -25,7 +23,7 @@ class GestionUsersController extends Controller
         $pagos = PagoSalario::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
             ->with('user')
             ->get();        
-
+        
         return view('usuarios.index', [
             'users' => $users,
             'salarios' => $salarios,

@@ -274,10 +274,10 @@ window.Echo.private('auth-event')
     .error((error) => {
         console.log('Error en el canal:', error);
     });
-    
+
 function conexion(userFromEvent, tipo, ultimaConexion = null) {
     const tds = document.querySelectorAll('.td-personal');
-    
+
     tds.forEach(td => {
         const userIdTd = td.dataset.id;
 
@@ -292,3 +292,44 @@ function conexion(userFromEvent, tipo, ultimaConexion = null) {
         }
     });
 }
+
+window.Echo.private(`pdf-ready.${window.userId}`)
+    .listen('PdfGeneradoEvent', async (e) => {   
+        const container = document.getElementById('loading-container');     
+        const link = document.createElement('a');
+        link.href = `${e.path}`;
+        console.log(e.path)
+        try{          
+            setTimeout(()=>{
+                container.classList.add('hidden');
+                sessionStorage.removeItem('pdf-toast')
+                alert('Su pdf esta listo')
+                const url = 'http://127.0.0.1:80/download'
+                const a = document.createElement('a');
+                a.href = url;
+                a.click();            
+            }, 500)  
+        }catch(err){
+            console.log(err)
+        }
+    })
+    .error((error) => {
+        console.log('Error en el canal:', error);
+    });
+
+
+window.Echo.private('ultima-actividad')
+    .listen('UltimaActividadEvent', (e) => {
+        const tds = document.querySelectorAll('.td-total')
+        tds.forEach(td => {
+            const userIdTd = td.dataset.userid;
+            if(e.userId == userIdTd){
+                td.innerText = `Gs. ${e.totalVenta}`;
+            }
+        })
+    })
+    .error(err => {
+        console.log(err)
+    })
+
+

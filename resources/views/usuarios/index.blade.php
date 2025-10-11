@@ -88,6 +88,7 @@
                                     > 
                                         {{ $user->en_linea ? 'En linea' : ($user->ultima_conexion != null ? format_time($user->ultima_conexion) : '' ) }}                                        
                                     </td>
+                                    <td data-userid={{ $user->id }} class="td-total px-4 py-3">Gs. {{ moneda($user->ultima_venta?->total) ?? '' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
