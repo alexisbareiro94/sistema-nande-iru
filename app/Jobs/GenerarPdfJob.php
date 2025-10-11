@@ -57,7 +57,7 @@ class GenerarPdfJob implements ShouldQueue
                 'color' => 'blue',
                 'user_id' => $this->userId,
                 'is_read' => false,
-            ]);
+            ]);            
             PdfGeneradoEvent::dispatch($this->userId, $path);
         } catch (\Exception $e) {
             dd($e->getMessage());

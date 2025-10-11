@@ -5,7 +5,10 @@ use App\Models\{Caja, MovimientoCaja};
 
 if (!function_exists('format_time')) {
     function format_time($time)
-    {
+    {        
+        if(!$time){
+            return;
+        }
         return Carbon::parse($time)->format('d/m/Y - H:i');
     }
 }

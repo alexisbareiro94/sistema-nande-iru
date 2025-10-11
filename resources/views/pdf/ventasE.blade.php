@@ -149,7 +149,7 @@
                 @foreach ($ventas as $venta)
                 <tr>
                     <td>{{ $venta['id'] }}</td>
-                    <td>{{ $venta['caja']['name'] }}</td>
+                    <td>{{ $venta['caja']['user']['name'] }}</td>
                     <td>{{ format_time($venta['created_at']) }}</td>
                     <td>{{ $venta['tipo'] }}</td>
                     <td>{{ $venta['concepto'] }}</td>

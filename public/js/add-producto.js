@@ -99,6 +99,7 @@ if (boton) {
     });
 
 }
+
 //mostar preview de la imagen
 if (imagen) {
     imagen.addEventListener('change', (e) => { //evento del input de la imagen    
@@ -615,3 +616,11 @@ document.getElementById('import-form').addEventListener('submit', async (e) => {
         showToast(`${err.error}`, 'error');
     }
 });
+
+console.log('message')
+function asd(){
+    if(JSON.parse(sessionStorage.getItem('pdf-toast'))){
+       toastLoading();
+    }
+}
+asd();
