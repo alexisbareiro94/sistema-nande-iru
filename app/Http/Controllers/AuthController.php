@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AuthEvent;
+use App\Events\LogoutEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -40,6 +42,10 @@ class AuthController extends Controller
 
             if (Auth::attempt($validate)) {
                 $user = Auth::user();
+                $user->update([
+                    'en_linea' => true,
+                ]);
+                AuthEvent::dispatch($user, 'login');
                 NotificacionEvent::dispatch('Nuevo Inicio de Sesion', "$user->name inicio sesion", 'blue');
                 if ($user->role == 'personal' || $user->role == 'caja') {
                     return redirect()->route('caja.index');
@@ -91,10 +97,18 @@ class AuthController extends Controller
 
     public function logout()
     {
-        $user = Auth::user();
-        NotificacionEvent::dispatch('Cierre de Sesion', "$user->name a cerrado sesion", 'blue');
-        Auth::logout();
-        session()->flush();
-        return redirect('/');
+        try{
+            $user = Auth::user();
+            $user->update([
+                'ultima_conexion' => now(),
+                'en_linea' => false,
+            ]);            
+            Auth::logout();
+            AuthEvent::dispatch($user, 'logout');
+            NotificacionEvent::dispatch('Cierre de Sesion', "$user->name a cerrado sesion", 'blue');            
+            return redirect('/');
+        }catch(\Exception){
+            return back()->with('error', 'Intente de vuelta');
+        }
     }
 }
