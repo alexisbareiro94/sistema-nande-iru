@@ -236,8 +236,8 @@
                     <div id="export-menu"
                         class="absolute z-[999] hidden opacity-0 transition-all duration-150 -right-1.5 top-5 mt-2 w-48 rounded-md border bg-white shadow-lg">
                         <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                            <a id="export-pdf" href="{{ route('venta.pdf') }}" tabindex="0" role="menuitem"
-                                class="px-4 py-2 text-sm font-semibold text-gray-700 bg-red-50 transition-colors duration-150 hover:bg-red-200 focus:bg-red-400 flex justify-between">
+                            <button id="export-pdf"  tabindex="0" role="menuitem"
+                                class="w-full cursor-pointer px-4 py-2 text-sm font-semibold text-gray-700 bg-red-50 transition-colors duration-150 hover:bg-red-200 focus:bg-red-400 flex justify-between">
                                 PDF
                                 <span class="">
                                     <svg class="w-6 h-6 text-gray-800 " aria-hidden="true"
@@ -249,7 +249,7 @@
                                     </svg>
 
                                 </span>
-                            </a>
+                            </button>
                             <a href="{{ route('venta.excel') }}" tabindex="0" role="menuitem"
                                 class="px-4 py-2 text-sm font-semibold text-gray-700 bg-green-50 transition-colors duration-150 hover:bg-green-200 focus:bg-green-400 flex justify-between">
                                 EXCEL
@@ -316,8 +316,7 @@
         </div>
     </div>
 
-@section('js')
-    <script src="{{ asset('js/historial-ventas.js') }}"></script>
+@section('js')    
     <script src="{{ asset('js/detalle-movimiento.js') }}"></script>
 @endsection
 @include('caja.historial-completo.detalle-venta')

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PdfGeneradoEvent;
+use App\Events\PdfNotificacionEvent;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreVentaRequest;
 use App\Services\VentaService;
@@ -10,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\VentasExport;
+use App\Jobs\GenerarPdfJob;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Cache;
 use App\Jobs\VentaRealizada;
@@ -127,13 +130,13 @@ class VentaController extends Controller
             }
 
             if (auth()->user()->role === 'admin') {
-                $ventas = $query->with(['venta' => function ($query) {
+                $ventas = $query->with(['caja.user','venta' => function ($query) {
                     $query->with(['cliente', 'detalleVentas', 'productos']);
                 }])->orderByDesc('created_at')->get();
             } else {
                 $ventas = $query->whereHas('venta', function ($query) {
                     return $query->where('vendedor_id', auth()->user()->id);
-                })->with(['venta' => function ($query) {
+                })->with(['caja.user','venta' => function ($query) {
                     $query->with(['cliente', 'detalleVentas', 'productos']);
                 }])->orderByDesc('created_at')->get();
             }
@@ -321,37 +324,34 @@ class VentaController extends Controller
 
     public function export_pdf()
     {
-        $item = Cache::get('ventas');
+        $item = Cache::get('ventas');  
+                      
         if (filled($item)) {
             $mov = $item->contains(fn($value) => $value->venta == null);
         }
-        if (!filled($item) || $mov) {
-            $item = Cache::remember('ventas', 20, fn() => MovimientoCaja::with('caja.user:id,name')->get());
+        if (!filled($item) || $mov) {        
+            $item = Cache::remember('ventas', 20, fn() => MovimientoCaja::with('caja.user:id,name')->get());            
             Cache::forget('ventas');
             $ingresos = $item->sum('monto');
             $egresos = $item->where('tipo', 'egreso')->sum('monto');
             $ventas = $item->toArray();
             $items = count($ventas);
             $desde = Carbon::parse($ventas[$items - 1]['created_at'])->format('dmy');
-            $hasta = Carbon::parse($ventas[0]['created_at'])->format('dmy');
-            $fileName = "$desde-$hasta.pdf";
-            $pdf = Pdf::loadView('pdf.ventasE', [
-                'ventas' => $ventas,
-                'ingresos' => $ingresos,
-                'egresos' => $egresos,
+            $hasta = Carbon::parse($ventas[0]['created_at'])->format('dmy');            
+                        
+            GenerarPdfJob::dispatch(auth()->user()->id, $ventas, $ingresos, $egresos);      
+            return response()->json([
+                'data' => 'listo',
             ]);
-            return $pdf->download($fileName);
         } else {
+        //    return response()->json($item);
             $ventas = $item->toArray();
-            $items = count($ventas);
-            $desde = Carbon::parse($ventas[$items - 1]['created_at'])->format('dmy');
-            $hasta = Carbon::parse($ventas[0]['created_at'])->format('dmy');
-            $fileName = "$desde-$hasta.pdf";
+            $items = count($ventas);                        
             Cache::forget('ventas');
-            $pdf = Pdf::loadView('pdf.ventas', [
-                'ventas' => $ventas,
+            GenerarPdfJob::dispatch(auth()->user()->id, $ventas);            
+            return response()->json([
+                'data' => 'listo',
             ]);
-            return $pdf->download($fileName);
         }
     }
 }
