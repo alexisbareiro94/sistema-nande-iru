@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMovimientoRequest;
 use Illuminate\Http\Request;
-use App\Models\{MovimientoCaja, Caja};
+use App\Models\{Auditoria, MovimientoCaja, Caja};
 use App\Services\MovimientoService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -71,6 +71,16 @@ class MovimientoCajaController extends Controller
         DB::beginTransaction();
         try {
             $movimiento = MovimientoCaja::create($data);
+            Auditoria::create([
+                'created_by' => auth()->user()->id,
+                'entidad_type' => MovimientoCaja::class,
+                'entidad_id' => $movimiento->id,
+                'accion' => 'Registro de movimiento en caja',
+                'datos' => [
+                    'monto' => $data['monto'],
+                    'tipo' => $data['tipo'] 
+                ]
+            ]);
             crear_caja();
             if ($data['personal_id'] != null) {
                 $pago = $this->movimientoService->pago_salario($data, $movimiento, $request->user()->id);
@@ -81,9 +91,9 @@ class MovimientoCajaController extends Controller
                         'error' => 'Error al pagar el salario'
                     ], 400);
                 }
-            }
+            }            
             DB::commit();
-            MovimientoRealizado::dispatch($movimiento, $movimiento->tipo);
+            MovimientoRealizado::dispatch($movimiento, $movimiento->tipo);            
             return response()->json([
                 'success' => true,
                 'message' => 'Movimiento registrado correctamente',

@@ -2,38 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Auditoria;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CategoriaController extends Controller
 {
-    public function store(Request $request){
-        $validate = Validator::make($request->all(),[
-           'nombre' => 'required|unique:categorias,nombre',
-        ],[
+    public function store(Request $request)
+    {
+        $validate = Validator::make($request->all(), [
+            'nombre' => 'required|unique:categorias,nombre',
+        ], [
             'nombre.required' => 'El categoria es requerido',
             'nombre.unique' => 'La Categoria ya existe',
         ]);
 
-        if($validate->fails()){
+        if ($validate->fails()) {
             return response()->json([
                 'success' => false,
                 'errors' => $validate->messages(),
             ], 400);
         }
 
-        try{
+        try {
             $categoria = Categoria::create([
                 'nombre' => $request->nombre,
+            ]);
+
+            Auditoria::create([
+                'created_by' => $request->user()->id,
+                'entidad_type' => Categoria::class,
+                'entidad_id' => $categoria->id,
+                'accion' => 'Creación de categoría',                
             ]);
 
             return response()->json([
                 'success' => true,
                 'categoria' => $categoria
             ], 201);
-
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -41,20 +49,21 @@ class CategoriaController extends Controller
         }
     }
 
-    public function index(Request $request){
-        try{
+    public function index(Request $request)
+    {
+        try {
             $query = Categoria::query();
             $q = $request->query('q');
 
             $categorias = $query->whereLike('nombre', "%$q%")
-                                ->whereNot('id', 1)
-                                ->get();
+                ->whereNot('id', 1)
+                ->get();
 
             return response()->json([
                 'success' => true,
                 'categorias' => $categorias,
             ]);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),

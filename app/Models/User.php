@@ -79,4 +79,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(PagoSalario::class, 'user_id');
     }
+
+    public function auditorias(){
+        return $this->hasMany(Auditoria::class);
+    }
 }

@@ -10,6 +10,7 @@ use App\Models\Categoria;
 use App\Models\Distribuidor;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\StoreProductRequest;
+use App\Models\Auditoria;
 use App\Services\ProductService;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -142,6 +143,13 @@ class ProductoController extends Controller
             }
             $producto = Producto::create($data);
 
+            Auditoria::create([
+                'created_by' => auth()->user()->id,
+                'entidad_type' => Producto::class,
+                'entidad_id' => $producto->id,
+                'accion' => 'Creación de producto'
+            ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Producto agregado correctamente.',
@@ -198,7 +206,12 @@ class ProductoController extends Controller
                 $data['imagen'] = null;
             }
             $producto->update($data);
-
+            Auditoria::create([
+                'created_by' => auth()->user()->id,
+                'entidad_type' => Producto::class,
+                'entidad_id' => $producto->id,
+                'accion' => 'Actualización de producto'
+            ]);
             return response()->json([
                 'success' => true,
                 'message' => 'Producto Actualizado',
@@ -219,6 +232,12 @@ class ProductoController extends Controller
             $producto = Producto::find($id);
             $producto->delete();
             $producto->save();
+            Auditoria::create([
+                'created_by' => auth()->user()->id,
+                'entidad_type' => Producto::class,
+                'entidad_id' => $producto->id,
+                'accion' => 'Eliminacion de producto'
+            ]);
             return response()->json([
                 'success' => true,
                 'message' => "producto borrado",
@@ -244,6 +263,13 @@ class ProductoController extends Controller
             ]);
             $file = $request->file('productos');
             Excel::import(new ProductosImport, $file);
+
+            Auditoria::create([
+                'created_by' => auth()->user()->id,
+                'entidad_type' => Producto::class,
+                'entidad_id' => 1,
+                'accion' => 'Importación de productos por excel'
+            ]);
 
             return response()->json([
                 'success' => true,

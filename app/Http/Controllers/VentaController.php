@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\PdfGeneradoEvent;
-use App\Events\PdfNotificacionEvent;
 use App\Events\UltimaActividadEvent;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreVentaRequest;
 use App\Services\VentaService;
-use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto};
+use App\Models\{Auditoria, MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto};
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\VentasExport;
 use App\Jobs\GenerarPdfJob;
 use Maatwebsite\Excel\Facades\Excel;
@@ -235,6 +232,16 @@ class VentaController extends Controller
                 'estado' => 'completado',
             ]);
 
+            Auditoria::create([
+                'created_by' => auth()->user()->id,
+                'entidad_type' => Venta::class,
+                'entidad_id' => $venta->id,
+                'accion' => 'Registro de venta',
+                'datos' => [
+                    'total' => $venta->total,
+                ]
+            ]);
+
             MovimientoCaja::create([
                 'caja_id' => $cajaId,
                 'tipo' => 'ingreso',
@@ -337,9 +344,7 @@ class VentaController extends Controller
             $ingresos = $item->sum('monto');
             $egresos = $item->where('tipo', 'egreso')->sum('monto');
             $ventas = $item->toArray();
-            $items = count($ventas);
-            $desde = Carbon::parse($ventas[$items - 1]['created_at'])->format('dmy');
-            $hasta = Carbon::parse($ventas[0]['created_at'])->format('dmy');            
+            $items = count($ventas);            
                         
             GenerarPdfJob::dispatch(auth()->user()->id, $ventas, $ingresos, $egresos);      
             return response()->json([

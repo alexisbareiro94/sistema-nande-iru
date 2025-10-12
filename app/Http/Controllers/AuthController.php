@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Events\AuthEvent;
-use App\Events\LogoutEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-use App\Models\{User, Caja, MovimientoCaja};
+use App\Models\{User, Auditoria};
 use App\Events\NotificacionEvent;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -38,13 +36,20 @@ class AuthController extends Controller
                 'email.required' => 'completar el campo email',
                 'email.exists' => 'El email no esta registrado',
                 'password.*' => 'completar el campo contraseña'
-            ]);            
+            ]);
 
             if (Auth::attempt($validate)) {
                 $user = Auth::user();
                 $user->update([
                     'en_linea' => true,
                 ]);
+                Auditoria::create([
+                    'created_by' => $user->id,
+                    'entidad_type' => User::class,
+                    'entidad_id' => $user->id,
+                    'accion' => 'Inicio sesion'
+                ]);
+
                 AuthEvent::dispatch($user, 'login');
                 NotificacionEvent::dispatch('Nuevo Inicio de Sesion', "$user->name inicio sesion", 'blue');
                 if ($user->role == 'personal' || $user->role == 'caja') {
@@ -52,7 +57,7 @@ class AuthController extends Controller
                 }
                 if ($user->role === 'cliente') {
                     session()->flush();
-                }              
+                }
                 return redirect()->route('home');
             } else {;
                 NotificacionEvent::dispatch('Intento de inicio de sesion', " de: " . $validate['email'], 'orange');
@@ -88,7 +93,13 @@ class AuthController extends Controller
             return back()->with('error', $validate->messages()->first());
         }
         try {
-            User::create($validate->validated());
+            $user = User::create($validate->validated());
+            Auditoria::create([
+                'created_by' => $request->user()->id,
+                'entidad_type' => User::class,
+                'entidad_id' => $user->id,
+                'accion' => 'Creacion de usuario'
+            ]);
             return redirect()->route('login')->with('success', 'Registro exitoso');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -97,17 +108,23 @@ class AuthController extends Controller
 
     public function logout()
     {
-        try{
+        try {
             $user = Auth::user();
             $user->update([
                 'ultima_conexion' => now(),
                 'en_linea' => false,
-            ]);            
+            ]);
+            Auditoria::create([
+                'created_by' => $user->id,
+                'entidad_type' => User::class,
+                'entidad_id' => $user->id,
+                'accion' => 'Cierre de sesion'
+            ]);
             Auth::logout();
             AuthEvent::dispatch($user, 'logout');
-            NotificacionEvent::dispatch('Cierre de Sesion', "$user->name a cerrado sesion", 'blue');            
+            NotificacionEvent::dispatch('Cierre de Sesion', "$user->name a cerrado sesion", 'blue');
             return redirect('/');
-        }catch(\Exception){
+        } catch (\Exception) {
             return back()->with('error', 'Intente de vuelta');
         }
     }

@@ -52,6 +52,64 @@
                 </div>
             </div>
 
+            <!-- Auditoria -->
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">Auditoria</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4">
+                        <div class="flex gap-4 items-center">
+                            <h3 class="font-bold">Registro de actividad</h3>
+                            <p class="text-sm text-gray-500 hover:underline cursor-pointer">Ver todos</p>
+                        </div>
+                        <div class="mt-3 sm:mt-0">
+                            <select class="p-2 border rounded">
+                                <option>Mes Actual</option>
+                                <option>Mes Anterior</option>
+                                <option>Últimos 3 meses</option>
+                            </select>
+                            <button class="ml-2 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">Descargar
+                                Reporte</button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Creado por
+                                    </th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Tipo
+                                    </th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Datos
+                                    </th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Fecha
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                @foreach ($auditorias as $item)                                    
+                                    <tr>
+                                        <td class="px-4 py-3">{{ $item->user->name ?? ''}}</td>
+                                        <td class="px-4 py-3">{{ $item->accion }}</td>
+                                        <td class="px-4 py-3">
+                                            @if ($item->datos)                                                
+                                                @foreach ($item->datos as $key => $dato)
+                                                    {{ $key }}: {{ is_numeric($dato) ? moneda($dato) : $dato }} <br>
+                                                @endforeach
+                                            @endif
+                                        </td>
+                                        <td class="px-4 py-3">{{ format_time($item->created_at) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
             <!-- Estadísticas por Rol -->
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <h3 class="font-bold text-lg mb-4">Empleados</h3>
@@ -70,10 +128,10 @@
                                 </th>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                                     conexión
-                                </th>                                
+                                </th>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                                     ultima actividad
-                                </th>                                
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -83,12 +141,13 @@
                                     <td class="px-4 py-3">{{ ucfirst($user->name) }}</td>
                                     <td class="px-4 py-3">Gs. {{ moneda($user->salario) }}</td>
                                     <td id="estado" data-id="{{ $user->id }}" @class([
-                                        'td-personal px-4 py-3 font-semibold', 
-                                        'text-green-500' => $user->en_linea])
-                                    > 
-                                        {{ $user->en_linea ? 'En linea' : ($user->ultima_conexion != null ? format_time($user->ultima_conexion) : '' ) }}                                        
+                                        'td-personal px-4 py-3 font-semibold',
+                                        'text-green-500' => $user->en_linea,
+                                    ])>
+                                        {{ $user->en_linea ? 'En linea' : ($user->ultima_conexion != null ? format_time($user->ultima_conexion) : '') }}
                                     </td>
-                                    <td data-userid={{ $user->id }} class="td-total px-4 py-3">Gs. {{ moneda($user->ultima_venta?->total) ?? '' }}</td>
+                                    <td data-userid={{ $user->id }} class="td-total px-4 py-3">Gs.
+                                        {{ moneda($user->ultima_venta?->total) ?? '' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -135,7 +194,8 @@
                                 </span>
                             </span>
                         </div>
-                        <input name="telefono" type="tel" placeholder="Teléfono" class="w-full p-2 border rounded" />
+                        <input name="telefono" type="tel" placeholder="Teléfono"
+                            class="w-full p-2 border rounded" />
                         <select name="role" class="w-full p-2 border rounded">
                             <option disabled selected>Rol</option>
                             <option>personal</option>
@@ -231,7 +291,7 @@
                         <thead>
                             <tr>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Empleado
-                                </th>                                
+                                </th>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Sueldo</th>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Fecha Pago
                                 </th>
@@ -242,13 +302,13 @@
                         <tbody class="divide-y divide-gray-200">
                             @foreach ($pagos as $pago)
                                 <tr>
-                                    <td class="px-4 py-3">{{ $pago->user->name }}</td> 
+                                    <td class="px-4 py-3">{{ $pago->user->name }}</td>
                                     <td class="px-4 py-3"> Gs. {{ moneda($pago->monto) }}</td>
                                     <td class="px-4 py-3">{{ format_time($pago->created_at) }}</td>
                                     <td class="px-4 py-3">
                                         <button class="text-blue-600 hover:underline text-sm">Ver recibo</button>
                                     </td>
-                                </tr>                            
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>

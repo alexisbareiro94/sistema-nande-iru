@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{User, PagoSalario, Venta};
+use App\Models\{Auditoria, User, PagoSalario, Venta};
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdatePersonalRequest;
 
@@ -18,19 +18,25 @@ class GestionUsersController extends Controller
         $salarios = User::whereNot('role', 'cliente')
             ->where('activo', true)
             ->selectRaw("sum(salario) as salario")
-            ->first()->salario;    
+            ->first()->salario;
 
         $pagos = PagoSalario::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
             ->with('user')
-            ->get();        
-        
+            ->get();
+
+        $auditorias = Auditoria::with('user')
+            ->orderByDesc('created_at')
+            ->get()    
+            ->take(3);
+
         return view('usuarios.index', [
             'users' => $users,
             'salarios' => $salarios,
             'pagos' => $pagos,
+            'auditorias' => $auditorias,
         ]);
     }
-
+    
     public function index()
     {
         $users = User::whereNot('role', 'admin')
@@ -55,9 +61,14 @@ class GestionUsersController extends Controller
                 'activo' => 'required',
             ]);
             $validated['estado'] = true;
-            User::create($validated);
-
-            return back()->with('success', 'esta bien :D');
+            $user = User::create($validated);
+            Auditoria::create([
+                'created_by' => $request->user()->id,
+                'entidad_type' => User::class,
+                'entidad_id' => $user->id,
+                'accion' => 'Creacion de personal'
+            ]);
+            return back()->with('success', 'Usuario creado');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -88,7 +99,12 @@ class GestionUsersController extends Controller
         try {
             $data = $request->validated();
             User::find($id)->update($data);
-
+            Auditoria::create([
+                'created_by' => $request->user()->id,
+                'entidad_type' => User::class,
+                'entidad_id' => $id,
+                'accion' => 'Actualizacion de datos de personal'
+            ]);
             return response()->json([
                 'success' => true,
                 'message' => 'Usuario actualizado',
@@ -104,6 +120,12 @@ class GestionUsersController extends Controller
     {
         try {
             User::destroy($id);
+            Auditoria::create([
+                'created_by' => auth()->user()->id,
+                'entidad_type' => User::class,
+                'entidad_id' => $id,
+                'accion' => 'Eliminacion de personal'
+            ]);
             return response()->json([
                 'message' => 'Usuario eliminado',
             ]);

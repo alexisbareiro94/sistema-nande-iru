@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Auditoria;
 use Illuminate\Http\Request;
 use App\Models\Marca;
 use Illuminate\Support\Facades\Validator;
@@ -22,6 +23,13 @@ class MarcaController extends Controller
 
         try{
             $marca = Marca::create($validate->validated());
+            Auditoria::create([
+                'created_by' => $request->user()->id,
+                'entidad_type' => Marca::class,
+                'entidad_id' => $marca->id,
+                'accion' => 'Creación de marca'
+            ]);
+
             return response()->json([
                 'success' => true,
                 'data' => $marca,
@@ -41,7 +49,7 @@ class MarcaController extends Controller
             $marcas = $query->whereLike('nombre', "%$search%")
                             ->whereNot('id', 1)
                             ->get();
-
+            
             return response()->json([
                 'success' => true,
                 'marcas' => $marcas,

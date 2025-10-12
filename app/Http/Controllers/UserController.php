@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{User, PagoSalario};
+use App\Models\{Auditoria, User, PagoSalario};
 use App\Http\Requests\StoreUserRequest;
 
 class UserController extends Controller
@@ -36,6 +36,13 @@ class UserController extends Controller
         $data = $request->validated();
         try {
             $cliente = User::create($data);
+
+            Auditoria::create([
+                'created_by' => $request->user()->id,
+                'entidad_type' => User::class,
+                'entidad_id' => $cliente->id,
+                'accion' => 'Registro de cliente'
+            ]);
 
             return response()->json([
                 'success' => true,

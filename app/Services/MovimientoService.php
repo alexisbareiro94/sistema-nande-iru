@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Services;
-use App\Models\{User, PagoSalario, MovimientoCaja};
+use App\Models\{Auditoria, User, PagoSalario, MovimientoCaja};
 
 class MovimientoService
 {
@@ -31,15 +31,26 @@ class MovimientoService
             } else {
                 $adelanto = true;
                 $restante = $user->salario - $data['monto'];
-            }
+            }            
 
-            PagoSalario::create([
+            $pagoSalario = PagoSalario::create([
                 'user_id' => $data['personal_id'],
                 'movimiento_id' => $movimiento->id,
                 'adelanto' => $adelanto,
                 'monto' => $data['monto'],
                 'restante' => $restante,
                 'created_by' => $userId,
+            ]);
+
+            Auditoria::create([
+                'created_by' => auth()->user()->id,
+                'entidad_type' => PagoSalario::class,
+                'entidad_id' => $pagoSalario->id,
+                'accion' => 'Pago de salario',
+                'data' => [
+                    'user_id' => $pagoSalario->user_id,
+                    'monto' => $pagoSalario->monto,
+                ]
             ]);
 
             return true;

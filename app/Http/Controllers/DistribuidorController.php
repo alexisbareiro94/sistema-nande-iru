@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Auditoria;
 use Illuminate\Http\Request;
 use App\Models\Distribuidor;
 use Illuminate\Support\Facades\Validator;
@@ -9,16 +10,17 @@ use Illuminate\Support\Facades\Validator;
 
 class DistribuidorController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         $q = $request->query('q');
-        $query = Distribuidor::query();       
+        $query = Distribuidor::query();
 
         $distribuidores = $query->where('nombre', 'like', "%$q%")
             ->orWhere('ruc', 'like', "%$q%")
             ->orWhere('celular', 'like', "%$q%")
             ->orWhere('direccion', 'like', "%$q%")
             ->orderBy('id', 'asc')
-            ->get();            
+            ->get();
 
         return response()->json([
             'success' => true,
@@ -26,14 +28,14 @@ class DistribuidorController extends Controller
         ]);
     }
 
-    public function store(Request $request){    
-        //return response()->json($request->all());    
-        $validate = Validator::make($request->all(),[
+    public function store(Request $request)
+    {
+        $validate = Validator::make($request->all(), [
             'nombre' => 'required|unique:distribuidores,nombre',
             'ruc' => 'nullable|string|unique:distribuidores,ruc',
             'celular' => 'nullable|numeric',
-            'direccion' => 'nullable|string',                        
-        ],[
+            'direccion' => 'nullable|string',
+        ], [
             'nombre.required' => 'El nombre del distribuidor es obligatorio',
             'ruc.unique' => 'El RUC ya se encuentra registrado',
             'ruc.string' => 'El RUC debe ser una cadena de texto',
@@ -41,25 +43,33 @@ class DistribuidorController extends Controller
             'direccion.string' => 'La dirección debe ser una cadena de texto',
         ]);
 
-        if($validate->fails()){
+        if ($validate->fails()) {
             return response()->json([
-               "success" => false,
+                "success" => false,
                 'messages' => $validate->messages()
-            ],400);
+            ], 400);
         }
 
         try {
             $distribuidor = Distribuidor::create($validate->validated());
+
+            Auditoria::create([
+                'created_by' => $request->user()->id,
+                'entidad_type' => Distribuidor::class,
+                'entidad_id' => $distribuidor->id,
+                'accion' => 'Creación de distribuidor',                
+            ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Distribuidor creado correctamente',
                 'data' => $distribuidor
             ]);
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
             ], 400);
         }
-    }    
+    }
 }
