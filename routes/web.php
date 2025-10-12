@@ -108,8 +108,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/api/gestion_user/{id}', [GestionUsersController::class, 'update']);
         Route::delete('/api/gestion_user/{id}', [GestionUsersController::class, 'delete']);
 
-
-        Route::post('/api/conf/{id}', [CajaController::class, 'max_cajas']);
+        Route::get('/api/auditorias', [GestionUsersController::class, 'refresh_auditorias']);        
     });
 });
 

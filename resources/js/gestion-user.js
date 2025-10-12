@@ -3,7 +3,7 @@ import { showToast } from './toast';
 
 let userId = '';
 function selectUser() {
-    if(!document.getElementById('edit-user')){
+    if (!document.getElementById('edit-user')) {
         return;
     }
     document.getElementById('edit-user').addEventListener('change', async (e) => {
@@ -32,7 +32,7 @@ function selectUser() {
     });
 }
 selectUser();
-if(document.getElementById('update-personal-form')){
+if (document.getElementById('update-personal-form')) {
     document.getElementById('update-personal-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         await updatePersonal(true);
@@ -40,7 +40,7 @@ if(document.getElementById('update-personal-form')){
     });
 }
 
-if(document.getElementById('personal-activo')){
+if (document.getElementById('personal-activo')) {
     document.getElementById('personal-activo').addEventListener('change', (e) => {
         userId = e.target.value;
         console.log(userId);
@@ -182,4 +182,69 @@ async function rerenderForm() {
     } catch (err) {
         console.log(err);
     }
+}
+
+
+window.Echo.private('auditoria-creada')
+    .listen('AuditoriaCreadaEvent', async e => {
+        try {
+            const res = await fetch('http://127.0.0.1:80/api/auditorias');
+            const data = await res.json();
+            if (!res.ok) {
+                throw data;
+            }            
+            renderTableBody(data.data);
+        } catch (err) {
+            console.log(err)
+        }
+    })
+    .error(err => {
+        console.log(err)
+    })
+
+
+function renderTableBody(data) {
+    const body = document.getElementById('table-body-auditorias');
+    body.innerHTML = '';
+    let count = 0;
+
+    data.forEach(item => {
+        console.log(item);
+        const tr = document.createElement('tr');
+        let key = '';
+        let dato = '';
+
+        if (item.datos && typeof item.datos === 'object') {
+            console.log(item.datos);            
+            for (const [k, v] of Object.entries(item.datos)) {
+                key = k;
+                dato = v;
+                console.log(key, dato);
+            }
+        }
+
+        tr.className = count === 0 ? 'bg-blue-200' : '';
+
+        fecha = new Date(item.created_at);
+        fechaFormateada = fechaA.toLocaleString('es-PY', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).replace(',', ' -');
+
+        tr.innerHTML = `
+            <td class="px-4 py-3">${item.user?.name ?? ''}</td>
+            <td class="px-4 py-3">${item.accion}</td>
+            <td class="px-4 py-3">
+                ${key} : ${dato}
+            </td>
+            <td class="px-4 py-3">${fechaFormateada}</td>
+        `;
+
+        body.appendChild(tr);
+        count++;
+    });
 }

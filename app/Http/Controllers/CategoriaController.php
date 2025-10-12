@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AuditoriaCreadaEvent;
 use App\Models\Auditoria;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
@@ -36,7 +37,7 @@ class CategoriaController extends Controller
                 'entidad_id' => $categoria->id,
                 'accion' => 'Creación de categoría',                
             ]);
-
+            AuditoriaCreadaEvent::dispatch();
             return response()->json([
                 'success' => true,
                 'categoria' => $categoria

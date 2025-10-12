@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AuditoriaCreadaEvent;
 use App\Models\Auditoria;
 use Illuminate\Http\Request;
 use App\Models\Marca;
@@ -29,7 +30,7 @@ class MarcaController extends Controller
                 'entidad_id' => $marca->id,
                 'accion' => 'Creación de marca'
             ]);
-
+            AuditoriaCreadaEvent::dispatch();
             return response()->json([
                 'success' => true,
                 'data' => $marca,

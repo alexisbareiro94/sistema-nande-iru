@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AuditoriaCreadaEvent;
 use App\Events\AuthEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -49,7 +50,7 @@ class AuthController extends Controller
                     'entidad_id' => $user->id,
                     'accion' => 'Inicio sesion'
                 ]);
-
+                AuditoriaCreadaEvent::dispatch();
                 AuthEvent::dispatch($user, 'login');
                 NotificacionEvent::dispatch('Nuevo Inicio de Sesion', "$user->name inicio sesion", 'blue');
                 if ($user->role == 'personal' || $user->role == 'caja') {
@@ -99,7 +100,8 @@ class AuthController extends Controller
                 'entidad_type' => User::class,
                 'entidad_id' => $user->id,
                 'accion' => 'Creacion de usuario'
-            ]);
+            ]);     
+            AuditoriaCreadaEvent::dispatch();       
             return redirect()->route('login')->with('success', 'Registro exitoso');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -120,6 +122,7 @@ class AuthController extends Controller
                 'entidad_id' => $user->id,
                 'accion' => 'Cierre de sesion'
             ]);
+            AuditoriaCreadaEvent::dispatch();
             Auth::logout();
             AuthEvent::dispatch($user, 'logout');
             NotificacionEvent::dispatch('Cierre de Sesion', "$user->name a cerrado sesion", 'blue');

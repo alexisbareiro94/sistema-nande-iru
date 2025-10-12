@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AuditoriaCreadaEvent;
 use App\Http\Requests\StoreMovimientoRequest;
 use Illuminate\Http\Request;
 use App\Models\{Auditoria, MovimientoCaja, Caja};
@@ -81,6 +82,7 @@ class MovimientoCajaController extends Controller
                     'tipo' => $data['tipo'] 
                 ]
             ]);
+            AuditoriaCreadaEvent::dispatch();
             crear_caja();
             if ($data['personal_id'] != null) {
                 $pago = $this->movimientoService->pago_salario($data, $movimiento, $request->user()->id);

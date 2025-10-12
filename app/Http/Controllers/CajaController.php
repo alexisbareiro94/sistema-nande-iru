@@ -6,6 +6,7 @@ use App\Http\Requests\AbrirCajaRequest;
 use App\Http\Requests\UpdateCajaRequest;
 use App\Models\{Caja, MovimientoCaja, Venta, DetalleVenta, Pago, PagoSalario, User, Auditoria};
 use App\Services\CajaService;
+use App\Events\AuditoriaCreadaEvent;
 use App\Jobs\{MovimientoRealizado, CierreCaja};
 use Illuminate\Http\Request;
 
@@ -69,6 +70,7 @@ class CajaController extends Controller
                     'monto apertura' => $caja['monto_inicial']
                 ]
             ]);
+            AuditoriaCreadaEvent::dispatch();
             return back()->with("success", "Caja Abierta Correctamente");
         } catch (\Exception $e) {
             return back()->with("error", $e->getMessage());
@@ -113,6 +115,7 @@ class CajaController extends Controller
                     'monto cierre' => $data['monto_cierre']
                 ]
             ]);
+            AuditoriaCreadaEvent::dispatch();
             return response()->json([
                 "success" => true,
                 "message" => "Caja cerrada correctamente",

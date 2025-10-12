@@ -6,7 +6,7 @@ use App\Models\Auditoria;
 use Illuminate\Http\Request;
 use App\Models\Distribuidor;
 use Illuminate\Support\Facades\Validator;
-
+use App\Events\AuditoriaCreadaEvent;
 
 class DistribuidorController extends Controller
 {
@@ -59,7 +59,7 @@ class DistribuidorController extends Controller
                 'entidad_id' => $distribuidor->id,
                 'accion' => 'Creación de distribuidor',                
             ]);
-
+            AuditoriaCreadaEvent::dispatch();
             return response()->json([
                 'success' => true,
                 'message' => 'Distribuidor creado correctamente',

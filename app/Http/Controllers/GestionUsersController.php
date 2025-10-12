@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Auditoria, User, PagoSalario, Venta};
+use App\Models\{Auditoria, User, PagoSalario};
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdatePersonalRequest;
+use App\Events\AuditoriaCreadaEvent;
 
 class GestionUsersController extends Controller
 {
@@ -26,7 +27,7 @@ class GestionUsersController extends Controller
 
         $auditorias = Auditoria::with('user')
             ->orderByDesc('created_at')
-            ->get()    
+            ->get()
             ->take(3);
 
         return view('usuarios.index', [
@@ -36,7 +37,25 @@ class GestionUsersController extends Controller
             'auditorias' => $auditorias,
         ]);
     }
-    
+
+    public function refresh_auditorias()
+    {
+        try {
+            $auditorias = Auditoria::with('user')
+                ->orderByDesc('created_at')
+                ->get()
+                ->take(3);
+
+            return response()->json([
+                'data' => $auditorias,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 400);
+        }
+    }
+
     public function index()
     {
         $users = User::whereNot('role', 'admin')
@@ -68,6 +87,7 @@ class GestionUsersController extends Controller
                 'entidad_id' => $user->id,
                 'accion' => 'Creacion de personal'
             ]);
+            AuditoriaCreadaEvent::dispatch();
             return back()->with('success', 'Usuario creado');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -105,6 +125,7 @@ class GestionUsersController extends Controller
                 'entidad_id' => $id,
                 'accion' => 'Actualizacion de datos de personal'
             ]);
+            AuditoriaCreadaEvent::dispatch();
             return response()->json([
                 'success' => true,
                 'message' => 'Usuario actualizado',
@@ -126,6 +147,7 @@ class GestionUsersController extends Controller
                 'entidad_id' => $id,
                 'accion' => 'Eliminacion de personal'
             ]);
+            AuditoriaCreadaEvent::dispatch();
             return response()->json([
                 'message' => 'Usuario eliminado',
             ]);

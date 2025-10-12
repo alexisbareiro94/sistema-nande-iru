@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 namespace App\Services;
+
+use App\Events\AuditoriaCreadaEvent;
 use App\Models\{Auditoria, User, PagoSalario, MovimientoCaja};
 
 class MovimientoService
@@ -52,7 +54,7 @@ class MovimientoService
                     'monto' => $pagoSalario->monto,
                 ]
             ]);
-
+            AuditoriaCreadaEvent::dispatch();
             return true;
         } else {            
             return false;

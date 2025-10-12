@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AuditoriaCreadaEvent;
 use App\Events\UltimaActividadEvent;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreVentaRequest;
@@ -241,6 +242,8 @@ class VentaController extends Controller
                     'total' => $venta->total,
                 ]
             ]);
+            
+            AuditoriaCreadaEvent::dispatch();
 
             MovimientoCaja::create([
                 'caja_id' => $cajaId,
@@ -308,7 +311,7 @@ class VentaController extends Controller
             $caja['saldo'] += $venta->total;
             session()->put(['caja' => $caja]);
             DB::commit();
-            VentaRealizada::dispatch($venta);
+            VentaRealizada::dispatch($venta);            
             UltimaActividadEvent::dispatch(auth()->user()->id, $venta->total);
             crear_caja();
             return response()->json([

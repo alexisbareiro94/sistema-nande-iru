@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AuditoriaCreadaEvent;
 use App\Imports\ProductosImport;
 use Illuminate\Http\Request;
 use App\Models\Producto;
@@ -149,7 +150,7 @@ class ProductoController extends Controller
                 'entidad_id' => $producto->id,
                 'accion' => 'Creación de producto'
             ]);
-
+            AuditoriaCreadaEvent::dispatch();
             return response()->json([
                 'success' => true,
                 'message' => 'Producto agregado correctamente.',
@@ -212,6 +213,7 @@ class ProductoController extends Controller
                 'entidad_id' => $producto->id,
                 'accion' => 'Actualización de producto'
             ]);
+            AuditoriaCreadaEvent::dispatch();
             return response()->json([
                 'success' => true,
                 'message' => 'Producto Actualizado',
@@ -238,6 +240,7 @@ class ProductoController extends Controller
                 'entidad_id' => $producto->id,
                 'accion' => 'Eliminacion de producto'
             ]);
+            AuditoriaCreadaEvent::dispatch();
             return response()->json([
                 'success' => true,
                 'message' => "producto borrado",
@@ -270,7 +273,7 @@ class ProductoController extends Controller
                 'entidad_id' => 1,
                 'accion' => 'Importación de productos por excel'
             ]);
-
+            AuditoriaCreadaEvent::dispatch();
             return response()->json([
                 'success' => true,
                 'message' => 'Productos importados'

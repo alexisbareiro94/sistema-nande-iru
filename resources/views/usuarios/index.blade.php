@@ -89,7 +89,7 @@
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200">
+                            <tbody id="table-body-auditorias" class="divide-y divide-gray-200">
                                 @foreach ($auditorias as $item)                                    
                                     <tr>
                                         <td class="px-4 py-3">{{ $item->user->name ?? ''}}</td>

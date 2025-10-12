@@ -30,3 +30,7 @@ Broadcast::channel('pdf-ready.{id}', function($user, $id){
 Broadcast::channel('ultima-actividad', function($user){
     return $user->role === 'admin';
 });
+
+Broadcast::channel('auditoria-creada', function($user){
+    return $user->role === 'admin';
+});
