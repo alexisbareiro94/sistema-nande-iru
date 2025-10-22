@@ -29,7 +29,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Clientes y Distribuidores -->
-            <a href="#"
+            <a id="gestion-cl-dis" href="{{ route('cliente.dist.index') }}"
                 class="group bg-gradient-to-b from-white to-gray-50 border border-gray-100 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:shadow-blue-100/50 min-h-[180px] flex flex-col items-center p-6">
                 <div class="bg-blue-50 rounded-full p-4 mb-4 group-hover:scale-110 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -40,8 +40,9 @@
 
                 </div>
                 <span
-                    class="text-lg font-medium text-gray-800 text-center group-hover:text-blue-600 transition-colors">Gestión
-                    de Clientes y Distribuidores</span>
+                    class="text-lg font-medium text-gray-800 text-center group-hover:text-blue-600 transition-colors">
+                    Gestión de Clientes y Distribuidores
+                </span>                
             </a>
 
             <!-- Caja -->

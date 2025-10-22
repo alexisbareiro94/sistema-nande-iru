@@ -74,13 +74,18 @@ class User extends Authenticatable
         return $this->hasOne(Venta::class, 'vendedor_id')->latest('created_at');
     }
 
-
     public function pagoSalarios()
     {
         return $this->hasMany(PagoSalario::class, 'user_id');
     }
 
-    public function auditorias(){
+    public function auditorias()
+    {
         return $this->hasMany(Auditoria::class);
+    }
+
+    public function compras()
+    {
+        return $this->hasMany(Venta::class, 'cliente_id');
     }
 }

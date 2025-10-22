@@ -28,7 +28,7 @@ class Venta extends Model
         'created_by',
         'updated_by',
         'deleted_by',
-        'vendedor_id'
+        'vendedor_id',        
     ];
 
     public function cajero()

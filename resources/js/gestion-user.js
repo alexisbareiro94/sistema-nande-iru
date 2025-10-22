@@ -225,8 +225,8 @@ function renderTableBody(data) {
 
         tr.className = count === 0 ? 'bg-blue-200' : '';
 
-        fecha = new Date(item.created_at);
-        fechaFormateada = fechaA.toLocaleString('es-PY', {
+        const fecha = new Date(item.created_at);
+        const fechaFormateada = fecha.toLocaleString('es-PY', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',

@@ -219,7 +219,7 @@ async function confirmarVenta(formaPago) {
         if (!res.ok) {
             throw data;
         }
-
+        document.getElementById('input-b-producto-ventas').value = '';
         showToast('Venta realizado con éxito');
         return data;
     } catch (err) {
@@ -246,6 +246,7 @@ async function limpiarUI() {
     razon.classList.add('border-gray-300', 'focus:ring-yellow-400', 'focus:border-yellow-400')
     razon.placeholder = 'Ingrese nombre o razon social';
     document.getElementById('modal-confirmar-venta').classList.add('hidden')
+    document.getElementById('form-b-productos-ventas').reset();
     await recargarMovimientos();
     await recargarSaldo();
 }

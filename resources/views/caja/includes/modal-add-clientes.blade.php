@@ -4,7 +4,7 @@
 
         <!-- Header -->
         <div class="flex bg-white justify-between items-center p-4 border-b border-gray-400">
-            <h2 class="text-xl font-semibold text-gray-800">Agregar Cliente</h2>
+            <h2  class="text-xl font-semibold text-gray-800">Agregar Cliente</h2>
             <button id="cerrar-modal-add-cliente"
                 class="cursor-pointer text-gray-800 hover:text-gray-400 text-2xl font-bold">&times;</button>
         </div>

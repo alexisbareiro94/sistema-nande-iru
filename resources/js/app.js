@@ -3,6 +3,9 @@ import './bootstrap';
 import './reportes';
 import './notificaciones';
 import './gestion-user';
+import './utils'
+import './clients-dist'
+import './componentes/clientes'
 
 
 let myChart = null;
