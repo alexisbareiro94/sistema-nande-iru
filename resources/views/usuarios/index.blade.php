@@ -16,7 +16,7 @@
 
         <!-- Sección 1: Dashboard / Resumen -->
         <section class="mb-10">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">Dashboard / Resumen de Usuarios</h2>
+            {{-- <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">Dashboard / Resumen de Usuarios</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Total Usuarios Activos -->
                 <div class="bg-white p-5 rounded-lg shadow-md flex flex-col items-center justify-center text-center">
@@ -50,17 +50,27 @@
                     <h3 class="font-semibold text-gray-700">Roles Registrados</h3>
                     <p class="text-2xl font-bold text-gray-900">5</p>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Auditoria -->
             <section class="mb-10">
                 <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">Auditoria</h2>
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4">
-                        <div class="flex gap-4 items-center">
+                        <a href="{{ route('auditoria.index') }}" class="flex gap-4 items-center">
                             <h3 class="font-bold">Registro de actividad</h3>
-                            <p class="text-sm text-gray-500 hover:underline cursor-pointer">Ver todos</p>
-                        </div>
+                            <p class="flex items-center text-sm text-gray-500 hover:underline cursor-pointer group">
+                                Ver todos
+                                <i class="ml-2 items-center">
+                                    <svg class="w-4 transition-all duration-150 group-hover:translate-x-1"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                    </svg>
+                                </i>
+                            </p>
+                        </a>
                         <div class="mt-3 sm:mt-0">
                             <select class="p-2 border rounded">
                                 <option>Mes Actual</option>
@@ -90,14 +100,15 @@
                                 </tr>
                             </thead>
                             <tbody id="table-body-auditorias" class="divide-y divide-gray-200">
-                                @foreach ($auditorias as $item)                                    
+                                @foreach ($auditorias as $item)
                                     <tr>
-                                        <td class="px-4 py-3">{{ $item->user->name ?? ''}}</td>
+                                        <td class="px-4 py-3">{{ $item->user->name ?? '' }}</td>
                                         <td class="px-4 py-3">{{ $item->accion }}</td>
                                         <td class="px-4 py-3">
-                                            @if ($item->datos)                                                
+                                            @if ($item->datos)
                                                 @foreach ($item->datos as $key => $dato)
-                                                    {{ $key }}: {{ is_numeric($dato) ? moneda($dato) : $dato }} <br>
+                                                    {{ $key }}: {{ is_numeric($dato) ? moneda($dato) : $dato }}
+                                                    <br>
                                                 @endforeach
                                             @endif
                                         </td>

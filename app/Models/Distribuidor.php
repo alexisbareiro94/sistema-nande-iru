@@ -15,7 +15,8 @@ class Distribuidor extends Model
         'direccion',
     ];
 
-    public function vendedores(){
+    public function vendedores()
+    {
         return $this->hasMany(VendedorDist::class, 'distribuidor_id');
     }
 }

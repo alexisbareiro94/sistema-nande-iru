@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\ClienteDistController;
 use App\Http\Controllers\DistribuidorController;
 use App\Http\Controllers\GestionUsersController;
 use App\Http\Controllers\MarcaController;
@@ -17,7 +19,7 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
 use Illuminate\Support\Facades\Route;
 
-use App\Models\{MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto, PagoSalario};
+use App\Models\{Auditoria, MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto, PagoSalario};
 use Carbon\Carbon;
 
 Route::get('/login', [AuthController::class, 'login_view'])->name('login');
@@ -108,7 +110,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/api/gestion_user/{id}', [GestionUsersController::class, 'update']);
         Route::delete('/api/gestion_user/{id}', [GestionUsersController::class, 'delete']);
 
-        Route::get('/api/auditorias', [GestionUsersController::class, 'refresh_auditorias']);        
+        Route::get('/api/auditorias', [GestionUsersController::class, 'refresh_auditorias']);   
+        Route::get('/auditorias', [AuditoriaController::class, 'index'])->name('auditoria.index');
+        
+        Route::get('/gestion_clientes_distribuidores', [ClienteDistController::class, 'index'])->name('cliente.dist.index');
+
+        Route::get('/api/cliente/{id}', [ClienteDistController::class, 'show_cliente']);
+        Route::post('/api/user/{id}', [UserController::class, 'update']);
+
+        Route::post('/api/cliente/{id}', [ClienteDistController::class, 'desactive']);
     });
 });
 
@@ -122,6 +132,17 @@ Route::get('/borrar-session', function () {
 });
 
 use Illuminate\Http\Request;
-Route::get('/debug', function (Request $request) {
-    return response()->download(public_path("reports/report.pdf"));
+use Illuminate\Support\Facades\Mail;
+Route::get('/test-mail', function () {
+    try {
+        Mail::raw('Este es un correo de prueba enviado desde Laravel con Gmail SMTP.', function ($message) {
+            $message->to('ale.bareirolu@gmail.com')
+                    ->subject('Correo de prueba desde Laravel');
+        });
+
+        return '✅ Correo enviado correctamente';
+    } catch (\Exception $e) {
+        return '❌ Error al enviar correo: ' . $e->getMessage();
+    }
 });
+;

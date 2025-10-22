@@ -48,7 +48,7 @@
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
-                    <form id="form-b-productos-ventas" action="">
+                    <form id="form-b-productos-ventas">
                         <input id="input-b-producto-ventas" type="text"
                             placeholder="Buscar producto por nombre, código o categoría..."
                             class="w-full pl-12 pr-4 py-3 border border-gray-300  rounded-xl focus:ring-2 focus:ring-gray-400 focus:border-gray-400 transition-all">

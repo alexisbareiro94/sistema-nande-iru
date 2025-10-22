@@ -11,12 +11,12 @@ class GestionUsersController extends Controller
 {
     public function index_view()
     {
-        $users = User::whereNot('role', 'cliente')
-            ->where('activo', true)
+        $users = User::whereNotIn('role', ['cliente', 'admin'])
+            ->where('activo', true)            
             ->with(['pagoSalarios', 'ultima_venta'])
             ->get();
 
-        $salarios = User::whereNot('role', 'cliente')
+        $salarios = User::whereNotIn('role', ['cliente', 'admin'])
             ->where('activo', true)
             ->selectRaw("sum(salario) as salario")
             ->first()->salario;
@@ -156,5 +156,5 @@ class GestionUsersController extends Controller
                 'error' => $e->getMessage(),
             ], 400);
         }
-    }
+    }    
 }
