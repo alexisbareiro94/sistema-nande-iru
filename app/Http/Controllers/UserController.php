@@ -8,12 +8,14 @@ use App\Models\{Auditoria, User, PagoSalario};
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $q = $request->query('q');        
+        $q = $request->query('q');
         try {
             $users = User::where(function ($query) use ($q) {
                 $query->whereLike('name', "%$q%")
@@ -21,11 +23,11 @@ class UserController extends Controller
                     ->orWhereLike('ruc_ci', "%$q%");
             })
                 ->with('compras')
-                ->whereNotIn('role', ['admin', 'caja', 'personal']) 
+                ->whereNotIn('role', ['admin', 'caja', 'personal'])
                 ->where('activo', true)
-                ->orderByDesc('created_at')        
+                ->orderByDesc('created_at')
                 ->get();
-            
+
             return response()->json([
                 'success' => true,
                 'users' => $users,
@@ -48,7 +50,7 @@ class UserController extends Controller
             Auditoria::create([
                 'created_by' => $request->user()->id,
                 'entidad_type' => User::class,
-                'entidad_id' => $cliente->id,                
+                'entidad_id' => $cliente->id,
                 'accion' => 'Registro de cliente',
             ]);
 
@@ -110,7 +112,7 @@ class UserController extends Controller
             ]);
 
             NotificacionEvent::dispatch('Actualización', 'Usuario Actualizado', 'blue');
-            $data = $user->load('compras');            
+            $data = $user->load('compras');
             DB::commit();
             return response()->json([
                 'message' => 'Usuario actualizado',
@@ -121,6 +123,41 @@ class UserController extends Controller
             return response()->json([
                 'error' => $e->getMessage(),
             ]);
+        }
+    }
+
+    public function reset_password(Request $request, string $id)
+    {
+        DB::beginTransaction();
+        try {
+            $userId = Crypt::decrypt($id);
+            $user = User::findOrFail($userId);            
+            $validated = Validator::make($request->all(), [
+                'password' => 'required|confirmed|min:6'
+            ]);
+
+            if ($validated->fails()) {
+                return redirect()->back()->with('error', $validated->messages());
+            }
+            $user->update([
+                'password' => $request->password,
+            ]);
+
+            Auditoria::create([
+                'created_by' => $user->id,
+                'entidad_type' => User::class,
+                'entidad_id' => $user->id,
+                'accion' => 'Contraseña cambiada',
+                'datos' => [
+                    'Usuario: ' => $user->name ?? $user->razon_social,
+                ]
+            ]);            
+            DB::commit();
+            return redirect()->route('login')->with('success', 'Contraseña cambiada');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+            return redirect()->route('login')->with('error', 'Ocurrio un error');
         }
     }
 }

@@ -26,6 +26,8 @@ Route::get('/login', [AuthController::class, 'login_view'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post')->middleware('throttle:5,1');
 Route::get('/register', [AuthController::class, 'register_view'])->name('register.view');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::get('/restablecer_pass', [GestionUsersController::class, 'restablecer_pass_view'])->name('restablecer.pass.view');
+Route::post('/restablecer/{id}', [UserController::class, 'reset_password'])->name('reset.password');
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [AuthController::class, 'index'])->name('home');
@@ -119,10 +121,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/api/user/{id}', [UserController::class, 'update']);
 
         Route::post('/api/cliente/{id}', [ClienteDistController::class, 'desactive']);
+
+        Route::post('/restablecer', [GestionUsersController::class, 'restablecer_pass'])->name('restablecer.pass');        
     });
 });
 
-Route::get('/session/{nombre}', function ($nombre) {
+Route::get('/session/{nombre}', function (string $nombre) {
     return [session("$nombre"), gettype(session("$nombre"))];
     session()->forget($nombre);
 });
@@ -131,18 +135,8 @@ Route::get('/borrar-session', function () {
     session()->forget('ventas');
 });
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-Route::get('/test-mail', function () {
-    try {
-        Mail::raw('Este es un correo de prueba enviado desde Laravel con Gmail SMTP.', function ($message) {
-            $message->to('ale.bareirolu@gmail.com')
-                    ->subject('Correo de prueba desde Laravel');
-        });
 
-        return '✅ Correo enviado correctamente';
-    } catch (\Exception $e) {
-        return '❌ Error al enviar correo: ' . $e->getMessage();
-    }
+Route::get('/debug', function () {
+   dd(User::select('name')->findOrFail(3));
 });
 ;

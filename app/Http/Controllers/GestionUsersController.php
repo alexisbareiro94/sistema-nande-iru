@@ -6,6 +6,11 @@ use App\Models\{Auditoria, User, PagoSalario};
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdatePersonalRequest;
 use App\Events\AuditoriaCreadaEvent;
+use App\Jobs\MailRestablecerPassJob;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class GestionUsersController extends Controller
 {
@@ -24,6 +29,7 @@ class GestionUsersController extends Controller
         $pagos = PagoSalario::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
             ->with('user')
             ->get();
+
 
         $auditorias = Auditoria::with('user')
             ->orderByDesc('created_at')
@@ -156,5 +162,51 @@ class GestionUsersController extends Controller
                 'error' => $e->getMessage(),
             ], 400);
         }
-    }    
+    }  
+    
+    public function restablecer_pass(Request $request){        
+        $validated = Validator::make($request->all(),[
+            'id' => 'required|exists:users,id'
+        ]);
+
+        if($validated->fails()){
+            return back()->with('error', 'Selecciona un cliente');
+        }
+        $user = User::select('id','name')->findOrFail($request->id);
+        try{
+            Auditoria::create([
+                'created_by' => auth()->user()->id,
+                'entidad_type' => User::class,
+                'entidad_id' => $request->id,
+                'accion' => 'Correo de recuperación de contraseña enviado',
+                'datos' => [
+                    'Usuario' => $user->name,
+                ]
+            ]);
+            MailRestablecerPassJob::dispatch($request->id);
+            return redirect()->back()->with('success', 'Correo de recuperación de contraseña enviada');
+        }catch(\Exception $e){
+            return redirect()->back()->with('error', $e->getMessage(),);
+        }
+    }
+
+    public function restablecer_pass_view(Request $request){    
+        try{
+            $token = $request->query('token');
+            $data = json_decode(Crypt::decrypt($token));
+            $id = $data->user_id;
+            $expireDate= $data->expires_at;
+            
+            if(Carbon::parse($expireDate)->isPast()){
+                return redirect()->route('login')->with('error', 'El enlace ya no es valido');
+            }
+
+            $user = User::findOrFail($id);
+            return view('gestios-usuarios.restablecer-pass.index', [
+                'user' => $user,
+            ]);
+        }catch(\Exception){            
+            return redirect()->route('login')->with('error', 'Token Invalido');
+        }                
+    }
 }

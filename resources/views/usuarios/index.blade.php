@@ -283,7 +283,7 @@
 
         <!-- Sección 4: Visualización de Sueldos -->
         <section class="mb-10">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">💰 Pago de Sueldos</h2>
+            <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">Pagos de Sueldos</h2>
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4">
                     <h3 class="font-bold">Listado de Sueldos</h3>
@@ -329,10 +329,10 @@
 
         <!-- Sección 6: Opciones de Seguridad -->
         <section class="mb-10">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">🔒 Seguridad</h2>
+            <h2 class="text-2xl font-bold mb-4 text-indigo-800 border-b pb-2">Seguridad</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-5 rounded-lg shadow-md">
-                    <h3 class="font-bold mb-2">🔑 Cambiar Contraseña</h3>
+                    <h3 class="font-bold mb-2">Cambiar Contraseña</h3>
                     <form class="space-y-2">
                         <input type="password" placeholder="Contraseña actual" class="w-full p-2 border rounded" />
                         <input type="password" placeholder="Nueva contraseña" class="w-full p-2 border rounded" />
@@ -342,12 +342,14 @@
                     </form>
                 </div>
                 <div class="bg-white p-5 rounded-lg shadow-md">
-                    <h3 class="font-bold mb-2">🔄 Restablecer Contraseña (Admin)</h3>
-                    <form class="space-y-2">
-                        <select class="w-full p-2 border rounded">
+                    <h3 class="font-bold mb-2">Restablecer Contraseña</h3>
+                    <form class="space-y-2" action="{{ route('restablecer.pass') }}" method="POST">
+                        @csrf
+                        <select name="id" class="w-full p-2 border rounded">
                             <option disabled selected>Seleccionar usuario</option>
-                            <option>Juan Pérez</option>
-                            <option>Ana López</option>
+                            @foreach ($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>                                
+                            @endforeach
                         </select>
                         <button
                             class="w-full bg-orange-500 text-white py-2 rounded hover:bg-orange-600">Restablecer</button>
@@ -355,7 +357,7 @@
                     </form>
                 </div>
                 <div class="bg-white p-5 rounded-lg shadow-md">
-                    <h3 class="font-bold mb-2">⛔ Bloqueo Temporal</h3>
+                    <h3 class="font-bold mb-2">Bloqueo Temporal</h3>
                     <form class="space-y-2">
                         <select class="w-full p-2 border rounded">
                             <option disabled selected>Seleccionar usuario</option>
