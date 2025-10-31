@@ -24,6 +24,7 @@ class ProductoFactory extends Factory
 
         return [
             'nombre' => $this->faker->words(2, true),
+            'tenant_id' => 1,
             'tipo' => $tipo,
             'codigo' => $codigoAuto ? null : $this->faker->unique()->regexify('[A-Z0-9]{8}'),
             'marca_id' => $tipo === 'producto' ? Marca::inRandomOrder()->value('id') : null,

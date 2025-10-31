@@ -14,8 +14,9 @@ class VentaFactory extends Factory
     public function definition(): array
     {
         return [
-            'codigo' => generate_code(),
+            'codigo' => generate_code(),            
             'caja_id' => 1, 
+            'tenant_id' => 1,
             'cliente_id' => null, 
             'nro_ticket' => $this->faker->unique()->numerify('TKT-#####'),
             'nro_factura' => $this->faker->unique()->numerify('FAC-#####'),
@@ -48,7 +49,8 @@ class VentaFactory extends Factory
                 $producto->save();
                 $precio = $producto->precio_venta;                
                 $venta->detalleVentas()->create([
-                    'producto_id' => $producto->id,
+                    'producto_id' => $producto->id, 
+                    'tenant_id' => 1,                   
                     'caja_id' => 1,
                     'cantidad' => $cantidad,
                     'precio_unitario' => $producto->precio_venta,
@@ -71,6 +73,7 @@ class VentaFactory extends Factory
             }            
             $venta->update([
                 'cliente_id' => $cliente?->id,
+                'tenant_id' => 1,
                 'cantidad_productos' => $cantidadTotal,
                 'subtotal' => round($subtotal),
                 'total' => round($total),
@@ -78,7 +81,8 @@ class VentaFactory extends Factory
             ]);
             
             $venta->movimiento()->create([
-                'caja_id' => 1,
+                'caja_id' => 1,  
+                'tenant_id' => 1,              
                 'venta_id' => $venta->id,
                 'tipo' => 'ingreso',
                 'concepto' => 'Venta de productos',
@@ -87,7 +91,8 @@ class VentaFactory extends Factory
             ]);
             
             $venta->pagos()->create([
-                'caja_id' => 1,
+                'caja_id' => 1,       
+                'tenant_id' => 1,         
                 'venta_id' => $venta->id,
                 'metodo' => $venta->forma_pago,
                 'monto' => $venta->total,

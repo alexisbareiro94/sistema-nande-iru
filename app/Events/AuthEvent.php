@@ -22,11 +22,14 @@ class AuthEvent implements ShouldBroadcast
     public User $user;
     public string $tipo;
     public $ultimaConexion;
-    public function __construct(User $user, string $tipo)
+    public $tenantId;    
+
+    public function __construct(User $user, string $tipo, $tenantId)
     {
         $this->user = $user;
         $this->tipo = $tipo;
         $this->ultimaConexion = format_time($user->ultima_conexion);
+        $this->tenantId = $tenantId;
     }
 
     /**
@@ -37,7 +40,7 @@ class AuthEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('auth-event'),
+            new PrivateChannel('auth-event.' . $this->tenantId),
         ];
     }
 }

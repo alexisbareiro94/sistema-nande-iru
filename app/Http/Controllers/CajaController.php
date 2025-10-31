@@ -18,19 +18,29 @@ class CajaController extends Controller
     }
     public function index_view()
     {
+
+
         if (!session("caja")) {
             $caja = Caja::orderByDesc("id")->first();
         }
-
-        $pagosSalario = PagoSalario::whereHas('user', function ($q) {
-            return $q->where('role', 'personal')->where('activo', true);
+        $tenantId = tenant_id();
+        $pagosSalario = PagoSalario::whereHas('user', function ($q) use ($tenantId) {
+            return $q->where('role', 'personal')
+                ->where('activo', true)
+                ->where('tenant_id', $tenantId);
         })
             ->orderByDesc('created_at')
-            ->with('user')
+            ->with(['user' => function ($q) use ($tenantId) {
+                $q->where('tenant_id', $tenantId);
+            }])
+
             ->get()
             ->unique('user_id');
 
-        $users = User::where('role', 'personal')->where('activo', true)->get();
+        $users = User::where('role', 'personal')
+            ->where('activo', true)
+            ->where('tenant_id', $tenantId)
+            ->get();
         return view("caja.index", [
             "caja" => $caja ?? "",
             'pagosSalario' => $pagosSalario,
@@ -47,6 +57,7 @@ class CajaController extends Controller
         $data = $this->cajaService->set_data($res);
 
         try {
+            $tenantId = tenant_id();
             session("caja", []);
             $caja = Caja::create($data);
 
@@ -57,10 +68,16 @@ class CajaController extends Controller
                 "monto" => $caja["monto_inicial"],
             ]);
 
-            $arrayCaja = $caja->load("user:id,name")->toArray();
+            $arrayCaja = $caja->load([
+                'user' => function ($q) use ($tenantId) {
+                    $q->select('id', 'name')
+                        ->where('tenant_id', $tenantId);
+                }
+            ])->toArray();
+
             $arrayCaja["saldo"] = $arrayCaja["monto_inicial"];
             session()->put(["caja" => $arrayCaja]);
-            MovimientoRealizado::dispatch($movimiento, $movimiento->tipo);
+            MovimientoRealizado::dispatch($movimiento, $movimiento->tipo, tenant_id());
             Auditoria::create([
                 'created_by' => $request->user()->id,
                 'entidad_type' => Caja::class,
@@ -70,7 +87,7 @@ class CajaController extends Controller
                     'monto apertura' => $caja['monto_inicial']
                 ]
             ]);
-            AuditoriaCreadaEvent::dispatch();
+            AuditoriaCreadaEvent::dispatch(tenant_id());
             return back()->with("success", "Caja Abierta Correctamente");
         } catch (\Exception $e) {
             return back()->with("error", $e->getMessage());
@@ -104,8 +121,8 @@ class CajaController extends Controller
 
             session()->forget("caja");
 
-            CierreCaja::dispatch($caja);
-            
+            CierreCaja::dispatch($caja, tenant_id());
+
             Auditoria::create([
                 'created_by' => $request->user()->id,
                 'entidad_type' => Caja::class,
@@ -115,7 +132,7 @@ class CajaController extends Controller
                     'monto cierre' => $data['monto_cierre']
                 ]
             ]);
-            AuditoriaCreadaEvent::dispatch();
+            AuditoriaCreadaEvent::dispatch(tenant_id());
             return response()->json([
                 "success" => true,
                 "message" => "Caja cerrada correctamente",
@@ -130,7 +147,7 @@ class CajaController extends Controller
     public function show(string $id)
     {
         try {
-            $caja = Caja::find($id);
+            $caja = Caja::with('user')->find($id);
             $transacciones = Venta::where("caja_id", $caja->id)->count();
             $mayorVenta = Venta::where("caja_id", $caja->id)
                 ->orderByDesc("total")
@@ -166,7 +183,7 @@ class CajaController extends Controller
             $transfProcentaje = (100 * $transferencia) / $total;
 
             $datos = [
-                "caja" => $caja->load("user"),
+                "caja" => $caja,
                 "ventas" => $ventas->values()->toArray(),
                 "transacciones" => $transacciones,
                 "clientes" => $clientes,

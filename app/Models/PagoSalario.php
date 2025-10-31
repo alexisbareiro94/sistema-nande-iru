@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class PagoSalario extends Model
 {
+    // use BelongsToTenant;
+
     protected $table = 'pago_salarios';
 
     protected $fillable = [
@@ -16,12 +19,43 @@ class PagoSalario extends Model
         'restante',
         'created_by'
     ];
-    
-    public function movimientos(){
+
+    // En tu modelo Auditoria
+    protected static function booted(): void
+    {
+        static::addGlobalScope('tenant_filter', function (Builder $builder) {
+            if (auth()->check()) {
+                $tenantId = auth()->user()->role === 'admin'
+                    ? auth()->user()->id
+                    : auth()->user()->tenant_id;
+
+                $builder->where('pago_salarios.tenant_id', $tenantId);
+            }
+        });
+    }
+
+
+    // En tu modelo Producto
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (!$model->tenant_id && auth()->check()) {
+                $model->tenant_id = auth()->user()->role === 'admin'
+                    ? auth()->user()->id
+                    : auth()->user()->tenant_id;
+            }
+        });
+    }
+
+    public function movimientos()
+    {
         return $this->belongsTo(MovimientoCaja::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

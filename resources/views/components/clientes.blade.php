@@ -62,7 +62,7 @@
                     @foreach ($clientes as $cliente)
                         <tr data-id="{{ $cliente->id }}" class="tr-clientes bg-white border-b  border-gray-200">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                {{ $cliente->razon_social }}
+                                {{ $cliente->razon_social }} {{ $cliente->tenant_id }} {{ auth()->user()->tenant_id }}
                             </th>
                             <td class="px-6 py-4">
                                 {{ $cliente->ruc_ci }}

@@ -16,6 +16,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $q = $request->query('q');
+        $tenantId = tenant_id();        
         try {
             $users = User::where(function ($query) use ($q) {
                 $query->whereLike('name', "%$q%")
@@ -23,8 +24,9 @@ class UserController extends Controller
                     ->orWhereLike('ruc_ci', "%$q%");
             })
                 ->with('compras')
-                ->whereNotIn('role', ['admin', 'caja', 'personal'])
                 ->where('activo', true)
+                ->where('tenant_id', $tenantId)
+                ->whereNotIn('role', ['admin', 'caja', 'personal'])
                 ->orderByDesc('created_at')
                 ->get();
 
@@ -80,7 +82,7 @@ class UserController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $pagosSalario ?? User::find($id),
+                'data' => $pagosSalario ?? User::where('tenant_id', tenant_id())->find($id),
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -95,7 +97,7 @@ class UserController extends Controller
         DB::beginTransaction();
         try {
             $data = $request->validated();
-            $user = User::findOrFail($id);
+            $user = User::where('tenant_id', tenant_id())->findOrFail($id);
             $user->update([
                 'razon_social' => $data['razon_social'] ?? $user->razon_social,
                 'ruc_ci' => $data['ruc_ci'] ?? $user->ruc_ci,
@@ -111,7 +113,7 @@ class UserController extends Controller
                 ]
             ]);
 
-            NotificacionEvent::dispatch('Actualización', 'Usuario Actualizado', 'blue');
+            NotificacionEvent::dispatch('Actualización', 'Usuario Actualizado', 'blue', tenant_id());
             $data = $user->load('compras');
             DB::commit();
             return response()->json([
@@ -131,7 +133,7 @@ class UserController extends Controller
         DB::beginTransaction();
         try {
             $userId = Crypt::decrypt($id);
-            $user = User::findOrFail($userId);            
+            $user = User::where('tenant_id', tenant_id())->findOrFail($userId);            
             $validated = Validator::make($request->all(), [
                 'password' => 'required|confirmed|min:6'
             ]);

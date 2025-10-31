@@ -20,12 +20,14 @@ class CierreCajaEvent implements ShouldBroadcast
     public string $tipo;
     public string $mensaje;
     public string $color;
+    public $tenantId;
 
-    public function __construct(string $tipo, string $mensaje, string $color)
+    public function __construct(string $tipo, string $mensaje, string $color, $tenantId)
     {
         $this->tipo = $tipo;
         $this->mensaje = $mensaje;
         $this->color = $color;
+        $this->tenantId = $tenantId;
     }
 
     /**
@@ -36,7 +38,7 @@ class CierreCajaEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('cierre-caja'),
+            new PrivateChannel('cierre-caja.' . $this->tenantId),
         ];
     }
 }

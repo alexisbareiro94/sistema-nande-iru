@@ -13,6 +13,7 @@ return new class extends Migration
     {        
         Schema::create('planes_cuotas', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('venta_id')->constrained('ventas');
             $table->enum('tipo', ['mensual', 'semanal', 'quincenal', 'personalizado']);
             $table->integer('cantidad_cuotas');

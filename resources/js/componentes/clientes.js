@@ -3,7 +3,6 @@ import { renderAllUser } from '../clients-dist'
 import axios from 'axios';
 
 const modal = $('#modal-todos-clientes');
-
 if($('#btn-ver-todos-clientes')){
     $el('#btn-ver-todos-clientes', 'click', () => {
         modal.classList.remove('hidden');    
@@ -33,7 +32,7 @@ if($('#todos-clientes-input')){
         clearTimeout(timer);
         timer = setTimeout(async () => {
             try{
-                const res = await axios.get(`api/users?q=${q}`);
+                const res = await axios.get(`api/users?q=${q}`);                
                 console.log(res)
                 renderAllUser(res.data.users);
             }catch(err){

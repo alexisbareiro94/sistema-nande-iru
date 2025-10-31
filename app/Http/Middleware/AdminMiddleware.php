@@ -15,13 +15,13 @@ class AdminMiddleware
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
-    {
+    {        
         if ($request->user()->role != 'admin') {
             $user = auth()->user();                  
             NotificacionEvent::dispatch(
                 'ALERTA!',
                 "Intento de acceso no autorizado, por: " . ($user->name ?? $request->ip()) . " en " . $request->fullUrl(),
-                'red'
+                'red', tenant_id()
             );
             return redirect()->route('login')->with('error', 'no tienes permisos');
         }

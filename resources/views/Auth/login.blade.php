@@ -6,13 +6,6 @@
     <div class="min-h-screen flex items-center justify-center bg-[#A4B6B3] px-4">
         <div class="w-full max-w-md bg-white shadow-lg rounded-lg p-8">
             <h2 class="text-2xl font-bold text-center text-[#000000] mb-6">Iniciar Sesión</h2>
-
-            @if (session('error'))
-                <div class="bg-[#CC0000] text-white p-2 rounded mb-4 text-sm text-center">
-                    {{ session('error') }}
-                </div>
-            @endif
-
             <form action="{{ route('login') }}" method="POST" class="space-y-4">
                 @csrf
 
@@ -42,10 +35,10 @@
                         class="w-full mb-5 bg-[#000000] text-white font-semibold py-2 px-4 rounded-md hover:bg-[#333] transition-colors">
                         Iniciar Sesión
                     </button>
-                    <a href="{{ route('register.view') }}"
+                    {{-- <a href="{{ route('register.view') }}"
                         class="cursor-pointer w-full mt-6 bg-white text-black font-semibold py-2 px-4 rounded-md hover:underline transition-colors">
                         Registro
-                    </a>
+                    </a> --}}
                 </div>
             </form>
         </div>

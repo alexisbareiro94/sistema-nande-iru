@@ -18,6 +18,7 @@ class MovimientoCajaFactory extends Factory
     {
         return [
             'caja_id' => 1,
+            'tenant_id' => 1,
             'tipo' => 'egreso',
             'concepto' => $this->faker->randomElement(['Pago proveedores', 'extraccion', 'compra']),
             'monto' => $this->faker->numberBetween(10000, 500000),

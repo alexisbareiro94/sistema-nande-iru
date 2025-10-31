@@ -1,7 +1,7 @@
 <?php
 
 use Carbon\Carbon;
-use App\Models\{Caja, MovimientoCaja};
+use App\Models\{Caja, MovimientoCaja, Omitido};
 
 if (!function_exists('format_time')) {
     function format_time($time)
@@ -52,4 +52,26 @@ function crear_caja()
     if (Caja::where('estado', 'cerrado')->exists() && !Caja::where('estado', 'abierto')->exists() && session('caja')) {
         session()->forget('caja');
     }
+}
+
+function omited($value)
+{   
+    try{
+        $omitido = Omitido::all()->contains('user_id', $value);
+    
+        if($omitido){
+            return true;
+        }else{
+            Omitido::create(['user_id' => $value]);
+            return false;
+        }
+
+    }catch(\Exception $e){
+        throw new \Exception($e->getMessage());
+    }
+}
+
+function tenant_id()
+{
+    return auth()->user()->tenant_id;    
 }

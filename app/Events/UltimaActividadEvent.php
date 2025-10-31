@@ -20,10 +20,13 @@ class UltimaActividadEvent implements ShouldBroadcast
      */
     public $userId;
     public $totalVenta;
-    public function __construct($userId, $totalVenta)
+    public $tenantId;
+
+    public function __construct($userId, $totalVenta, $tenantId)
     {
         $this->userId = $userId;
         $this->totalVenta =  moneda($totalVenta);
+        $this->tenantId;
     }
 
     /**
@@ -34,7 +37,7 @@ class UltimaActividadEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('ultima-actividad'),
+            new PrivateChannel('ultima-actividad.' . $this->tenantId),
         ];
     }
 }

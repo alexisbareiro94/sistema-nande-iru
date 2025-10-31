@@ -15,6 +15,7 @@ use App\Jobs\GenerarPdfJob;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Cache;
 use App\Jobs\VentaRealizada;
+use App\Services\PrinterService;
 
 class VentaController extends Controller
 {
@@ -23,7 +24,10 @@ class VentaController extends Controller
     public function index_view()
     {
         $query = Venta::query();
-        $clientes = User::where('role', 'cliente')->selectRaw('count(*) as total_users')->first()->total_users;
+        $clientes = User::where('role', 'cliente')
+            ->where('tenant_id', tenant_id())
+            ->selectRaw('count(*) as total_users')
+            ->first()->total_users;
         $totalVentas = count($query->get());
         $ingresos = $query->sum('total');
         $ingresosHoy = $query->where('created_at', '>=', now()->format('Y-m-d'))->get()->sum('total');
@@ -194,7 +198,7 @@ class VentaController extends Controller
         }
     }
 
-    public function store(StoreVentaRequest $request)
+    public function store(StoreVentaRequest $request, PrinterService $printer)
     {
         $data = $request->validated();  //aca se valida que llegue el carrito y demas datos
         $errores = $this->ventaService->validate_data($data); //aca valido los datos del carrito y el usuario
@@ -211,7 +215,10 @@ class VentaController extends Controller
         $totalCarrito = collect(json_decode($data['total']));
         $formaPago = collect(json_decode($data['forma_pago']));
         $ruc = $data['ruc'];
-        $userId = User::where('ruc_ci', $ruc)->pluck('id')->first();
+        $userId = User::where('ruc_ci', $ruc)
+            ->where('tenant_id', tenant_id())
+            ->pluck('id')
+            ->first();
         $cajaId = Caja::where('estado', 'abierto')->pluck('id')->first();
         $metodoPago = $formaPago->keys();
         session(['key' => $metodoPago[0]]);
@@ -243,7 +250,7 @@ class VentaController extends Controller
                 ]
             ]);
             
-            AuditoriaCreadaEvent::dispatch();
+            AuditoriaCreadaEvent::dispatch(tenant_id());
 
             MovimientoCaja::create([
                 'caja_id' => $cajaId,
@@ -283,6 +290,9 @@ class VentaController extends Controller
                     }
                 }
                 $productdb->increment('ventas', $producto->cantidad);
+
+                
+
             }
 
             foreach ($formaPago as $forma => $monto) {
@@ -311,8 +321,8 @@ class VentaController extends Controller
             $caja['saldo'] += $venta->total;
             session()->put(['caja' => $caja]);
             DB::commit();
-            VentaRealizada::dispatch($venta);            
-            UltimaActividadEvent::dispatch(auth()->user()->id, $venta->total);
+            VentaRealizada::dispatch($venta, tenant_id());            
+            UltimaActividadEvent::dispatch(auth()->user()->id, $venta->total, tenant_id());
             crear_caja();
             return response()->json([
                 'success' => true,
@@ -349,7 +359,7 @@ class VentaController extends Controller
             $ventas = $item->toArray();
             $items = count($ventas);            
                         
-            GenerarPdfJob::dispatch(auth()->user()->id, $ventas, $ingresos, $egresos);      
+            GenerarPdfJob::dispatch(auth()->user()->id, $ventas, $ingresos, $egresos, tenant_id());      
             return response()->json([
                 'data' => 'listo',
             ]);
@@ -357,7 +367,7 @@ class VentaController extends Controller
             $ventas = $item->toArray();
             $items = count($ventas);                        
             Cache::forget('ventas');
-            GenerarPdfJob::dispatch(auth()->user()->id, $ventas);            
+            GenerarPdfJob::dispatch(auth()->user()->id, $ventas, null, tenant_id());            
             return response()->json([
                 'data' => 'listo',
             ]);

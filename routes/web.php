@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteDistController;
+use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\DistribuidorController;
 use App\Http\Controllers\GestionUsersController;
 use App\Http\Controllers\MarcaController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\NotificacionController;
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CajaMiddleware;
+use App\Http\Middleware\CheckUserIsBloqued;
 use Illuminate\Support\Facades\Route;
 
 use App\Models\{Auditoria, MovimientoCaja, User, Venta, DetalleVenta, Caja, Pago, Producto, PagoSalario};
@@ -29,15 +31,19 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::get('/restablecer_pass', [GestionUsersController::class, 'restablecer_pass_view'])->name('restablecer.pass.view');
 Route::post('/restablecer/{id}', [UserController::class, 'reset_password'])->name('reset.password');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', CheckUserIsBloqued::class])->group(function () {
     Route::get('/', [AuthController::class, 'index'])->name('home');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::get('/download', function(){
+    Route::get('/download', function () {
         return response()->download(public_path("reports/report.pdf"));
     });
 
     Route::middleware(CajaMiddleware::class)->group(function () {
+        //
+        Route::get('/config', [ConfigController::class, 'config_view'])->name('auth.config.view'); //estaba en el Auth
+        Route::post('/config', [ConfigController::class, 'config'])->name('auth.config');//estaba en el Auth
+        Route::post('/omitido', [ConfigController::class, 'omitido'])->name('config.omitido');
         //caja
         Route::get('/caja', [CajaController::class, 'index_view'])->name('caja.index');
         Route::post('/abrir-caja', [CajaController::class, 'abrir'])->name('caja.abrir');
@@ -112,9 +118,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/api/gestion_user/{id}', [GestionUsersController::class, 'update']);
         Route::delete('/api/gestion_user/{id}', [GestionUsersController::class, 'delete']);
 
-        Route::get('/api/auditorias', [GestionUsersController::class, 'refresh_auditorias']);   
+        Route::get('/api/auditorias', [GestionUsersController::class, 'refresh_auditorias']);
         Route::get('/auditorias', [AuditoriaController::class, 'index'])->name('auditoria.index');
-        
+
         Route::get('/gestion_clientes_distribuidores', [ClienteDistController::class, 'index'])->name('cliente.dist.index');
 
         Route::get('/api/cliente/{id}', [ClienteDistController::class, 'show_cliente']);
@@ -122,7 +128,7 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/api/cliente/{id}', [ClienteDistController::class, 'desactive']);
 
-        Route::post('/restablecer', [GestionUsersController::class, 'restablecer_pass'])->name('restablecer.pass');        
+        Route::post('/restablecer', [GestionUsersController::class, 'restablecer_pass'])->name('restablecer.pass');
     });
 });
 
@@ -135,8 +141,59 @@ Route::get('/borrar-session', function () {
     session()->forget('ventas');
 });
 
-
 Route::get('/debug', function () {
-   dd(User::select('name')->findOrFail(3));
+    dd(auth()->user()->tenant_id);
 });
-;
+
+use App\Services\PrinterService;
+
+//antes hay que iniciar el servidor de express.js => Documentos/proyectos-laravel/printer-service
+Route::get('/test-receipt', function (PrinterService $printer) {
+    // Simulación del carrito
+    $productos = [
+        (object) ['nombre' => 'Aceite 10W40', 'cantidad' => 1, 'precio' => 45000],
+        (object) ['nombre' => 'Filtro de aire', 'cantidad' => 2, 'precio' => 30000],
+        (object) ['nombre' => 'Alineación', 'cantidad' => 1, 'precio' => 60000],
+    ];
+
+    // Calcular total
+    $total = collect($productos)->sum(fn($p) => $p->precio * $p->cantidad);
+    $fechaHora = Carbon::now()->format('d/m/Y H:i');
+
+    // Crear ticket con formato
+    $lines = [
+        '        Taller Ñande Irū        ',
+        '   Alineación y Gomería - Luque   ',
+        'Tel: (0981) 123-456',
+        'Florida c/paso Esperanza, Laurelty',
+        'Fecha: ' . $fechaHora,
+        '-----------------------------',
+        'PROD.              CANT   P/U',
+        '-----------------------------',
+    ];
+
+    // Agregar los productos con formato de columnas
+    foreach ($productos as $p) {
+        // Recortar nombre si es muy largo (por ancho del papel)
+        $nombre = str_pad(substr($p->nombre, 0, 14), 14);
+        $cantidad = str_pad($p->cantidad, 5, ' ', STR_PAD_LEFT);
+        $precio = str_pad(number_format($p->precio, 0, ',', '.'), 7, ' ', STR_PAD_LEFT);
+
+        $lines[] = "{$nombre}{$cantidad}{$precio}";
+    }
+
+    $lines[] = '-----------------------------';
+    $lines[] = str_pad('TOTAL:', 20) . 'Gs.' . number_format($total, 0, ',', '.');
+    $lines[] = '';
+    $lines[] = '¡Gracias por su compra!';
+    $lines[] = '                             ';
+    $lines[] = '                             ';
+    $lines[] = '                             ';
+
+    // Enviar a imprimir
+    $ok = $printer->printReceipt($lines);
+
+    return $ok
+        ? 'Ticket enviado correctamente al servicio de impresión'
+        : 'Error al imprimir el ticket';
+});

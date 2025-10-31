@@ -416,6 +416,6 @@
             ocultar.classList.add('hidden');
             mostrar.classList.remove('hidden');
             password.type = 'password'
-        });
+        });        
     </script>
 @endsection

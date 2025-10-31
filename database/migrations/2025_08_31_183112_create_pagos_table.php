@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('pagos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('venta_id')->constrained('ventas');
             $table->foreignId('caja_id')->constrained('cajas');
             $table->enum('metodo', ['efectivo', 'transferencia', 'mixto']);            

@@ -1,13 +1,14 @@
 <div class="p-6 min-h-screen">
     <h1 class="text-xl font-bold mb-8">
-        <a href="/">
+        {{-- <a href="/">
             <img class="w-26 ml-6" src="{{ asset('images/logo/logo.png') }}" alt="">
-        </a>
+        </a> --}}
+        <p>{{ auth()->user()->admin->empresa }}</p>
     </h1>
     <nav>
         <ul class="space-y-2">
             <li>
-                <a href="#"
+                <a href="{{ route('home') }}"
                     class="flex items-center p-3 rounded-lg hover:bg-[#b6c4c2] hover:text-gray-800 hover:scale-110 transition-all hover:shadow-xl">
                     <span class="font-semibold">Inicio</span>
                 </a>

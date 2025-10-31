@@ -17,6 +17,7 @@ class Clientes extends Component
     {
         $this->clientes = User::where('activo', true)
             ->whereNotIn('role', ['admin', 'caja', 'personal'])
+            ->where('tenant_id', tenant_id())
             ->orderByDesc('created_at')
             ->get();        
     }

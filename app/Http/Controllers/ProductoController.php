@@ -127,30 +127,29 @@ class ProductoController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        $data = $request->validated();
+        $data = $request->validated();                
         if ($request->hasFile('imagen')) {
             $fileName = time() . '.' . $request->file('imagen')->getClientOriginalExtension();
             $request->file('imagen')->move(public_path('images'), $fileName);
 
             $data['imagen'] = $fileName;
-        }
+        }        
         $request->marca_id ?? $data['marca_id'] = 1;
         $request->categoria_id ?? $data['categoria_id'] = 1;
-        $request->distribuidor_id ?? $data['distribuidor_id'] = 1;
-
-        try {
+        $request->distribuidor_id ?? $data['distribuidor_id'] = 1;        
+        try {            
             if ($request->codigo_auto) {
                 $data['codigo'] = $this->productService->create_code($data['categoria_id'], $data['nombre'], $data['marca_id']);
-            }
+            }            
             $producto = Producto::create($data);
-
+            // return response()->json('punto 4');
             Auditoria::create([
                 'created_by' => auth()->user()->id,
                 'entidad_type' => Producto::class,
                 'entidad_id' => $producto->id,
                 'accion' => 'Creación de producto'
-            ]);
-            AuditoriaCreadaEvent::dispatch();
+            ]);         
+            AuditoriaCreadaEvent::dispatch(tenant_id());
             return response()->json([
                 'success' => true,
                 'message' => 'Producto agregado correctamente.',
@@ -213,7 +212,7 @@ class ProductoController extends Controller
                 'entidad_id' => $producto->id,
                 'accion' => 'Actualización de producto'
             ]);
-            AuditoriaCreadaEvent::dispatch();
+            AuditoriaCreadaEvent::dispatch(tenant_id());
             return response()->json([
                 'success' => true,
                 'message' => 'Producto Actualizado',
@@ -240,7 +239,7 @@ class ProductoController extends Controller
                 'entidad_id' => $producto->id,
                 'accion' => 'Eliminacion de producto'
             ]);
-            AuditoriaCreadaEvent::dispatch();
+            AuditoriaCreadaEvent::dispatch(tenant_id());
             return response()->json([
                 'success' => true,
                 'message' => "producto borrado",
@@ -273,7 +272,7 @@ class ProductoController extends Controller
                 'entidad_id' => 1,
                 'accion' => 'Importación de productos por excel'
             ]);
-            AuditoriaCreadaEvent::dispatch();
+            AuditoriaCreadaEvent::dispatch(tenant_id());
             return response()->json([
                 'success' => true,
                 'message' => 'Productos importados'

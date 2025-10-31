@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('auditorias', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('created_by')->constrained('users');
             $table->morphs('entidad');
             $table->string('accion');

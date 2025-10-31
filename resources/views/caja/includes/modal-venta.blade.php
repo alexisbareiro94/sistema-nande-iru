@@ -1,6 +1,7 @@
 <div @class([
         'fixed inset-0 backdrop-blur-xs bg-black/20 flex items-center justify-center z-40 transition-opacity duration-300', 
-        'hidden' => Auth::user()->role == 'admin'
+        'hidden' => Auth::user()->role == 'admin',
+        'hidden' => !session('caja')
     ]) 
     id="modal-ventas">
     <div class="bg-white border-1 border-gray-800 rounded-2xl w-full max-w-[80%] shadow-2xl overflow-hidden flex flex-col h-[90vh]">

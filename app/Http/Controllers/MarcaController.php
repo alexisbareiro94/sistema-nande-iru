@@ -30,7 +30,7 @@ class MarcaController extends Controller
                 'entidad_id' => $marca->id,
                 'accion' => 'Creación de marca'
             ]);
-            AuditoriaCreadaEvent::dispatch();
+            AuditoriaCreadaEvent::dispatch(tenant_id());
             return response()->json([
                 'success' => true,
                 'data' => $marca,

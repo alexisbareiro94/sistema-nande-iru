@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('ventas', function (Blueprint $table) {
             $table->id();
             $table->string('codigo')->unique();            
+            $table->foreignId('tenant_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('caja_id')->constrained('users');
             $table->foreignId('cliente_id')->constrained('users');
             $table->foreignId('vendedor_id')->constrained('users');

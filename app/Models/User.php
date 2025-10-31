@@ -6,7 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -17,9 +18,22 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (!$model->tenant_id && auth()->check()) {
+                $model->tenant_id = auth()->user()->role === 'admin'
+                    ? auth()->user()->id
+                    : auth()->user()->tenant_id;
+            }
+        });
+    }
+
     protected $fillable = [
         'name',
-        'surname',
         'email',
         'role',
         'razon_social',
@@ -30,6 +44,12 @@ class User extends Authenticatable
         'activo',
         'ultima_conexion',
         'en_linea',
+        'tenant_id',
+        'temp_password',
+        'expires_at',
+        'temp_used',
+        'is_blocked',
+        'empresa',
     ];
 
     /**
@@ -87,5 +107,10 @@ class User extends Authenticatable
     public function compras()
     {
         return $this->hasMany(Venta::class, 'cliente_id');
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(User::class, 'tenant_id');
     }
 }

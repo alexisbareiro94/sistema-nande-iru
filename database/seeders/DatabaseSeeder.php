@@ -23,31 +23,32 @@ class DatabaseSeeder extends Seeder
     {
         // $this->call([UserSeeder::class]);
 
-        // DB::table("marcas")->insert([
-        //     "nombre" => "sin marca",
-        // ]);
-
-        // DB::table("categorias")->insert([
-        //     "nombre" => "sin categoria",
-        // ]);
-
-        // DB::table("distribuidores")->insert([
-        //     "nombre" => "sin distribuidor",
-        // ]);
-
-        // DB::table('configuraciones')->insert([
-        //     'key' => 'max_cajas',
-        //     'valor' => 1,
-        // ]);
-
-        // \App\Models\Producto::factory(50)->create();
-
-        User::factory(11)->create();
-        Venta::factory(279)->create([
-            "cliente_id" => User::all()->random()->id,
-            "total" => 2000000,
+        DB::table("marcas")->insert([
+            // "tanant_id" => 1,
+            "nombre" => "sin marca",
         ]);
 
-        MovimientoCaja::factory(112)->create();
+        DB::table("categorias")->insert([
+            // "tanant_id" => 1,            
+            "nombre" => "sin categoria",
+        ]);
+
+        DB::table("distribuidores")->insert([
+            // "tanant_id" => 1,               
+            "nombre" => "sin distribuidor",
+        ]);
+
+        
+
+        //  \App\Models\Producto::factory(50)->create();
+
+        // User::factory(11)->create();
+        // Venta::factory(279)->create([
+        //     "cliente_id" => User::all()->random()->id,
+        //     'tenant_id' => 1,
+        //     "total" => 2000000,
+        // ]);
+
+        // MovimientoCaja::factory(112)->create();
     }
 }

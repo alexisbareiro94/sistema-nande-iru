@@ -21,13 +21,15 @@ class GenerarPdfJob implements ShouldQueue
     public $ingresos;
     public $egresos;
     public $userId;
+    public $tenantId;
 
-    public function __construct($userId, $ventas, $ingresos = null, $egresos = null)
+    public function __construct($userId, $ventas, $ingresos = null, $egresos = null, $tenantId)
     {
         $this->ventas = $ventas;
         $this->ingresos = $ingresos;
         $this->egresos = $egresos;
         $this->userId = $userId;                
+        $this->tenantId = $tenantId;
     }
 
     /**
@@ -50,7 +52,7 @@ class GenerarPdfJob implements ShouldQueue
             
             $path = public_path("reports/report.pdf");  
             $pdf->save($path);
-            NotificacionEvent::dispatch('Reporte generado', 'Nuevo reporte generado', 'blue');
+            NotificacionEvent::dispatch('Reporte generado', 'Nuevo reporte generado', 'blue', $this->tenantId);
             Notification::create([
                 'titulo' => 'Reporte Generado',
                 'mensaje' => 'Nuevo reporte generado',

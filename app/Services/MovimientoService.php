@@ -54,7 +54,7 @@ class MovimientoService
                     'monto' => $pagoSalario->monto,
                 ]
             ]);
-            AuditoriaCreadaEvent::dispatch();
+            AuditoriaCreadaEvent::dispatch(tenant_id());
             return true;
         } else {            
             return false;

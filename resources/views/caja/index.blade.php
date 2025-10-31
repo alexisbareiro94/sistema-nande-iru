@@ -121,7 +121,7 @@
                         <div class="relative">
                             <button id="ir-a-ventas"
                                 class="cursor-pointer w-full bg-gray-800 hover:bg-gray-600 text-white font-semibold py-4 rounded-lg
-                                    transition-all duration-200 hover:shadow-md">
+                                    transition-all duration-200 hover:shadow-md" {{ !session('caja') ? 'disabled' : ''}}>
                                 <div class="flex flex-col items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 
 class Caja extends Model
 {
@@ -25,6 +26,34 @@ class Caja extends Model
         'updated_by',
     ];
 
+    // En tu modelo Auditoria
+    protected static function booted(): void
+    {
+        static::addGlobalScope('tenant_filter', function (Builder $builder) {
+            if (auth()->check()) {
+                $tenantId = auth()->user()->role === 'admin'
+                    ? auth()->user()->id
+                    : auth()->user()->tenant_id;
+
+                $builder->where('cajas.tenant_id', $tenantId);
+            }
+        });
+    }
+
+    // En tu modelo Producto
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (!$model->tenant_id && auth()->check()) {
+                $model->tenant_id = auth()->user()->role === 'admin'
+                    ? auth()->user()->id
+                    : auth()->user()->tenant_id;
+            }
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -40,11 +69,13 @@ class Caja extends Model
         return $this->hasMany(Venta::class);
     }
 
-    public function detallesVentas(){
+    public function detallesVentas()
+    {
         return $this->hasMany(DetalleVenta::class, 'caja_id');
     }
 
-    public function pagos(){
+    public function pagos()
+    {
         return $this->hasMany(Pago::class, 'caja_id');
     }
 }

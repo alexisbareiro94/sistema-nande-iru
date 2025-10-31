@@ -37,7 +37,7 @@ class CategoriaController extends Controller
                 'entidad_id' => $categoria->id,
                 'accion' => 'Creación de categoría',                
             ]);
-            AuditoriaCreadaEvent::dispatch();
+            AuditoriaCreadaEvent::dispatch(tenant_id());
             return response()->json([
                 'success' => true,
                 'categoria' => $categoria

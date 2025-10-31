@@ -16,10 +16,11 @@ class AuditoriaCreadaEvent implements ShouldBroadcast
 
     /**
      * Create a new event instance.
-     */    
-    public function __construct()
+     */  
+    public $tenantId;
+    public function __construct($tenantId)
     {
-        //
+        $this->tenantId = $tenantId;
     }
 
     /**
@@ -30,7 +31,7 @@ class AuditoriaCreadaEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('auditoria-creada'),
+            new PrivateChannel('auditoria-creada.' . (int)$this->tenantId),
         ];
     }
 }

@@ -13,18 +13,21 @@ return new class extends Migration
     {
         Schema::create('categorias', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('nombre');
             $table->timestamps();
         });
 
         Schema::create('marcas', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('nombre');
             $table->timestamps();
         });
 
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('nombre');
             $table->string('codigo')->nullable()->unique();
             $table->enum('tipo', ['servicio', 'producto'])->default('producto');

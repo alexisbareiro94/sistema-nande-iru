@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('descuentos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('venta_id')->constrained('ventas');
             $table->foreignId('producto_id')->nullable()->constrained('productos');
             $table->enum('tipo', ['porcentaje', 'monto_fijo']);

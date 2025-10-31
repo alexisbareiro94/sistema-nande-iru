@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('distribuidores', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('nombre')->unique();
             $table->string('ruc')->nullable()->unique();
             $table->integer('celular')->nullable();
@@ -22,6 +23,7 @@ return new class extends Migration
 
         Schema::create('vendedores_dist', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('distribuidor_id')->constrained('distribuidores');
             $table->string('nombre');
             $table->string('telefono')->nullable();

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();            
+            $table->foreignId('tenant_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->enum('role', ['admin', 'caja', 'user', 'personal','cliente'])->default('cliente'); 
             $table->string('razon_social')->nullable();
             $table->string('ruc_ci')->nullable()->unique();
@@ -21,10 +22,15 @@ return new class extends Migration
             $table->string('email')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
+            $table->string('temp_password')->nullable();
             $table->integer('salario')->nullable();
             $table->boolean('activo')->nullable();
-            $table->boolean('en_linea')->nullable();
+            $table->boolean('en_linea')->nullable();            
             $table->dateTimeTz('ultima_conexion')->nullable();
+            $table->timestamp('expires_at')->nullable();
+            $table->boolean('temp_used')->nullable()->default(false);
+            $table->boolean('is_blocked')->nullable()->default(false);
+            $table->string('empresa')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

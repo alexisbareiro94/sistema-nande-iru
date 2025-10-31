@@ -82,7 +82,7 @@ class MovimientoCajaController extends Controller
                     'tipo' => $data['tipo'] 
                 ]
             ]);
-            AuditoriaCreadaEvent::dispatch();
+            AuditoriaCreadaEvent::dispatch(tenant_id());
             crear_caja();
             if ($data['personal_id'] != null) {
                 $pago = $this->movimientoService->pago_salario($data, $movimiento, $request->user()->id);

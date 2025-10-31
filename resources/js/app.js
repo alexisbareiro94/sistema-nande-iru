@@ -4,9 +4,35 @@ import './reportes';
 import './notificaciones';
 import './gestion-user';
 import './utils'
-import './clients-dist'
+import './clients-dist';
 import './componentes/clientes'
+import './componentes/restablecer-pass'
 
+// print();
+
+// function print() {
+//   const escpos = require('escpos');
+
+//   // Usar driver USB
+//   escpos.USB = require('escpos-usb');
+
+//   // Crear el dispositivo
+//   const device = new escpos.USB(); // detecta automáticamente la POS58
+//   const printer = new escpos.Printer(device);
+
+//   device.open(function () {
+//     printer
+//       .align('CT')
+//       .text('=== Ticket de prueba ===')
+//       .text('Producto 1   $1000')
+//       .text('Producto 2   $500')
+//       .text('--------------------')
+//       .text('Total        $1500')
+//       .cut()
+//       .close();
+//   });
+
+// }
 
 let myChart = null;
 async function loadChart(desde = '', hasta = '', periodo = '') {

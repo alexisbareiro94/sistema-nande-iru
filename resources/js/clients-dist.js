@@ -1,5 +1,5 @@
 import axios from "axios";
-import { $$, $el, $eli, $i, url, formatFecha } from './utils'
+import { $$, $el, $eli, $ ,$i, url, formatFecha } from './utils'
 import { showToast } from './toast'
 edit();
 function edit() {
@@ -70,8 +70,7 @@ async function renderUser() {
     const tableBody = $i('clientes-table-body')
     tableBody.innerHTML = '';
     try {
-        const res = await axios.get(`${url}/users`);
-        console.log(res.data.users)
+        const res = await axios.get(`${url}/users`);        
         const users = res.data.users
         let count = 0;
         for (const user of users) {
@@ -125,8 +124,7 @@ async function renderUser() {
 }
 
 
-export async function renderAllUser(data = null) {      
-    console.log(data)  
+export async function renderAllUser(data = null) {          
     const todosTableBody = $i('todos-clientes-table-body');        
     todosTableBody.innerHTML = '';    
     try {  
@@ -237,10 +235,8 @@ btnsCerrraModal.forEach(btn => {
         $i('modal-eliminar-cliente-gcd').classList.add('hidden')
     });
 });
-
 function deleteCliente() {
-
-    const btns = $$('.borrar-cliente-gcd')
+    const btns = $$('.borrar-cliente-gcd')    
     btns.forEach(btn => {
         btn.addEventListener('click', async () => {
             const id = btn.dataset.id;
@@ -281,6 +277,14 @@ if ($i('btn-eliminar-cliente')) {
         } catch (err) {
             console.log(err)
         }
+    });
+}
+
+
+//distribuidores
+if($('#cont-add-dist')){
+    $el('#cont-add-dist', 'click', () => {
+        console.log('message')
     });
 }
 

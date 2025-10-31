@@ -15,9 +15,11 @@ class VentaRealizada implements ShouldQueue
      * Create a new job instance.
      */
     public Venta $venta;
-    public function __construct(Venta $venta)
+    public $tenantId;
+    public function __construct(Venta $venta, $tenantId)
     {
         $this->venta = $venta;
+        $this->tenantId = $tenantId;
     }
 
     /**
@@ -25,11 +27,14 @@ class VentaRealizada implements ShouldQueue
      */
     public function handle(): void
     {
-        $admins = User::where('role', 'admin')->get();
-
+        $admins = User::where('role', 'admin')
+            ->where('tenant_id', $this->tenantId)
+            ->get();
+        
         foreach ($admins as $admin) {
             Notification::create([
                 'titulo' => 'Nueva Venta',
+                'tenant_id' => $admin->id,
                 'mensaje' => 'Venta de: Gs. ' . moneda($this->venta->total) . ' Registrado',
                 'is_read' => false,
                 'user_id' => $admin->id,
@@ -37,20 +42,21 @@ class VentaRealizada implements ShouldQueue
             ]);
         }
 
-        NotificacionEvent::dispatch('Nueva Venta', 'Venta de: Gs.' . moneda($this->venta->total) . ' Registrado', 'blue');
+        NotificacionEvent::dispatch('Nueva Venta', 'Venta de: Gs.' . moneda($this->venta->total) . ' Registrado', 'blue', $this->tenantId);
 
         foreach ($this->venta->productos as $producto) {
             if ($producto->stock_minimo >= $producto->stock && $producto->tipo == 'producto') {
                 foreach ($admins as $admin) {
                     Notification::create([
                         'titulo' => 'Stock Bajo',
+                        'tenant_id' => $admin->id,
                         'mensaje' => "$producto->nombre: $producto->stock unidades",
                         'is_read' => false,
                         'user_id' => $admin->id,
                         'color' => 'yellow',
                     ]);
                 }
-                NotificacionEvent::dispatch('Stock Bajo', "$producto->nombre: $producto->stock unidades", 'yellow');
+                NotificacionEvent::dispatch('Stock Bajo', "$producto->nombre: $producto->stock unidades", 'yellow', $this->tenantId);
             }
         }
     }

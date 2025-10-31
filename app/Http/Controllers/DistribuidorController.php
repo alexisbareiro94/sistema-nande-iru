@@ -59,7 +59,7 @@ class DistribuidorController extends Controller
                 'entidad_id' => $distribuidor->id,
                 'accion' => 'Creación de distribuidor',                
             ]);
-            AuditoriaCreadaEvent::dispatch();
+            AuditoriaCreadaEvent::dispatch(tenant_id());
             return response()->json([
                 'success' => true,
                 'message' => 'Distribuidor creado correctamente',

@@ -1,5 +1,6 @@
 import { csrfToken } from './csrf-token';
 import { showToast } from './toast';
+import { $ } from './utils';
 
 let userId = '';
 function selectUser() {
@@ -185,14 +186,14 @@ async function rerenderForm() {
 }
 
 
-window.Echo.private('auditoria-creada')
+window.Echo.private(`auditoria-creada.${window.tenantId}`)
     .listen('AuditoriaCreadaEvent', async e => {
         try {
             const res = await fetch('http://127.0.0.1:80/api/auditorias');
             const data = await res.json();
             if (!res.ok) {
                 throw data;
-            }            
+            }
             renderTableBody(data.data);
         } catch (err) {
             console.log(err)
@@ -204,6 +205,9 @@ window.Echo.private('auditoria-creada')
 
 
 function renderTableBody(data) {
+    if(!$('#table-body-auditorias')){
+        return;
+    }
     const body = document.getElementById('table-body-auditorias');
     body.innerHTML = '';
     let count = 0;
@@ -215,7 +219,7 @@ function renderTableBody(data) {
         let dato = '';
 
         if (item.datos && typeof item.datos === 'object') {
-            console.log(item.datos);            
+            console.log(item.datos);
             for (const [k, v] of Object.entries(item.datos)) {
                 key = k;
                 dato = v;

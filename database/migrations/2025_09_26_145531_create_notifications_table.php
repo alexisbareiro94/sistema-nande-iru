@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('notificaciones', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('users')->cascadeOnDelete();
             $table->string('titulo'); 
             $table->text('mensaje'); 
             $table->boolean('is_read')->default(false);

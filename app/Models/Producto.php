@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class Producto extends Model
 {
@@ -25,6 +26,35 @@ class Producto extends Model
         'ventas',
         'imagen',
     ];
+
+    // En tu modelo Auditoria
+    protected static function booted(): void
+    {
+        static::addGlobalScope('tenant_filter', function (Builder $builder) {
+            if (auth()->check()) {
+                $tenantId = auth()->user()->role === 'admin'
+                    ? auth()->user()->id
+                    : auth()->user()->tenant_id;
+
+                $builder->where('productos.tenant_id', $tenantId);
+            }
+        });
+    }
+
+
+    // En tu modelo Producto
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (!$model->tenant_id && auth()->check()) {
+                $model->tenant_id = auth()->user()->role === 'admin'
+                    ? auth()->user()->id
+                    : auth()->user()->tenant_id;
+            }
+        });
+    }
 
     public function categoria(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -50,6 +80,4 @@ class Producto extends Model
     {
         return $this->hasOne(DetalleVenta::class, 'producto_id')->latest('created_at');
     }
-
-    
 }

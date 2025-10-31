@@ -182,5 +182,6 @@
     @include('gestios-usuarios.includes.modal-edit-cliente')
     @include('caja.includes.modal-add-clientes')
     @include('gestios-usuarios.includes.modal-eliminar-cliente')
+    @include('productos.includes.add-distribuidor')
     <x-clientes />
 @endsection

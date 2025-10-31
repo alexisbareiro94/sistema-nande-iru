@@ -48,10 +48,8 @@ tipoProductoRadios.forEach(radio => {
         }
     });
 });
-
 if (boton) {
-
-    boton.addEventListener("click", (e) => {
+    boton.addEventListener("click", (e) => {                
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const formData = new FormData();
         formData.append('nombre', nombre.value);
@@ -66,7 +64,8 @@ if (boton) {
         formData.append('stock_minimo', stock_minimo.value ?? "");
         formData.append('distribuidor_id', distribuidor_id.value ?? "");
         formData.append('tipo', tipoSeleccionado ?? "");
-        formData.append('imagen', imagen.files[0] ?? "");
+        formData.append('imagen', imagen.files[0] ?? "");       
+        
         fetch('http://127.0.0.1:80/agregar-producto', {
             method: 'POST',
             headers: {
@@ -74,13 +73,15 @@ if (boton) {
             },
             body: formData
         })
-            .then(res => {
+            .then(async res => {
                 if (!res.ok) {
                     return res.json().then(errData => { throw errData });
                 }
+                 console.log(await res.json())
+                 return;
                 return res.json();
             })
-            .then(data => {
+            .then(data => {                
                 document.getElementById('form-add-producto').reset();
                 document.getElementById('imagen-preview').src = "";
                 document.getElementById("preview-cont").classList.add('hidden');
@@ -88,6 +89,8 @@ if (boton) {
                 showToast("Producto agregado con éxito", "success");
             })
             .catch(err => {
+                console.error(err);
+                return;
                 const errores = ['nombre', 'codigo', 'tipo', 'descripcion', 'precio_compra', 'precio_venta', 'stock', 'stock_minimo',
                     'categoria_id', 'marca_id', 'distribuidor_id', 'ventas', 'imagen',]
                 errores.forEach(errori => {
@@ -617,7 +620,6 @@ document.getElementById('import-form').addEventListener('submit', async (e) => {
     }
 });
 
-console.log('message')
 function asd(){
     if(JSON.parse(sessionStorage.getItem('pdf-toast'))){
        toastLoading();

@@ -9,9 +9,11 @@ use App\Models\User;
 class ClienteDistController extends Controller
 {
     public function index(){
+        $tenantId = tenant_id();
         $clientes = User::with('compras')
             ->where('role', 'cliente')
             ->where('activo', true)
+            ->where('tenant_id', $tenantId)
             ->orderByDesc('created_at')            
             ->get()
             ->take(5);
@@ -27,7 +29,8 @@ class ClienteDistController extends Controller
 
     public function show_cliente(string $id){
         try{
-            $cliente = User::findOrFail($id);
+            $tenantId = tenant_id();
+            $cliente = User::where('tenant_id', $tenantId)->findOrFail($id);
             return response()->json([
                 'data' => $cliente
             ]);
@@ -38,6 +41,7 @@ class ClienteDistController extends Controller
         }
     }
 
+    //post
     public function desactive(string $id){
         try{
             $user = User::findOrFail($id)

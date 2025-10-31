@@ -24,6 +24,7 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+            'tenant_id' => 1,
             'razon_social' => $this->faker->name(),
             'ruc_ci' => $this->faker->numberBetween(1200000, 5500000),
             'email' => $this->faker->email(),

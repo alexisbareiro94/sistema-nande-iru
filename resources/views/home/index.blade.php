@@ -5,7 +5,7 @@
 @section('contenido')
     <header class="bg-gray-300 text-black shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="{{ url('/') }}" class="text-xl font-bold"></a>
+            <p></p>
 
             <nav class="space-x-4 flex">
                 <a href="" class="hover:text-[#CC0000] font-semibold">Perfil</a>
@@ -25,6 +25,18 @@
     <div class="max-w-7xl mx-auto p-6 pt-8">
         <div class="mb-10">
             <h1 class="text-3xl font-bold text-gray-800 mb-2">Panel de Control</h1>
+            @if (auth()->check() && !auth()->user()->temp_used && auth()->user()->role == 'admin')
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4" role="alert">
+                    <p class="font-bold">Cuenta temporal</p>
+                    <p>Esta cuenta es temporal y vencerá el
+                        <strong>{{ format_time(auth()->user()->expires_at) }}</strong>.
+                        Por favor, configurá tu cuenta permanente antes de esa fecha.
+                    </p>
+                    <a href="{{ route('auth.config.view') }}" class="text-blue-600 underline font-medium hover:text-blue-800">
+                        Configurar ahora
+                    </a>
+                </div>
+            @endif
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -39,10 +51,9 @@
                     </svg>
 
                 </div>
-                <span
-                    class="text-lg font-medium text-gray-800 text-center group-hover:text-blue-600 transition-colors">
+                <span class="text-lg font-medium text-gray-800 text-center group-hover:text-blue-600 transition-colors">
                     Gestión de Clientes y Distribuidores
-                </span>                
+                </span>
             </a>
 
             <!-- Caja -->
