@@ -26,7 +26,7 @@ class Auditoria extends Model
                     : auth()->user()->tenant_id;
 
                 $builder->where('auditorias.tenant_id', $tenantId);
-            }            
+            }
         });
     }
 

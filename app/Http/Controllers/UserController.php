@@ -92,11 +92,13 @@ class UserController extends Controller
         }
     }
 
+    //clientes
     public function update(UpdateUserRequest $request, string $id)
     {
         DB::beginTransaction();
         try {
             $data = $request->validated();
+            dd($data);
             $user = User::where('tenant_id', tenant_id())->findOrFail($id);
             $user->update([
                 'razon_social' => $data['razon_social'] ?? $user->razon_social,

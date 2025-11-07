@@ -10,13 +10,13 @@
     </div>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+    <div class="cursor-pointer border rounded-lg p-4 hover:shadow-md transition-shadow">
         <div class="flex items-center">
             <div class="p-2 bg-blue-100 text-primary rounded-lg">
                 <i class="fas fa-file-invoice text-xl"></i>
             </div>
             <div class="ml-4">
-                <h4 class="font-medium">Reporte de Ventas</h4>
+                <h4 class="font-medium">Reporte de Ventas</h4>                
                 <p class="text-sm text-gray-500">Ventas detalladas por periodo</p>
             </div>
         </div>

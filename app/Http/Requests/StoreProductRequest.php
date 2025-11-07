@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreProductRequest extends FormRequest
 {
@@ -27,7 +28,11 @@ class StoreProductRequest extends FormRequest
             'nombre' => 'required',
             'tipo' => 'required',
             'codigo_auto' => 'nullable',
-            'codigo' => 'nullable|required_if:codigo_auto,false|unique:productos,codigo',
+            'codigo' => [
+                'required_if:codigo_auto,false',
+                Rule::unique('productos')->where(fn($q) => $q->where('tenant_id', tenant_id())),
+                'nullable',
+            ],
             'marca_id' => 'nullable|required_if:tipo,producto|exists:marcas,id',
             'categoria_id' => 'required|exists:categorias,id',
             'descripcion' => 'nullable',

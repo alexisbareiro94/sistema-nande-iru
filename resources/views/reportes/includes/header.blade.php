@@ -8,12 +8,12 @@
             <div class="mx-4">
                 <h4 class="text-gray-500 text-sm">Ventas de Este Mes</h4>
                 <div class="text-2xl font-bold">Gs.
-                    {{ number_format($data['ventas_hoy']['saldo'], 0, ',', '.') }}</div>
+                    {{ number_format($data['ventas_hoy']['saldo'] ?? 0, 0, ',', '.') }}</div>
             </div>
         </div>
         <div class="mt-4 text-green-500 text-sm flex items-center">
             <i class="fas fa-arrow-up mr-1"></i>
-            <span>{{ $data['ventas_hoy']['tag'] }}{{ $data['ventas_hoy']['porcentaje'] }}% respecto
+            <span>{{ $data['ventas_hoy']['tag'] ?? 0 }}{{ $data['ventas_hoy']['porcentaje'] ?? 0 }}% respecto
                 hasta mismo dia del mes pasado</span>
         </div>
     @else
@@ -31,12 +31,12 @@
         </div>
         <div class="mx-4">
             <h4 class="text-gray-500 text-sm">Clientes nuevos</h4>
-            <div class="text-2xl font-bold">{{ $data['clientes_nuevos']['nuevos'] }}</div>
+            <div class="text-2xl font-bold">{{ $data['clientes_nuevos']['nuevos'] ?? 0}}</div>
         </div>
     </div>
     <div class="mt-4 text-green-500 text-sm flex items-center">
         <i class="fas fa-arrow-up mr-1"></i>
-        <span>{{ $data['clientes_nuevos']['tag'] }}{{ $data['clientes_nuevos']['porcentaje'] }}%
+        <span>{{ $data['clientes_nuevos']['tag'] ?? 0 }}{{ $data['clientes_nuevos']['porcentaje'] ?? 0}}%
             respecto al mes pasado</span>
     </div>
 </div>
@@ -49,10 +49,10 @@
         </div>
         <div class="mx-4">
             <h4 class="text-gray-500 text-sm">Top producto</h4>
-            <div class="text-2xl font-bold">{{ $data['producto_vendido']['producto']->nombre }}</div>
+            <div class="text-2xl font-bold">{{ $data['producto_vendido']['producto']?->nombre ?? '' }}</div>
         </div>
     </div>
     <div class="mt-4 text-gray-500 text-sm">
-        {{ $data['producto_vendido']['cantidad'] }} unidades vendidas
+        {{ $data['producto_vendido']['cantidad'] ?? 0 }} unidades vendidas
     </div>
 </div>

@@ -95,7 +95,7 @@ class MovimientoCajaController extends Controller
                 }
             }            
             DB::commit();
-            MovimientoRealizado::dispatch($movimiento, $movimiento->tipo);            
+            MovimientoRealizado::dispatch($movimiento, $movimiento->tipo, tenant_id());            
             return response()->json([
                 'success' => true,
                 'message' => 'Movimiento registrado correctamente',

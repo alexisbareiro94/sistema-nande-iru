@@ -24,6 +24,11 @@ class UpdateUserRequest extends FormRequest
         return [
             'razon_social' => 'sometimes',
             'ruc_ci' => 'sometimes|unique:users,ruc_ci',
+            'actual_password' => 'nullable',
+            'password' => ['sometimes', 'string', 'min:8', 'regex:/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/', 'confirmed'],
+            'telefono' => 'sometimes',
+            'email' => 'sometimes|email',
+            'empresa' => 'sometimes'
         ];
-    }
+    }    
 }

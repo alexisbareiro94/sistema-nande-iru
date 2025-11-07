@@ -16,6 +16,9 @@ class ReporteService
     // datos para los tres primeros items de reportes (ventas hoy, clientes nuevos, prod mas vendido y mas vendidos )
     public function data_index(): array
     {
+        if(Producto::all()->count() < 1){
+            return [];
+        }
         $productos = Producto::orderByDesc('ventas')->get()->take(4);
         $productoMasVendido = $productos->first();
         $productos = $productos->where('id', '!=', $productoMasVendido->id);

@@ -5,19 +5,20 @@
             <div>
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Ganancia Actual</p>
                 <p id="ganancia-actual" class="text-2xl font-bold text-gray-900 mt-1">
-                    Gs. {{ number_format($data['utilidad']['actual']['ganancia'], 0, ',', '.') }}
+                    Gs. {{ number_format($data['utilidad']['actual']['ganancia'] ?? 0, 0, ',', '.') }}
                 </p>
                 <p id="rango-actual" class="text-xs text-gray-500 mt-2">
                     Rango: Hoy
-                    ({{ Carbon\Carbon::parse($data['utilidad']['actual']['fecha_apertura'])->format('d-m') }})
+                    ({{ Carbon\Carbon::parse($data['utilidad']['actual']['fecha_apertura'] ?? now())->format('d-m') }})
                 </p>
             </div>
 
             <span id="svg-cont-card" @class([
-                'text-red-500' => $data['utilidad']['tag'] == '-',
-                'text-green-500' => $data['utilidad']['tag'] == '+',
+                'text-red-500' => $data['utilidad']['tag'] ?? '' == '-',
+                'text-green-500' => $data['utilidad']['tag'] ?? '' == '+',
+                'text-gray-500' => '',
             ])>
-                @if ($data['utilidad']['tag'] == '-')
+                @if ($data['utilidad']['tag'] ?? '' == '-')
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="size-6">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -40,12 +41,12 @@
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">vs Periodo Anterior</p>
                 <p class="mt-1.5">
                     <span id="ganancia-anterior" class="text-lg font-semibold text-gray-800">
-                        Gs. {{ number_format($data['utilidad']['pasado']['ganancia'], 0, ',', '.') }}
+                        Gs. {{ number_format($data['utilidad']['pasado']['ganancia'] ?? 0, 0, ',', '.') }}
                     </span>
                 </p>
                 <p id="rango-anterior" class="text-xs text-gray-500 mt-2">
                     Rango: Ayer
-                    ({{ Carbon\Carbon::parse($data['utilidad']['pasado']['fecha_apertura'])->format('d-m') }})
+                    ({{ Carbon\Carbon::parse($data['utilidad']['pasado']['fecha_apertura'] ?? now())->format('d-m') }})
                 </p>
             </div>
 
@@ -54,11 +55,11 @@
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Diferencia</p>
                 <div class="mt-1.5 flex flex-col items-end">
                     <span id="variacion-porcentaje"
-                        class="text-sm font-semibold {{ $data['utilidad']['tag'] === '+' ? 'text-green-700 bg-green-200 rounded-xl px-1' : 'text-red-700 bg-red-200 rounded-xl px-1' }}">
-                        {{ $data['utilidad']['tag'] }} {{ $data['utilidad']['porcentaje'] }}%
+                        class="text-sm font-semibold {{ $data['utilidad']['tag'] ?? '+' === '+' ? 'text-green-700 bg-green-200 rounded-xl px-1' : 'text-red-700 bg-red-200 rounded-xl px-1' }}">
+                        {{ $data['utilidad']['tag'] ?? ''}} {{ $data['utilidad']['porcentaje'] ?? '' }}%
                     </span>
                     <span class="text-sm font-medium text-gray-600 mt-1" id="variacion-valor">
-                        Gs. {{ number_format($data['utilidad']['diferencia'], 0, ',', '.') }}
+                        Gs. {{ number_format($data['utilidad']['diferencia'] ?? 0, 0, ',', '.') }}
                     </span>
                 </div>
             </div>

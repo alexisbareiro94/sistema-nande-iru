@@ -30,36 +30,40 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-                @foreach ($data['productos_vendidos'] as $producto)
-                    <tr>
-                        <td class="px-4 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-md"></div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">
-                                        {{ $producto->nombre }}</div>
+                @if ($data)
+
+                    @foreach ($data['productos_vendidos'] as $producto)
+                        <tr>
+                            <td class="px-4 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-md"></div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">
+                                            {{ $producto->nombre }}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $producto->tipo }}
-                        </td>
-                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $producto->ventas }}
-                        </td>
-                        <td class="px-4 py-4 whitespace-nowrap">
-                            {{-- class=" bg-green-100 text-green-800" --}}
-                            <span @class([
-                                'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
-                                'bg-green-100 text-green-800' => $producto->stock > 5,
-                                'bg-yellow-100 text-yellow-800' => $producto->stock <= 5 && $producto->stock > 2,
-                                'bg-red-100 text-red-800' => $producto->stock < 2,
-                            ])>
-                                {{ $producto->stock }}
-                            </span>
-                        </td>
-                    </tr>
-                @endforeach
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ $producto->tipo }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ $producto->ventas }}
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap">
+                                {{-- class=" bg-green-100 text-green-800" --}}
+                                <span @class([
+                                    'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
+                                    'bg-green-100 text-green-800' => $producto->stock > 5,
+                                    'bg-yellow-100 text-yellow-800' =>
+                                        $producto->stock <= 5 && $producto->stock > 2,
+                                    'bg-red-100 text-red-800' => $producto->stock < 2,
+                                ])>
+                                    {{ $producto->stock }}
+                                </span>
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
             </tbody>
         </table>
     </div>

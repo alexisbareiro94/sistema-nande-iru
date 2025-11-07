@@ -270,7 +270,7 @@ if (document.getElementById('cargar-mas')) {
     });
 }
 
-window.Echo.private(`auth-event.${window.tenantId}`)
+window.Echo.private(`auth-event.${window.tenantId}`)    
     .listen('AuthEvent', (e) => {
         conexion(e.user, e.tipo, e.ultimaConexion);
     })

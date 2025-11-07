@@ -140,9 +140,9 @@ class AuthController extends Controller
                 'accion' => 'Cierre de sesion'
             ]);
             AuditoriaCreadaEvent::dispatch(tenant_id());
-            Auth::logout();
             AuthEvent::dispatch($user, 'logout', tenant_id());
             NotificacionEvent::dispatch('Cierre de Sesion', "$user->name a cerrado sesion", 'blue', tenant_id());
+            Auth::logout();
             return redirect('/');
         } catch (\Exception) {
             return back()->with('error', 'Intente de vuelta');

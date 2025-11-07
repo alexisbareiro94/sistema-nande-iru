@@ -112,7 +112,7 @@
                     </i>
                 </span>
             </h3>
-            <button
+            <button id="add-distribuidor-gcd"
                 class="font-semibold bg-gray-800 text-white px-2 py-1 rounded-md cursor-pointer transition-all active:scale-90">+
                 Agregar</button>
         </div>

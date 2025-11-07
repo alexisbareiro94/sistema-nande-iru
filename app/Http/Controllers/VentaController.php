@@ -133,13 +133,13 @@ class VentaController extends Controller
             }
 
             if (auth()->user()->role === 'admin') {
-                $ventas = $query->with(['caja.user','venta' => function ($query) {
+                $ventas = $query->with(['caja.user', 'venta' => function ($query) {
                     $query->with(['cliente', 'detalleVentas', 'productos']);
                 }])->orderByDesc('created_at')->get();
             } else {
                 $ventas = $query->whereHas('venta', function ($query) {
                     return $query->where('vendedor_id', auth()->user()->id);
-                })->with(['caja.user','venta' => function ($query) {
+                })->with(['caja.user', 'venta' => function ($query) {
                     $query->with(['cliente', 'detalleVentas', 'productos']);
                 }])->orderByDesc('created_at')->get();
             }
@@ -249,7 +249,7 @@ class VentaController extends Controller
                     'total' => $venta->total,
                 ]
             ]);
-            
+
             AuditoriaCreadaEvent::dispatch(tenant_id());
 
             MovimientoCaja::create([
@@ -290,9 +290,6 @@ class VentaController extends Controller
                     }
                 }
                 $productdb->increment('ventas', $producto->cantidad);
-
-                
-
             }
 
             foreach ($formaPago as $forma => $monto) {
@@ -321,7 +318,7 @@ class VentaController extends Controller
             $caja['saldo'] += $venta->total;
             session()->put(['caja' => $caja]);
             DB::commit();
-            VentaRealizada::dispatch($venta, tenant_id());            
+            VentaRealizada::dispatch($venta, tenant_id());
             UltimaActividadEvent::dispatch(auth()->user()->id, $venta->total, tenant_id());
             crear_caja();
             return response()->json([
@@ -346,28 +343,41 @@ class VentaController extends Controller
 
     public function export_pdf()
     {
-        $item = Cache::get('ventas');  
-                      
+        $item = Cache::get('ventas');
+
         if (filled($item)) {
             $mov = $item->contains(fn($value) => $value->venta == null);
         }
-        if (!filled($item) || $mov) {        
-            $item = Cache::remember('ventas', 20, fn() => MovimientoCaja::with('caja.user:id,name')->get());            
+        if (!filled($item) || $mov) {
+            $item = Cache::remember('ventas', 20, fn() => MovimientoCaja::with('caja.user:id,name')->get());
             Cache::forget('ventas');
             $ingresos = $item->sum('monto');
             $egresos = $item->where('tipo', 'egreso')->sum('monto');
             $ventas = $item->toArray();
-            $items = count($ventas);            
-                        
-            GenerarPdfJob::dispatch(auth()->user()->id, $ventas, $ingresos, $egresos, tenant_id());      
+            $items = count($ventas);
+
+            Auditoria::create([
+                'created_by' => auth()->user()->id,
+                'entidad_type' => User::class,
+                'entidad_id' => auth()->user()->id,
+                'accion' => 'Reporte Generado',
+            ]);
+
+            GenerarPdfJob::dispatch(auth()->user()->id, $ventas, $ingresos, $egresos, tenant_id());
             return response()->json([
                 'data' => 'listo',
             ]);
-        } else {        
+        } else {
             $ventas = $item->toArray();
-            $items = count($ventas);                        
+            $items = count($ventas);
             Cache::forget('ventas');
-            GenerarPdfJob::dispatch(auth()->user()->id, $ventas, null, tenant_id());            
+            Auditoria::create([
+                'created_by' => auth()->user()->id,
+                'entidad_type' => User::class,
+                'entidad_id' => auth()->user()->id,
+                'accion' => 'Reporte Generado',
+            ]);
+            GenerarPdfJob::dispatch(auth()->user()->id, $ventas, null, null, tenant_id());
             return response()->json([
                 'data' => 'listo',
             ]);

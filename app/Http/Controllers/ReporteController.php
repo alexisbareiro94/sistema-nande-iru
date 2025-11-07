@@ -16,7 +16,7 @@ class ReporteController extends Controller
     {
         $datos = $this->reporteService->data_index();
         return view('reportes.index', [
-            'data' => $datos
+            'data' => $datos ?? ''
         ]);
     }
 

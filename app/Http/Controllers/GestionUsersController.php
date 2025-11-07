@@ -6,9 +6,11 @@ use App\Models\{Auditoria, User, PagoSalario};
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdatePersonalRequest;
 use App\Events\AuditoriaCreadaEvent;
+use App\Http\Requests\UpdateUserRequest;
 use App\Jobs\MailRestablecerPassJob;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class GestionUsersController extends Controller
@@ -205,22 +207,41 @@ class GestionUsersController extends Controller
 
     public function restablecer_pass_view(Request $request)
     {
-        try {
-            $token = $request->query('token');
-            $data = json_decode(Crypt::decrypt($token));
+        try {            
+            $token = $request->query('token');              
+            $data = json_decode(Crypt::decrypt($token));                        
             $id = $data->user_id;
-            $expireDate = $data->expires_at;
-
+            $expireDate = $data->expires_at;            
             if (Carbon::parse($expireDate)->isPast()) {
                 return redirect()->route('login')->with('error', 'El enlace ya no es valido');
             }
 
-            $user = User::where('tenant_id', tenant_id())->findOrFail($id);
+            $user = User::findOrFail($id);
             return view('gestios-usuarios.restablecer-pass.index', [
                 'user' => $user,
             ]);
-        } catch (\Exception) {
-            return redirect()->route('login')->with('error', 'Token Invalido');
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+    }
+
+    public function update_admin(UpdateUserRequest $request, string $id)
+    {           
+        try{
+            $data = $request->validated();
+            $user = User::findOrFail($id);
+            
+            if(!Hash::check($data['actual_password'], $user->password)){
+                return redirect()->back()->with('error', 'La contraseña no coincide');
+            }
+
+            User::findOrFail($id)
+                ->update($data);
+
+            return redirect()->back()->with('success', 'Usuario Actualizado');
+        }catch(\Exception $e){
+            throw new \Exception($e->getMessage());
+            // return redirect()->back('error', 'Hubo un error, inténtelo nuevamente');
         }
     }
 }

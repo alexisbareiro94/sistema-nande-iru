@@ -7,13 +7,17 @@ use App\Models\Auditoria;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class CategoriaController extends Controller
 {
     public function store(Request $request)
     {
+        $tenantId = tenant_id();
         $validate = Validator::make($request->all(), [
-            'nombre' => 'required|unique:categorias,nombre',
+            'nombre' => ['required', Rule::unique('categorias')->where(function($q) use ($tenantId) {
+                $q->where('tenant_id', $tenantId);
+            })],
         ], [
             'nombre.required' => 'El categoria es requerido',
             'nombre.unique' => 'La Categoria ya existe',

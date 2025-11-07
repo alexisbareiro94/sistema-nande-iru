@@ -333,12 +333,20 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-5 rounded-lg shadow-md">
                     <h3 class="font-bold mb-2">Cambiar Contraseña</h3>
-                    <form class="space-y-2">
-                        <input type="password" placeholder="Contraseña actual" class="w-full p-2 border rounded" />
-                        <input type="password" placeholder="Nueva contraseña" class="w-full p-2 border rounded" />
-                        <input type="password" placeholder="Confirmar nueva" class="w-full p-2 border rounded" />
-                        <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Guardar
-                            Cambios</button>
+                    <form method="POST" action="{{ route('gestion.update.admin', ['id' => auth()->user()->id]) }}" class="space-y-2">
+                        @csrf
+                        <input name="actual_password" type="password" placeholder="Contraseña actual" class="pass w-full p-2 border rounded" />
+                        <input name="password" type="password" placeholder="Nueva contraseña" class="pass w-full p-2 border rounded" />
+                        <input name="password_confirmation" type="password" placeholder="Confirmar nueva" class="pass w-full p-2 border rounded" />
+
+                        <div class="py-2 cursor-pointer" >
+                            <input type="checkbox" name="show-pass" id="show-pass">
+                            <label for="show-pass">Mostrar Contraseña</label>
+                        </div>
+
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+                            Guardar Cambios
+                        </button>
                     </form>
                 </div>
                 <div class="bg-white p-5 rounded-lg shadow-md">
@@ -417,5 +425,16 @@
             mostrar.classList.remove('hidden');
             password.type = 'password'
         });        
+
+        const inputs = document.querySelectorAll('.pass');
+        document.getElementById('show-pass').addEventListener('change', () => {
+            inputs.forEach(input => {
+                if(input.type == 'password'){
+                    input.type = 'text';
+                }else{
+                    input.type = 'password';
+                }
+            })
+        });
     </script>
 @endsection

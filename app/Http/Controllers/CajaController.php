@@ -18,8 +18,6 @@ class CajaController extends Controller
     }
     public function index_view()
     {
-
-
         if (!session("caja")) {
             $caja = Caja::orderByDesc("id")->first();
         }

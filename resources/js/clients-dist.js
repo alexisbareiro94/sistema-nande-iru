@@ -282,9 +282,23 @@ if ($i('btn-eliminar-cliente')) {
 
 
 //distribuidores
-if($('#cont-add-dist')){
-    $el('#cont-add-dist', 'click', () => {
-        console.log('message')
+if($('#add-distribuidor-gcd')){
+    $el('#add-distribuidor-gcd', 'click', () => {
+        $('#cont-add-dist').classList.remove('hidden');
     });
 }
 
+
+if($('#cerrar-dist')){
+    $el('#cerrar-dist', 'click', () => {
+        $('#cont-add-dist').classList.add('hidden');
+    });
+}
+
+if($('#cont-add-dist')){
+    $el('#cont-add-dist', 'click', e => {
+        if(e.target == $('#cont-add-dist')){
+            $('#cont-add-dist').classList.add('hidden');
+        }
+    });
+}

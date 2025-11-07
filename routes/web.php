@@ -129,6 +129,8 @@ Route::middleware(['auth', CheckUserIsBloqued::class])->group(function () {
         Route::post('/api/cliente/{id}', [ClienteDistController::class, 'desactive']);
 
         Route::post('/restablecer', [GestionUsersController::class, 'restablecer_pass'])->name('restablecer.pass');
+
+        Route::post('/update_admin/{id}', [GestionUsersController::class, 'update_admin'])->name('gestion.update.admin');
     });
 });
 
@@ -142,7 +144,7 @@ Route::get('/borrar-session', function () {
 });
 
 Route::get('/debug', function () {
-    dd(auth()->user()->tenant_id);
+    dd(User::find(1));
 });
 
 use App\Services\PrinterService;
